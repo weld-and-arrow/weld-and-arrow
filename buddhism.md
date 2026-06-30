@@ -16,7 +16,9 @@ Linji provides the definitive link (weld?) of true person, no rank.
 
 Framing: rows one–two = synchronic cross-section; row three = diachronic. (Converts the original's silence into avowal; this single line is what permits the reversion.)
 
-Attunement axiom: one irreducible posit, two faces — coherence-is-value (row two) = kamma-niyāma underivable-from-utu (row three's weld).
+Attunement axiom: one irreducible posit, two faces (row two = row three's weld):
+- row two: (1) karma names a distinct causal order, value-free [definition], (2) practice welds direction onto it [enactment]
+- row three's weld: kamma-niyāma underivable-from-utu.
 
 The weld (row three enactment) is the cross-row operation binding row two's value down row three's arrow.
 
