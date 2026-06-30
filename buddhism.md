@@ -40,6 +40,6 @@ So the firing condition is *designation-whose-answer-routes-through-the-self* �
 
 Because there is no fixed base, soteriological direction can never be *read off* the facts — only *enacted*. So the enactment column is mandatory, not decorative: the left column's *no-substrate* and the right column's *must-weld* are one fact seen twice. Emptiness of the holder (dependence) *is* the necessity of welding (enactment).
 
-The fox kōan (Hyakujō's fox) supplies both, and the two tiers keep them honest: not-fall holds at the floor (no substance to fall), not-obscure holds conventionally (the arrow binds, never evaded). The old man's 500 fox-lives were for asserting not-fall where not-obscure was owed — floor-truth claimed at the conventional level is antinomian. Clinging to either alone is the fox; held across both tiers they are non-dual (Daishugyō's non-duality and Shinjin-inga's hard causal affirmation, each at its proper tier).
+The fox kōan (Hyakujō's fox) supplies both, and the two tiers keep them honest: not-fall holds at the floor (no substance to fall), not-obscure holds conventionally (the arrow binds, never evaded). The old man's 500 fox-lives were for asserting not-fall where not-obscure was owed — floor-truth claimed at the conventional level is antinomian. Held across both tiers they are non-dual (Daishugyō's non-duality and Shinjin-inga's hard causal affirmation, each at its proper tier).
 
 *A limited lens — other doctrines hold too.*
