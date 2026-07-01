@@ -44,6 +44,8 @@ Row 2 is the being's resonance to the dharmas — the difference between realiza
 
 And the grade is where *for-me-ness* comes from. A being that is not fully realized is not fully resonant, and that shortfall in resonance *is* the contraction into which the arrow's return pitches — a self for the fruit to be *for*. Full resonance is genjō: scaffold gone, no contraction left for the return to route through. Partial resonance is a self appearing. None is a stone. So the agent-index karma needs is never stipulated — it is generated, and generated as a relation (kannō-sōe, call and contraction), stated not held.
 
+The magnitude is always per-call — not a global altitude the being holds but kannō-sōe projected onto this dharma now; can it listen to Hyakujō? is one call, and another call reads another magnitude off the same being. So the vast space of self-indexing beings, each relocating through karmic action, is no map anyone carries — it is the trajectory the loop draws across successive act-time re-pitchings: a cross-section at each act, vastness only over the run.
+
 ## Karma
 
 Why not a table of just two rows? The fox koan (*Mumonkan, Case 2*, Wumen Huikai) is the test. The old man's mistake was a *tier-error*, not a wrong: he asserted *not-fall* where *not-obscure* was called for — a floor-truth spoken at the conventional level, which is antinomian, since a floor-truth can only ever be *spoken inside* a conventional act. Held each at its proper tier, the two are non-dual. The five hundred fox lives are not desert or punishment; they are returns — the loop running.
