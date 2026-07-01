@@ -1,6 +1,6 @@
 # Buddhism
 
-An ontology-under-erasure reading of Zen / Chan *(work in progress).*
+An ontology-under-erasure reading of Zen *(work in progress).*
 
 A soteriological metaphysics with no substrate and no value: take one emptiness posit and follow what it forces for karma, action, and awakening. There is no value anywhere in the system — the karma loop and the resonance that grades it are all there is, and are all that karma is.
 
