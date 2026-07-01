@@ -10,7 +10,7 @@ Per Nishitani — absolute non-being is not a privative void but lies beyond the
 
 ## Provisionally-designated middle
 
-Jizang — the ultimate is the self-emptying floor; every level is conventional (MMK 24: emptiness = dependent origination = conventional designation), and the two-truths distinction is itself conventional — Jizang's fourfold two truths (四重二諦), each pair re-emptied as merely conventional at the next level, so no level is a final floor. This is **genjō**, the provisional middle: manifestation, always going out into a particular case.
+Jizang — the ultimate is the self-emptying floor; every level is conventional (MMK (Nāgārjuna's *Mūlamadhyamakakārikā*) 24: emptiness = dependent origination = conventional designation), and the two-truths distinction is itself conventional — Jizang's fourfold two truths (四重二諦), each pair re-emptied as merely conventional at the next level, so no level is a final floor. This is **genjō**, the provisional middle: manifestation, always going out into a particular case.
 
 Distinct from it, and never equated with it, is the **non-attaining middle** at the floor — Linji's "true person of no rank", no metaphysical rank yet always going in and out, acting. This is **shō**: realization as anātman, agential, never a still attainment. Two middles: genjō provisional, shō non-attaining. The system turns on keeping them apart.
 
