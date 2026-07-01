@@ -35,11 +35,9 @@ The one posit is that **the karma-holder has no own-being** (the attunement axio
 - **shō** (証, realization), at the floor: no own-being, so no substance is caught in the causal net — **not-fall** (不落), anātman, not escape. That shō is agential, never a still attainment: the true person of no rank.
 - **shu** (修, practice), conventionally: the karmic arrow is real and inescapable, never evaded — **not-obscure** (不昧).
 
-## Attainment
+## Attainment & Karma
 
 Why not a table of just the first row? Hakuin provides the corrective: the *not-yet-buddha* mustn't be ignored; realization must meet beings where they are — which is why row 2 exists.
-
-## Karma
 
 Why not a table of just 2 rows? The fox koan (*The Gateless Gate (Mumonkan), Case 2, compiled by Wumen Huikai*) is the test. The old man's error was to assert not-fall where not-obscure was owed — a floor-truth claimed at the conventional level, which is antinomian, since a floor-truth can only ever be *spoken inside* a conventional act. Held each at its proper tier, the two are non-dual.
 
