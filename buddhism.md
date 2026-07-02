@@ -1,6 +1,6 @@
 # The Weld and the Arrow
 
-An ontology-under-erasure act-grammar for Zen *(work in progress; formerly titled "Buddhism").*
+An ontology-under-erasure act-grammar for Zen *(work in progress).*
 
 A soteriological metaphysics with no substrate and no value: take one emptiness posit and follow what it forces for karma, action, and awakening. No value is asserted anywhere in the system — the valence its vocabulary carries is the object's, reported — and the karma loop and the resonance that grades it are all there is, and are all that karma is. Made precise below, the claim is this: **the index-question is answered without remainder within the lens** — everything diachronic belongs to the field, everything indexed belongs to the weld, and nothing indexed is ever stored.
 
