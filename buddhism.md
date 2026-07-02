@@ -144,6 +144,7 @@ The system has so far been demonstrated as type-discipline; here is one case run
 **The release.** The later Hyakujō's turning word — *not obscure* — is another call. This time the reception is *listening*: dharmas-forward, banpō susumite, the arrived word among the myriad. The reach-back appropriates the whole return — *the fox body's long fruit, mine, of that sentence, mine* — with markedly less clench: a de-clench event, a kenshō, a rung and not a terminus (the mountain of ox-herding still ahead). Not-obscure is enacted in the reception; not-fall is true at the floor of the same act; held each at its tier, non-dual — the fox lets go. And nothing is *kept*: the release is not a possession acquired but the next configuration re-pitched, which the next call will read.
 
 Every load-bearing piece appears once: call, clench, weld, arrow, seed, return, reach-back, re-pitch, rung. The loop closes at reception, retrospectively, each time — nowhere else, and nowhere is it stored.
+
 ## A taxonomy of error
 
 The grid does not carry a list of spiritual errors; it carries a **generator**. Every distinction the system holds is governed by the one separate/fuse rule — separate under act-time diagnosis, fuse at the floor and at genjō — so every distinction yields exactly two errors:
