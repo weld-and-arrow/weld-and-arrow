@@ -50,6 +50,12 @@ Genjō, then, is one manifestation-floor with two populations arriving from oppo
 
 The magnitude is always per-call — not a global altitude the being holds but kannō-sōe projected onto *this* dharma now; *can it listen to Hyakujō?* is one call, and another call reads another magnitude off the same being. So the vast space of self-indexing beings, each relocating through karmic action, is no map anyone carries — it is the trajectory the loop draws across successive act-time re-pitchings: a cross-section at each act, vastness only over the run.
 
+### Kenshō: rungs on the grade
+
+The grade admits *events*, and the tradition already names them: **kenshō** — typed here as a per-call de-clench event, a call answered with markedly less clench, re-pitching the configuration. Not a sighting of a substrate: 見性 reads literally "seeing the nature," and 性 risks the faculty-freeze — buddha-nature as a standing thing glimpsed — so the term is taken over with its metaphysics stripped, the event kept, the seen-thing declined. Kenshō is countable — Dahui's great awakening eighteen times, small awakenings beyond count, the line Hakuin loved — which is exactly what a rung is and exactly what a terminus isn't. And because nothing is stored between acts, a kenshō *cannot be held*: post-kenshō backsliding, which the tradition treats as an embarrassment needing explanation, falls out here as a theorem. The being loses no attainment; there was never a stored configuration to lose, only the next act's re-weld reading a re-pitched fit. Many kenshōs, none possessed.
+
+The typing keeps three words apart. **Kenshō** is the rung — a countable per-call event on the grade. **Satori** (悟) keeps the role the Dōgen sentence gives it — the dharmas-forward *mode*, terminus-typed, not rung-typed. **Genjō** is the terminus itself — and the terminus is not the top rung. "Full resonance is genjō" states a coincidence for selved beings, not a type-identity (genjō also holds the stone, from outside the scale entirely); *full* is scale-vocabulary, an adverbial magnitude per-call, and the terminus is where the scale's measuring runs out, not where it maxes out — a type-change (non-attaining), not a maximum. So "full satori" is a phrase the grid declines rather than defines: a scale-word offered to a non-scale item, the terminal freeze miniaturized. The Jizang parallel is exact: the fourfold ladder terminates not in a fifth negation but in dropping the seeking, and the resonance grade terminates not in a maximal kenshō but in the cessation of clench — the same error-shape at both termini, mistaking a type-change for a last rung.
+
 ## Karma
 
 Why not a table of just two rows? The fox koan (*Mumonkan, Case 2*, Wumen Huikai) is the test. The old man's mistake was a *tier-error*, not a wrong: he asserted *not-fall* where *not-obscure* was called for — a floor-truth spoken at the conventional level, which is antinomian, since a floor-truth can only ever be *spoken inside* a conventional act. Held each at its proper tier, the two are non-dual. The five hundred fox lives are not desert or punishment; they are returns — the loop running.
@@ -85,9 +91,72 @@ Nor does dropping to the floor save the reduction: there it succeeds by default 
 
 Two guards hold the line. The agent resists reduction by being *more* thoroughly empty, not by being a special substance — else a soul is re-smuggled. And it is not a Moorean non-natural fact: the reduction is malformed *because its base is empty* — a dissolutionist reading on a self-emptying floor, not the positing of an extra fact.
 
+## A taxonomy of error
+
+The grid does not carry a list of spiritual errors; it carries a **generator**. Every distinction the system holds is governed by the one separate/fuse rule — separate under act-time diagnosis, fuse at the floor and at genjō — so every distinction yields exactly two errors:
+
+- **Collapse** — fusing a distinction *under act-time diagnosis*. The fox is the paradigm: not-fall spoken where not-obscure was called for.
+- **Freeze** — separating, holding, reifying a distinction *as a floor-claim*. Reading 無位真人 as a rank one rests at is the paradigm — the 乾屎橛 error.
+
+Classical nihilism turns out to be a freeze, not a collapse: the void is emptiness reified as an *absence* — a snake wrongly grasped is still grasping. And mis-typing — the reductionist's state-tool for an act-job, the faculty-reading of Row 2 — is the freeze applied to the act/state distinction specifically: an act frozen into a standing configuration.
+
+The no-value clause then forces **two grades of error**, which behave differently and must not be run together:
+
+1. **Grammatical errors** — tier-errors and typing-errors. These the system can *assert*, because "malformed" is a conventional-tier logic verdict, not a value. The fox's mistake is assertable.
+2. **Soteriological shortfalls** — clench, self-forward, low resonance, failure to meet beings. These the system can only *display* — Row 2 magnitudes and Row 3 directions, valence borrowed from the object. The five hundred fox lives were returns, not punishments; by the same token "he failed to act as a bodhisattva" is never an asserted wrong, only a displayed asymmetry.
+
+### Grade 1: the generator's output (assertable)
+
+| Distinction | Collapse (fused at act-time) | Freeze (held at the floor) |
+|---|---|---|
+| Being / non-being (Nishitani) | — | Nihilism: absolute non-being taken as privative void, one more member of the pair |
+| Level *n* / level *n*+1 (Jizang's fourfold) | Skipping the ladder — cheap transcendence, floor-talk without having emptied anything | Eternalism at level *n*: this pair is the final floor |
+| The ladder / its terminus | — | Emptiness-sickness (空病): seeking a fifth negation, the emptying itself frozen into a path-object instead of the seeking dropped |
+| Rung / terminus of the grade (kenshō / genjō) | A kenshō spoken *as* genjō — a rung as the floor; the 禅病 of "stinking of Zen," an opening inflated into arrival — the fox's error at another joint | Genjō held as *final* kenshō — the terminus as top rung, awakening as a still attainment, daigo as rank; "full satori" is this freeze miniaturized |
+| genjō / shō (two middles) | Conflating them — manifestation taken as realization, or conversely | Holding the two-middles distinction itself as a final floor-claim |
+| shō / satori (証 / 悟) | Reading the floor-face as the awakening-mode, or conversely | Satori as a datable possession |
+| shu / shō (the weld) | **The fox**: not-fall asserted conventionally — antinomianism. Converse fox: not-obscure insisted on at the floor — moralizing where nothing falls | Two one-sided freezes: shō without shu (quietism, Dahui's silent-illumination target — emptiness that only empties) and shu without shō (practice as means to a later attainment, breaking shushō-ittō) |
+| Row 2 adverb / Row 3 verb | The shortfall *being* the self — grade collapsed into agent | Resonance held as a faculty; buddha-nature as substance; the empty agent re-based |
+| karma / inga | The malformed reduction: an index-free field fed to an index-requiring designation | The soul: the index *stored* between welds — a standing bearer |
+| Subject-axis / object-axis (the stone) | 無情有性 as subject: insentient realization | The stone denied object-axis standing — no insentient preaching at all |
+| Undefined / zero (resonance domain) | The stone's undefined read as *maximal* openness | Zero taken as the scale's first rung rather than a gloss from outside it |
+| Per-call / global altitude | — | The stage-scheme error: bhūmis as rank held, a global altitude, rather than cross-sections of the loop's run |
+| Description / injunction (the orange) | "Eat this": the displayed asymmetry taken up *by the theory* as command | Refusing to state the asymmetry — a theory of poison that won't say which direction kills |
+| Theory / ultimate | — | Grid-attachment: this lens taken as final |
+| Terminus / exit | Not-fall taken as *escape* — the buddha as one who has left the loop rather than one who answers with no clench | Private nirvāṇa as a rank; the pratyekabuddha freeze |
+
+Some cells are empty because not every distinction is symmetric — some can only be frozen (the ladder's limit), some only collapsed. The asymmetry is itself informative: the errors do not lie on a line.
+
+### Grade 2: displayable shortfalls
+
+These form the soteriological taxonomy proper, and here it genuinely grades, because Row 2 is a grade:
+
+- **Self-forward** — Dōgen's delusion, the fox's *saying*. A Row 3 direction, per-act.
+- **Clench** — contraction as such, read as low resonance to this call. Per-call, so there is no standing rank of how deluded a being is — only the trajectory the loop draws.
+- **Response-refusal short of the stone** — a self appears but mounts almost no response; near-zero from inside the domain, never the stone's outside-zero.
+- **The buddha-side shortfall** — answering a not-yet-buddha's call with anything less than meeting it where it is. This is where the bodhisattva enters *structurally*: Hakuin's corrective is already the bodhisattva-function, and Row 2 exists because of it. The grid can display that response-without-clench to *another being's* call just is what saving beings looks like — the theory's own existence (the orange handed over, banpō susumite) is an instance. What the grid cannot do is enjoin it, or it commits the "eat this" collapse in its own voice. So "ignorance of buddhahood" splits: its assertable face is the terminus/exit error in the table; its displayable face is the buddha-side shortfall — and the split is the whole of its motivation, which is why it needs no explicit axiom.
+
+### Correlations
+
+**Ten Bulls** maps almost cell-for-cell, and its point is anti-rest: 1–6 are the grade climbing per-call; 7 (bull forgotten, man remains) is dharmas dropped with self-forward residue — a half-weld; 8 (both forgotten, the empty circle) is the floor, and *stopping at 8* is the quietism freeze; 9 (return to the source — streams flow, flowers are red of themselves) is genjō, the never-scaffolded face rejoined; 10 (entering the marketplace with helping hands) is 真人出入, the weld operative among beings — the bodhisattva displayed, never enjoined. The sequence 8→9→10 is the same floor's two arrivals plus the buddha-side response. Kenshō sits around stage 3 with seven stages of ox still to go — the trajectory-over-the-run in picture form.
+
+**Five Ranks** (Dongshan): best read here not as stages but as *tier-positions one can speak from* — 正中偏 and 偏中正 the two poles of a row read from each side; 正中來 the shō-face, and resting there the canonical freeze the scheme itself warns against; 兼中至 and 兼中到 the weld, 到 (arrival in the marketplace) matching Bull 10. The tradition's diagnostic question — *which rank is this utterance from?* — is exactly the act-time *which middle?*
+
+**The 52 stages**: the grid's verdict is corrective rather than correlative — a bhūmi-ladder is Row 2 frozen into global altitude, where the grid says magnitude is per-call and vastness exists only over the run. The scheme survives as a *display convention*, a coarse-grained summary of a trajectory; held as ranks, it is the 乾屎橛 at fifty-two removes.
+
+### Outside the framework
+
+Two remainders. **Pre-grid ignorance** — svabhāva realism, the provisional middle never reached: the grid diagnoses it (a freeze at level zero), but the being in it has no vocabulary in which the diagnosis lands — the orange unrecognized as food. **Errors about the theory** — grid-attachment and its mirror, the lens dismissed *because* it is only a lens. The Disclaimers block the first; "other doctrines can and do hold too" is the theory declining to freeze itself against the second.
+
+### Non-linearity
+
+The taxonomy is not a map of places on a path. Because every distinction goes live again at each act-time, **there is no stage from which the errors become impossible** — a stage immune to error would be a rank, and a rank is the shit-stick. Even the buddha's immunity is not a possession but the fact that each response, taken one at a time, makes no clench. This is why the fox koan, a story about one sentence spoken once, can carry the whole system's diagnostics: the errors are not stations but the ways the separate/fuse rule can be violated *now*.
+
 ## Disclaimers
 
 The tiering, the separate/fuse rule, kannō-sōe, and the coined compound shugenjō are conventional and my own — contra Dōgen, who keeps all ultimate, and who fused the very shushō I have re-tiered (shō at the floor, shu conventional). So too are: shō's agency as *conferred* — necessarily agential because never unwelded, yet not agential of itself; resonance as *stated, not held* — Row 2 an adverb on Row 3's verb, with no verb of its own; **for-me-ness located in the weld** — shu, Row 3's enactment pole, the I-making (ahaṃkāra) — so that self is a dependently-arisen *process* the act makes rather than a state the grade holds (Row 2 reads it, Row 3 makes it); the reading of Linji's **無位真人** along a three-way seam (無位 = shō, the floor-face / 真人…出入 = shu, the acting / 無位真人 = the weld, shushō-ittō); the tiering of **証** (realization-as-not-fall, floor-face) apart from **悟** (satori); **genjō** as a single manifestation-floor with two populations (the never-scaffolded stone and the scaffold-dissolved buddha), practice-run-scaffold-free a proper subset; the *malformed*-not-merely-hard verdict by which karma resists reduction to the impersonal field, and the token-reflexivity of the weld-index by which the process-designation counter (the flame, the dance) is met; the stone as the resonance scale's zero, marked from outside it — the resonance predicate typed over responses-to-calls, undefined where none is mounted; and the theory's own soteriological status — a dharma among the myriad that *affords* a release without *enjoining* one (the orange, not the "eat this"), its valenced vocabulary borrowed from the object and reported rather than asserted.
+
+Likewise my own: the **error-taxonomy as generated**, not listed — collapse and freeze as the two violations of the separate/fuse rule, one pair per distinction, non-linear by construction; the **two grades of error** — grammatical verdicts the system asserts, soteriological shortfalls it can only display — with the bodhisattva motivated entirely by that split rather than by an added axiom; **kenshō typed as a per-call de-clench event** — countable (Dahui's eighteen), unholdable (nothing stored, so backsliding a theorem), the seen-nature of 見性 declined while the event is kept — a *rung*, tiered apart from satori (the terminus-typed mode) and from genjō (the terminus itself, a type-change rather than a maximum, so that "full satori" is declined as a scale-word offered to a non-scale item — the same error-shape as seeking Jizang's fifth negation); and the readings of the **Ten Bulls** as anti-rest sequence, the **Five Ranks** as tier-positions spoken from rather than stages, and the **52 stages** as display convention only.
 
 The stone is doubly mujō — impermanent (無常) and insentient (無情) — and the grid answers each axis differently: null on the subject-axis (no resonance, no realization of its own), yet a full dharma on the object-axis, among the myriad that advance to clarify a practitioner (banpō susumite). So the grid gives a deflationary point of contact with Dōgen's impermanence-buddha-nature (無常仏性) — buddha-nature as floor-residence, the stone's empty-impermanent being — and even a deflated insentient-preaching (無情説法): the stone expounds as a dharma read, not as a voice of its own. What it declines is insentient realization as a subject (無情有性).
 
