@@ -228,3 +228,42 @@ Absences the system generates deliberately, in both of the categories above — 
 - **No stage immune to error.** The taxonomy has no terminal safe cell — a stage immune to error would be a rank, and a rank is the shit-stick. Even the buddha's immunity is per-call, not possessed.
 - **Prudential privilege underivable.** The special rational authority of self-concern is an absence owned as theorem, not cost — in Śāntideva's company, with the bodhisattva's impartiality falling out as its display-face.
 - **No measure over the grade.** Row 2 states a partial ordering only; the scalar is display. The absent metric is priced deliberately — the soteriology consumes only the ordering, so no measure is owed. (And none over delivery either: effectiveness enters as an ordering within a regime, never as a probability apparatus — the standing declines, §1.)
+
+## Glossary
+
+*Supplements the Theory glossary; terms defined there are not repeated.*
+
+- **The backsliding theorem** — kenshō cannot be held: nothing indexed is stored, so no attainment exists to lose; many kenshōs, none possessed.
+- **The memory theorem** — the trace is a seed, the recalling a reception; remembered mineness is welded fresh at recall-time, spent at recall-time; the from-the-inside phenomenology predicted, the felt storedness diagnosed.
+- **The retrospective soul** — the reach-back frozen into a standing backward relation; memory's felt storedness read literally is this freeze in psychological dress.
+- **The prudence theorem** — prudential privilege is underivable: the standing cross-gap *whose* it needs is what the typing declines; owned with Śāntideva, the bodhisattva's impartiality falling out as display.
+- **Covariation** — the second truth derived: mismatch scales with share, per-call, ordinally; a notch looser than identity, the price paid openly.
+- **Proneness / occurrence** — dukkha's standing/dated split: the tendency to suffer a seed; the suffering itself enacted per reception, spent.
+- **The transposition** — the terminus question answered rather than declined: at share-zero no self-pole index is made and no reach-back appropriates (theorem), while reception-side welds at others' Row 2 run intact (theorem); "the index changes pole" compresses the pair — a figure, not a mechanism; nothing travels.
+- **Kiriya / ahosi** — the arhat's deeds functional, generating no vipāka; fruit landing with no live index-question — derived here from share-zero, not borrowed.
+- **The mirror** (大円鏡智) — the responsive stone: shaped output per-call, nothing held, nothing claimed; function without share; legal as display convention over the run.
+- **The device / device-nature** — the pole compressed as if an apparatus; legal as display, a freeze when predicated of a being as a standing kind (a mirror *with a stand*); 本来無一物 is the guard; of function-zero furniture the predication is trivially true and no error.
+- **The maximally adaptive call** — deflated per orthogonality: not the terminus's ground but the limit at which the buddha-side shortfall closes.
+- **The generator** — the error-taxonomy's engine: one collapse/freeze pair per distinction, nothing listed by hand; answerable in public.
+- **The four verdicts** — a candidate error lands in an existing cell, forces a new one, is **declined** (no error), or forces a **retype** — a redrawing of a distinction's content (exercised twice: Zahavi; the disposition/act cell).
+- **The declined case** — the deaf-blind being: unreachable calls are a delivery-fact, no error; every error in the vicinity belongs to the diagnostician.
+- **Grade 1 / Grade 2** — grammatical errors (tier- and typing-errors, assertable within the lens) versus soteriological shortfalls (displayable only: Row 2 placements, Row 3 directions).
+- **Clenched reception** — returns received saying-mode, the reach-back welding *mine* with a tight fist; graded exactly as any deed.
+- **Declining the orange** — a low-resonance reception of this call, per-call; not a wrong, nothing global follows.
+- **Defiance** — arrogation as policy, the returns fought open-eyed; one grammatical error inside it (an injunction resisted that was never issued), the rest display; the fighting-stance a seed, each fight a fresh act.
+- **The buddha-side shortfall** — answering a not-yet-buddha's call with less than meeting it where it is; the pole's one live grade, ordinal with effectiveness, independent of typing.
+- **Delivery-arrogation** — an act claiming command of what arrives next: authority over the one register no act holds.
+- **Delivery-engineering** — grid-legal work on arrival: upāya responder-side (finding the call that lands — deepest parameter, *when*), aimed calls sowing-side.
+- **The cetanā theorem** — AN 6.63 derived, not stipulated: the tradition's grading tracks the weld where no common event exists, and peaks where the event is guaranteed to fail.
+- **The futility theorem** — the deliberate attempt fails twice: at the target (a Tathāgata cannot be killed by another's hand) and downstream — death converts the device adaptive→static, a real delivery-loss subtracting nothing from the object-axis.
+- **Victim-rank** — severity read off the victim's station; a freeze, rank smuggled back through the tariff.
+- **Hell-typed** — the seed-typing of total arrogation: no gentler call in the regime's actual repertoire reaches the configuration; regime-relational, never modal.
+- **The ledger** — the state's productivity register (Han Yu, Huichang, Baizhang's code): a receiver whose one open modality is economic; its errors the per-call/global freeze, the seed-as-bearer, the exit-collapse, and delivery-arrogation at scale.
+- **Economic legibility** — a field-fact about which configurations a purge reaches; the survival-mechanism's register, asserted as typing, the survival's worth displayed.
+- **The gradeability rule** — the taxonomy may grade a recorded utterance only where the record carries its call; a quotation severed from its call is quotable, never gradeable; the koan-form is the compliant genre.
+- **Transcription** — recording converts adaptive to static, the futility mechanism one register down; transcripts type as seeds, the canon a warehouse of fixed calls, no fault stored in the words.
+- **The per-call/global freeze** — Row 2 hardened into global altitude or rank: the bhūmi-ladder held as ranks, awakening as stored quantity, the census reading standing loss off per-call beings.
+- **Subitism / gradualism** — subitism derived as possibility (re-pitch magnitude unconstrained); gradualism's legal face a delivery-fact about rates, its metaphysical face the per-call/global freeze.
+- **Tariki / other-power** — no second act-grammar: reception is a deed either way; the difference is a delivery-regime — where the effective calls sit.
+- **Pariṇāmanā / dedication** — sowing-side share-cession: fruit's landing given over rather than claimed, routing left to the field; svakarma demoted to a contingent delivery-regime.
+- **Instructive absences** — gaps the system generates deliberately, each doing diagnostic work (empty cells, the declined case, no measure, no fourth truth in the theory's voice, no stage immune to error).

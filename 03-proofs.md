@@ -97,6 +97,29 @@ The following are conventional and my own — original moves, each flagged again
 33. **The svakarma demotion** — *fruit ripens only in the doer's continuum* demoted from metaphysical necessity to contingent delivery-regime — contra the Abhidharma scruple, downstream of disclaimer 4's exhaustive decomposition of the diachronic *whose*; pariṇāmanā thereby absorbed on existing cells (Theorems), and the grid owned as *more* transfer-friendly than much of its source tradition.
 34. **The orthogonality rule and its price** — function/share types, effectiveness grades, adaptivity the terminus's manner and never the ground of landing; *the maximally adaptive call* deflated from terminus-description to the closed-shortfall limit — this paper's move, owned as such; with the domain joint's honesty-clause entered beside it — drive-composition the grid's entire answer to artifact-typing, nothing held in reserve, the Chinese-room price paid visibly, kin to the priced scalar — and the pole-reducibility corollary stated as entailed: reduction succeeds exactly where welding ceases.
 
+## Glossary
+
+*Supplements the Theory and Theorems glossaries; terms defined there are not repeated.*
+
+- **The five collapses** — the replies the anti-reduction argument must block: **verbal** (mere relabelling), **soul** (the index as stored author), **process** (ownership by convention over events, the flame and the dance), **diachronic** (ownership reclaimed as a series-fact), **supervenience** (ownership fixed by the totality of third-personal facts).
+- **State-designation vs. act-fixing** — the chariot is *had* over a standing base at a time, so convention can track it; karmic ownership is *made* at act-time, so there is no indexed base for convention to range over; handing the state-tool the act-job is what *malformed* comes to.
+- **Continuity-convention** — the reductionist's instrument: *whose* fixed by convention over a causal series; it can redistribute a mineness some act enacted, never originate a doing.
+- **Two-tier conventionalist** — Siderits's actual position: no real index sought, only a useful fiction; met by relocating the fiction's office, not by hunting the self.
+- **The offices-spine** — the identity-claim argued from the object's usage: every office karmic ownership holds in the tradition (cetanā, reception, practice, remorse and absolution, dedication) discharges at act-time; the diachronic bookkeeping is where the tradition deflates itself.
+- **The act/fact typing** — a doing is not a fact-candidate; the occurrence-fact (*that* it happened) is ceded to the field, the doing is not; supervenience is a relation among fact-sets, so *malformed*'s final cash-value is *feeding an act to a fact-relation*.
+- **Austin credited, declined** — the act/constative split acknowledged as register; the mechanism refused: no practice, no role, no uptake, the weld not a speech act — the performer-side felicity condition has no jurisdiction because the index is self-anchoring.
+- **"Confers," demoted** — conferral-talk kept as display only; the arrogation's categorical ground is the actual driving the determination clause reads.
+- **The two gods / the de se** — Perry and Lewis enlisted for agency only: the field as the two gods (everything carried, nothing done); the shopper's *mine* adding no worldly fact; supporting, never load-bearing.
+- **The promising analogy** — promising demoted from model to analogy; the standing/binding split owned as this paper's claim in act-hood currency — possibly revisionist for promising, doctrinal for karma.
+- **The hostage** — what the reply's fate rides on: act-hood, not speech-act theory; constative renderings of performatives (Searle; Bach–Harnish) relocate the doing without factizing it and pass the argument by; only an exhaustive rendering of doings as facts-about-doings would reach the weld; Cappelen–Dever strip the support, not the load.
+- **Thin for-me-ness** — Zahavi's pre-reflective givenness, explicitly non-appropriative; recognized as what the weld's token-reflexivity itself needs — the deed lit as this-deed-for-this-doer — pared of one predicate: *standing*; the disagreement narrowed to that predicate alone.
+- **The Sartrean occupant** — what fills the clench-as-structure cell after the Zahavi retype: anguish as the very form of consciousness.
+- **The sower-reaps split** — the report-face (true simpliciter, a field-fact) versus the ownership-face (done at reception, full or vacuous); never a standing relation between the two.
+- **The pole-reducibility corollary** — reduction succeeds exactly where welding ceases: at share-zero nothing act-indexed remains for the state-tool to miss; the reductionist is right about the buddha, for the grid's reasons.
+- **The two guards** — the agent resists reduction by being *more* thoroughly empty, never a special substance; and *malformed* is no Moorean non-natural fact — the reduction fails *because its base is empty*.
+- **The verdict's own tier** — *malformed* is a conventional-tier verdict, not a floor-claim: it fires at act-time where "whose fruit?" is live and fuses harmlessly below; reducer and weld share a tier or share nothing.
+- **The disclaimers** — the enumerated original moves, each flagged as conventional and the author's own against the canonical position it departs from or extends.
+
 ---
 
 *With thanks to Claude (Anthropic) — sparring partner and midwife to a more resonant theory.*

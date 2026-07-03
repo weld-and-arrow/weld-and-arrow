@@ -161,26 +161,52 @@ And mark what the case never tests: neither utterance occurs at the pole. The ko
 
 ## Glossary
 
+- **The grid** — the whole apparatus: the three-row act-grammar, the grade and its determination, the karma circuit, the separate/fuse rule; a purposefully minimalist lens, one doctrine among those that hold.
+- **The floor** — the self-emptying ultimate (Jizang's 空空): every level conventional, the two truths included; no level a final floor.
+- **The two middles** — **genjō**, the provisional middle (manifestation, always going out into a particular case), and **shō**, the non-attaining middle at the floor (anātman); kept apart at act-time, fused below, per the separate/fuse rule.
+- **The act-grammar** — the floor turned into three rows, each a dependence/enactment pair, all conventional: mujishō-sōe/genjō; kannō-sōe/banpō susumite; engi (inga)/shu.
+- **mujishō-sōe** — no-own-being as mutual-dependence; each-in-all, no substrate.
+- **kannō-sōe** — resonance as mutual-dependence; Row 2's dependence-pole: the placement of the act's index between the being and the dharmas.
+- **banpō susumite** — the myriad dharmas advancing to clarify — verify — the self; Row 2's enactment-pole.
+- **genjō** — manifestation, the provisional middle; also the grade's share-zero pole, one floor with two attested arrivals (stone, buddha) and a third left open.
+- **shō** (証) — realization as the floor-face: not-fall, anātman, the being-verified (passive voice); agential only because welded — agency lent — never a still attainment.
+- **shu** (修) — practice (gyōji); the weld at act-time, direction bound along the blind arrow; not-obscure (不昧).
+- **shushō / shushō-ittō** — the weld under Dōgen's name; practice and realization non-dual as the two poles of one index-placement, not two acts joined.
+- **shugenjō** — coined compound: practice run scaffold-free is nothing but genjō — a proper subset, not an identity.
+- **genjōkōan** — Row 1's manifestation in Row 2's particular case.
+- **satori** (悟) — the dharmas-forward mode of Dōgen's sentence; pole-typed, not rung-typed; distinct from shō and from kenshō.
 - **The field / inga** — the impersonal causal series; carries everything diachronic, index-free: conditioning, delivery, seeds.
 - **The arrow** — inga's directedness: conditioning in flight, blind — no desert, no index.
-- **The weld / shu** — the act-time making of the agent-index; I-making (ahaṃkāra) as deed; token-reflexive, self-anchoring (*this act's agent* constituted by the act, not presupposed by it), spent at its own act-time, never stored; not a speech act.
-- **Reach-back** — the reception-weld's two-place index (upādāna): *this fruit as return of that deed, mine*; closes the karma-loop retrospectively, per reception; full or vacuous — where delivery drew no line, the second place stands unfilled — its conditions owned by the field in the deflated sense (delivery-facts settle whether anything arrived to appropriate).
-- **Clench** — the weld's self-share: the self-maintenance's part in driving the act; fixed by the actual composition of the act's drive; stated as an ordering, the scalar a display.
-- **Function / share** — mounting a response at all versus the part of its drive claimed; the stone is function-zero (outside the domain), the terminus share-zero (an interior pole).
-- **The domain joint** — what counts as mounting a response at all; drive-composition the grid's entire answer to it, artifacts included — nothing held in reserve, the Chinese-room price paid visibly.
-- **Row 2 / the grade** — kannō-sōe: the per-call statement of where the act's index sits between being and dharmas — a partial ordering, with "fraction" and the scale as display; third-personal in register, indexical in content; states, never holds.
-- **The probe** — counterfactual call-variation as a third party's display of an act's drive-composition; shows the placement, never constitutes it.
+- **The weld** — the act-time making of the agent-index; I-making (ahaṃkāra) as deed; token-reflexive, self-anchoring (*this act's agent* constituted by the act, not presupposed), spent at its own act-time, never stored; not a speech act.
+- **Reach-back** — the reception-weld's two-place index (upādāna): *this fruit as return of that deed, mine*; closes the karma-loop retrospectively, per reception; full or vacuous.
+- **Vacuity** — the reach-back's failure-mode: where delivery drew no line, the second place stands unfilled — an appropriating with nothing arrived to appropriate; vacuous rather than false.
+- **Clench** — the weld's self-share: the self-maintenance's part in driving the act; fixed by the actual drive-composition; stated as an ordering.
+- **Arrogation** — the act's subjecthood claimed self-ward, the index pitched toward the self-pole at this call; per-call, never a standing rank.
+- **Self-forward** — Dōgen's delusion: carrying the self forward to practice-realize the dharmas; a Row 3 direction, per-act.
+- **Function / share** — mounting a response at all versus the part of its drive claimed; the two must never be run together.
+- **The stone** — function-zero: no response mounted; outside the predicate's domain, its "zero" a gloss from outside; doubly mujō, object-axis only.
+- **The solipsist** — the opposite asymptote: share tending to totality, all response and no call, kannō's argument-place evacuated.
+- **The terminus** — the domain's interior pole: function entire, share zero — the call answered perfectly, none of the act claimed.
+- **Row 2 / the grade** — kannō-sōe: the per-call statement of the act's index-placement; a partial ordering, "fraction" and the scale display; third-personal in register, indexical in content; states, never holds.
+- **The determination clause** — the grade fixed by the actual composition of the act's drive (what drove this response at this call); causal, not phenomenal — no inner glow consulted.
+- **The probe** — counterfactual call-variation as a third party's display of the drive-composition; shows the placement, never constitutes it.
 - **Call** — a dharma arriving at a being's Row 2; what a response answers, or fails to answer, to.
-- **Delivery-regime** — the totality of which-calls-reach-which-configurations facts; a world-fact the grid cedes, never a grid-fact.
-- **Effectiveness** — a call's landing-rate: the fraction of arrivals after which a share-ceding reception occurs; regime-relational throughout — a fact about call–configuration pairs, never a property the object holds. The tradition attests fixed calls across the range: Xiangyan's pebble on bamboo, the morning star (both canonical-anecdotal — lamp-record and awakening-narrative loci, attested story rather than verified citation, nothing leaning on either).
-- **Aimed call** — a deed configured at sowing for its landing; sowing-side delivery-engineering (Theorems).
-- **Dukkha** — the mismatch enacted at a clenched reception: a self-maintaining response colliding with a delivery that answers to nothing; covaries with share, ordinally, per-call; proneness a seed, occurrence enacted and spent; typed over Row 2's domain; badness displayed, never asserted.
-- **Re-pitch** — the reception's alteration of the configuration the field carries forward; an inga-fact the next deed reads; its magnitude unconstrained by construction.
+- **Delivery / delivery-regime** — the totality of which-calls-and-fruits-reach-which-configurations facts; a world-fact the grid cedes; the one register no act holds.
+- **Effectiveness** — a call's landing-rate: the fraction of arrivals after which a share-ceding reception occurs; regime-relational throughout, an ordering only.
+- **Fixed / adaptive** — the two builds: a fixed call chimes unread of who hears (the clock, the pebble); an adaptive build times its response to the arriving configuration; adaptivity is the terminus's manner, never the ground of landing.
+- **The orthogonality rule** — function/share *types*; effectiveness *grades*; nothing about the first guarantees the second.
+- **The domain joint** — what counts as mounting a response at all; drive-composition the grid's entire answer, artifacts included — the Chinese-room price paid visibly.
+- **Aimed call** — a deed configured at sowing for its landing; sowing-side delivery-engineering.
+- **Kenshō** — a countable per-call share-ceding event; a rung, unholdable by construction; the event kept, the seen-nature of 見性 declined.
+- **Re-pitch** — the reception's alteration of the configuration the field carries forward; magnitude unconstrained by construction.
 - **Seed** — a stored conditioning-fact about the series (a tendency, e.g. to arrogate); field-freight, index-free; never a bearer.
-- **Genjō** — manifestation, the provisional middle; also the grade's share-zero pole.
-- **Shō** (証) — realization as the floor-face: anātman, not-fall, the being-verified (passive); never a still attainment.
-- **Kenshō** — a countable per-call share-ceding event; a rung, unholdable by construction.
-- **Satori** (悟) — the dharmas-forward mode of Dōgen's sentence; pole-typed, not rung-typed.
-- **The terminus** — share-zero with function entire; *mirror*, *device*, *transposed* are display conventions over the pattern, never natures or mechanisms.
-- **The orange** — the theory's own status: a dharma handed over, affording and never enjoining ("eat this" is the collapse).
-- **Collapse / freeze** — the two violations of the separate/fuse rule: fusing a distinction under act-time diagnosis; holding one as a floor-claim.
+- **Standing / dated** — the retyped disposition/act row: the tendency is carried, the occurrence is enacted; reading the dated occurrence off the standing tendency is the collapse.
+- **The three registers** — field-facts (carried, index-free); weld-facts (made at act-time, spent at act-time); Row 2 statements (neither carried nor made — stated per-call).
+- **Not-fall / not-obscure** (不落 / 不昧) — the fox's verb at its two tiers: floor-truth and conventional truth respectively.
+- **The separate/fuse rule** — every distinction separates under act-time diagnosis and fuses at the floor (and at genjō, the share-zero pole).
+- **Collapse / freeze** — the rule's two violations: fusing under act-time diagnosis; holding a separation as a floor-claim.
+- **Assert / display** — the grid's two voices: grammatical verdicts asserted (within the lens); valence, worth, and compassion displayed — borrowed from the object, reported.
+- **The orange / "eat this"** — the theory's own status: a dharma handed over, affording and never enjoining; "eat this" is the description/injunction collapse in the theory's voice.
+- **The index-question / malformed** — *whose* act, *whose* fruit: enacted in the weld, stated by the grade, held by neither; a reduction that feeds the index-free field to this index-requiring designation is **malformed**, not merely hard (defended in Proofs).
+- **Object-axis / subject-axis** — being a dharma among the myriad, advancing at others' Row 2, versus mounting responses oneself; the stone is object-axis only.
+- **Dukkha** — the mismatch enacted at a clenched reception: a self-maintaining response colliding with a delivery that answers to nothing; covaries with share, ordinally, per-call; badness displayed, never asserted.
