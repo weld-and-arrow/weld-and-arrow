@@ -36,8 +36,8 @@ Three rows, each a dependence/enactment pair; all three conventional.
 
 | Dependence | Enactment |
 |---|---|
-| **mujishō-sōe** — no-own-being as mutual-dependence; each-in-all, no substrate. | **genjō** — manifesting fully; the seam where the scaffold dissolves. |
-| **kannō-sōe** — resonance as mutual-dependence; the placement of the act's index between the being and the dharmas (*how much of the listening to Hyakujō is the self doing?*). | **banpō susumite** — the myriad dharmas advance and clarify — *verify* — the self. |
+| **mujishō-sōe** — no-own-being as mutual-dependence; each-in-all, no substrate. | **genjō** — manifesting entire: the act out in its case with nothing of it claimed back; full = no remainder of arrogation, which is why one floor holds both arrivals.; the seam where the scaffold dissolves. |
+| **kannō-sōe** — resonance as mutual-dependence; the placement of the act's index between the being and the dharmas (*how much of the listening to Hyakujō is the self doing?*). | **banpō susumite** — the myriad dharmas advancing — the reception practising, the self verified — one act, two poles of one placement. |
 | **engi / inga** — directedness with no moral ground; the blind arrow. | **shu** — practice (gyōji); the weld at act-time, direction bound along the blind arrow, *and the I-making that indexes it*; not-obscure (不昧). |
 
 *(kannō-sōe rather than the canonical kannō-dōkō, to keep the coupling connotation-light: the -sōe already carries mutual-dependence.)*
@@ -167,7 +167,7 @@ And mark what the case never tests: neither utterance occurs at the pole. The ko
 - **The act-grammar** — the floor turned into three rows, each a dependence/enactment pair, all conventional: mujishō-sōe/genjō; kannō-sōe/banpō susumite; engi (inga)/shu.
 - **mujishō-sōe** — no-own-being as mutual-dependence; each-in-all, no substrate.
 - **kannō-sōe** — resonance as mutual-dependence; Row 2's dependence-pole: the placement of the act's index between the being and the dharmas.
-- **banpō susumite** — the myriad dharmas advancing to clarify — verify — the self; Row 2's enactment-pole.
+- **banpō susumite** —  the myriad dharmas advancing — the reception practising, the self verified — one act, two poles of one placement; Row 2's enactment-pole.
 - **genjō** — manifestation, the provisional middle; also the grade's share-zero pole, one floor with two attested arrivals (stone, buddha) and a third left open.
 - **shō** (証) — realization as the floor-face: not-fall, anātman, the being-verified (passive voice); agential only because welded — agency lent — never a still attainment.
 - **shu** (修) — practice (gyōji); the weld at act-time, direction bound along the blind arrow; not-obscure (不昧).
