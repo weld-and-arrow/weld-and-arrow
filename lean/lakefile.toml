@@ -3,7 +3,7 @@ version = "0.1.0"
 defaultTargets = ["proofs"]
 
 [[lean_lib]]
-name = "Proofs"
+name = "WeldAndArrow"
 
 [[lean_exe]]
 name = "proofs"

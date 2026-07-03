@@ -1,4 +1,4 @@
-import Proofs
+import WeldAndArrow
 
 def main : IO Unit :=
-  IO.println "Proofs"
+  IO.println "WeldAndArrow"
