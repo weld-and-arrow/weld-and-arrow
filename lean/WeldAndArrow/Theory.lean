@@ -58,24 +58,16 @@ Design log
   nothing here ever manufactures an index without first being handed a
   complete occurrence to project it from.
 
-* The tier machinery (separate/fuse) is a SHALLOW embedding: a `Distinction`
-  is a bare pair of tier-indexed propositions (`Tier → Prop`), and fusing is
-  a `Prop` computed from a tier, not an independent judgement relation with
-  its own syntax. This is adequate for everything Theory.lean itself needs —
-  stating which claims are live at which tier, and that the floor and any
-  share-zero act both dissolve a distinction that is live elsewhere — and it
-  is checked against one non-degenerate sanity example below. It will NOT be
-  adequate once Theorems.lean starts grading *actually uttered* sentences
-  against the two-truths machinery (the fox's sentence, Baizhang's rule):
-  grading an utterance needs the utterance as an object the taxonomy can
-  inspect — which call it answers, what tier it was offered at, whether that
-  matches its content — and that is a deep embedding: an object language of
-  claims together with a tier-indexed satisfaction relation and a genuine
-  judgement `⊢_t P`, not a `Prop`-valued function. Theory.lean only ever
-  needs to *state* the rule; running a generator over recorded utterances is
-  Theorems.lean's job, and the honest prediction is that the shallow
-  encoding gets *replaced*, not extended, before the taxonomy is built. This
-  verdict is argued again, briefly, at the definition site (§4).
+* The tier machinery (separate/fuse) now exposes the small DEEP interface
+  Theorems.lean will need: a `ClaimLanguage` gives an object-language of
+  claims together with tier-indexed satisfaction, a `Distinction` stores two
+  claim-objects rather than two bare `Tier → Prop` predicates, and a
+  `RecordedUtterance` stores the utterance's weld, offered tier, and content.
+  Theory.lean still does not choose the concrete language or run the
+  taxonomy generator. That remains Theorems content. The point of the
+  interface is only to prevent the old shallow encoding from becoming a
+  dead end once the fox's sentence, Baizhang's rule, and other recorded
+  utterances have to be graded as inspectable objects.
 
 * Every `Contrib`-valued magnitude is kept under a hand-rolled `WeakOrder` —
   reflexive and transitive, deliberately NOT required to be total. This is
@@ -394,6 +386,41 @@ theorem reachBack_full_or_vacuous (deed reception : G.Weld) :
     G.ReachBackFull deed reception ∨ G.ReachBackVacuous deed reception :=
   Classical.em (G.conditions deed reception)
 
+/-- An actual weld packaged with its actuality proof. This is the small
+    carrier downstream files need when they reason about remembered deeds,
+    future receptions, or paired receptions without repeatedly passing the
+    same `Actual` hypotheses around by hand. -/
+structure ActualWeld (G : Grid Contrib) where
+  weld   : G.Weld
+  actual : G.Actual weld
+
+/-- A pair of actual receptions, kept deliberately neutral. Theory does not
+    say that either reception has prudential privilege over the other; it
+    only supplies the typed pair over which Theorems can formulate, test, or
+    refute such a privilege claim by countermodel. -/
+structure ReceptionPair (G : Grid Contrib) where
+  first  : ActualWeld G
+  second : ActualWeld G
+
+namespace ReceptionPair
+
+/-- Reach-back from the first reception in the pair to the second, phrased
+    through the existing delivery relation. Whether this is the relation a
+    downstream prudence theorem needs is a theorem-level choice; the carrier
+    merely makes the relevant actual pair available. -/
+def FirstConditionsSecond {G : Grid Contrib} (p : ReceptionPair G) : Prop :=
+  G.ReachBackFull p.first.weld p.second.weld
+
+/-- The pair's sequential re-pitched configurations, exposed for future
+    two-step arguments. No ordering or privilege between them is asserted
+    here. -/
+def rePitchSequence {G : Grid Contrib} (before : Config Contrib)
+    (p : ReceptionPair G) : Config Contrib × Config Contrib :=
+  let afterFirst := G.rePitch before p.first.weld
+  (afterFirst, G.rePitch afterFirst p.second.weld)
+
+end ReceptionPair
+
 end Grid
 
 /- ==============================================================================
@@ -419,18 +446,13 @@ end Grid
 /- ==============================================================================
    §4  The separate/fuse rule
 
-   Shallow embedding, as flagged in the design log: a `Distinction` is
-   nothing but a pair of tier-indexed propositions, and `Fused`/`Collapse`/
-   `Freeze` are `Prop`s computed from a tier, not an independent judgement
-   calculus. Adequate for stating the rule; almost certainly inadequate for
-   Theorems.lean's taxonomy generator, which needs to grade objects with
-   their own content and tier of assertion (recorded utterances), i.e. a
-   deep embedding — an object language of claims, a tier-indexed
-   satisfaction relation, a genuine `⊢_t P`. That is not built here. Moving
-   to it later means re-deriving this section's lemmas against new
-   definitions, not importing them: the shallow `Distinction.Fused` below
-   and a deep-embedding `⊢_t` are different formal objects that happen to
-   share a name in the prose.
+   The rule is stated against a deliberately small deep interface. The
+   object language itself is abstract: future files choose a concrete
+   `Claim` type and a tier-indexed satisfaction relation. What Theory fixes
+   is the shape that later work needs: distinctions are pairs of claim
+   objects, and recorded utterances carry enough inspectable information for
+   a taxonomy generator to ask which call was answered, at which tier the
+   utterance was offered, and whether the content is satisfied there.
 ============================================================================== -/
 
 namespace Grid
@@ -455,10 +477,60 @@ def Tier.hasArrogation : Tier G → Prop
   | .floor     => False
   | .actTime w => G.share w ≠ shareZero
 
-/-- A distinction: two tier-indexed claims a diagnosis might hold apart. -/
+/-- An abstract object language of claims, together with its tier-indexed
+    satisfaction relation. This is intentionally only an interface: later
+    files can instantiate `Claim` with the concrete syntax their theorem or
+    taxonomy needs, while Theory can already state the separate/fuse rule
+    over inspectable claim-objects rather than over anonymous predicates. -/
+structure ClaimLanguage (G : Grid Contrib) where
+  Claim : Type
+  Holds : Tier G → Claim → Prop
+
+namespace ClaimLanguage
+
+/-- The judgement form a later file can read as `⊢_t P`: claim `p` is
+    satisfied at tier `t` in language `L`. It is still a `Prop`, but it is
+    not merely a free-floating `Tier → Prop`; the claim being judged is an
+    object of the chosen language. -/
+def TrueAt {G : Grid Contrib} (L : ClaimLanguage G) (t : Tier G) (p : L.Claim) :
+    Prop :=
+  L.Holds t p
+
+end ClaimLanguage
+
+/-- A recorded utterance, typed as data the taxonomy can inspect. The `weld`
+    records who answered which call with which response; `offeredAt` records
+    the tier at which the utterance was made; `content` is a claim-object in
+    the chosen language. The proof of `actual` keeps this type for actual
+    recorded utterances rather than hypothetical ones. -/
+structure RecordedUtterance (G : Grid Contrib) (L : ClaimLanguage G) where
+  weld      : G.Weld
+  actual    : G.Actual weld
+  offeredAt : Tier G
+  content   : L.Claim
+
+namespace RecordedUtterance
+
+/-- The call this utterance answers, exposed as a projection so future
+    classifiers do not have to unpack the weld by hand. -/
+def answersCall {G : Grid Contrib} {L : ClaimLanguage G}
+    (u : RecordedUtterance G L) : G.Call :=
+  u.weld.call
+
+/-- Whether the utterance's content is satisfied at the tier at which it was
+    offered. Fox-style tier-errors are expected to fail this test; the
+    taxonomy that classifies such failures belongs downstream. -/
+def FitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
+    (u : RecordedUtterance G L) : Prop :=
+  L.TrueAt u.offeredAt u.content
+
+end RecordedUtterance
+
+/-- A distinction: two claim-objects a diagnosis might hold apart. -/
 structure Distinction (G : Grid Contrib) where
-  sideA : Tier G → Prop
-  sideB : Tier G → Prop
+  language : ClaimLanguage G
+  sideA : language.Claim
+  sideB : language.Claim
 
 /-- Fusion: at a tier with no arrogation left, the two sides of a
     distinction are equivalent — read as the two sides becoming logically
@@ -472,30 +544,33 @@ structure Distinction (G : Grid Contrib) where
     exactly the content a genuinely doctrinal `Distinction` (not the
     trivial witness in the sanity example below) would have to earn. -/
 def Distinction.Fused {G : Grid Contrib} (d : Distinction G) (t : Tier G) : Prop :=
-  ¬ Tier.hasArrogation G t → (d.sideA t ↔ d.sideB t)
+  ¬ Tier.hasArrogation G t →
+    (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)
 
 /-- Collapse: fusing a distinction WHERE IT SHOULD SEPARATE — asserting a
     floor-tier content as though it settled a live, act-time diagnosis.
     The fox's shape (Theorems, "The fox: not-fall asserted conventionally
     — antinomianism"). -/
 def Distinction.Collapse {G : Grid Contrib} (d : Distinction G) (t : Tier G) : Prop :=
-  Tier.hasArrogation G t ∧ (d.sideA t ↔ d.sideB t)
+  Tier.hasArrogation G t ∧
+    (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)
 
 /-- Freeze: the rule's other violation — holding a distinction SEPARATE at
     the floor, where it should fuse. -/
 def Distinction.Freeze {G : Grid Contrib} (d : Distinction G) : Prop :=
-  ¬ (d.sideA Tier.floor ↔ d.sideB Tier.floor)
+  ¬ (d.language.TrueAt Tier.floor d.sideA ↔
+      d.language.TrueAt Tier.floor d.sideB)
 
 /-- Sanity check, not a doctrinal claim: the definitions above are not
-    degenerate. A distinction whose two sides are definitionally the SAME
-    proposition at every tier cannot freeze — confirming `Freeze` is not
-    trivially true of every `Distinction` (which would make it useless as
-    a diagnostic) and that `Fused`/`Freeze` actually consult `sideA`/
-    `sideB` rather than being constant. This says nothing about which
-    doctrinally-motivated distinctions (function/share, the two middles,
-    shō/satori, ...) actually obey the rule; each of those needs its own,
-    separate check once it is built, which is Theorems.lean's job. -/
-example (P : Tier G → Prop) : ¬ (⟨P, P⟩ : Distinction G).Freeze :=
+    degenerate. A distinction whose two sides are the SAME claim-object
+    cannot freeze — confirming `Freeze` is not trivially true of every
+    `Distinction` and that `Fused`/`Freeze` actually consult the language's
+    satisfaction relation. This says nothing about which doctrinally-
+    motivated distinctions (function/share, the two middles, shō/satori,
+    ...) actually obey the rule; each of those needs its own, separate check
+    once it is built, which is Theorems.lean's job. -/
+example (L : ClaimLanguage G) (p : L.Claim) :
+    ¬ ({ language := L, sideA := p, sideB := p } : Distinction G).Freeze :=
   fun h => h Iff.rfl
 
 end Grid
@@ -580,16 +655,16 @@ theorem malformed_no_recovery
    derivability result — you'd exhibit a model satisfying the axioms
    where the privilege fails."
 
-   Prudential privilege itself is Theorems content (§1 there), and needs
-   the reach-back apparatus applied across an actual PAIR of receptions —
-   a step this file's job is only to make possible, not to take. What is
-   checked here is narrower and prior: that "a model of the theory" is not
-   just a phrase but a term one can actually build and compute with,
+   Prudential privilege itself is Theorems content (§1 there). This file now
+   supplies the neutral carrier it will need (`ActualWeld`/`ReceptionPair`)
+   but does not formulate the privilege predicate or prove its failure.
+   What is checked here is narrower and prior: that "a model of the theory"
+   is not just a phrase but a term one can actually build and compute with,
    because that is the one thing a later countermodel construction cannot
-   do without. `clockGrid` below is also, independently, the worked
-   example `01-theory.md` itself gives for the domain joint (Theory:
-   Attainment, "The domain joint" — the manufactured cuckoo clock), so it
-   is in scope for this file on its own terms, not only as a preview.
+   do without. `clockGrid` below is also, independently, the worked example
+   `01-theory.md` itself gives for the domain joint (Theory: Attainment,
+   "The domain joint" — the manufactured cuckoo clock), so it is in scope
+   for this file on its own terms, not only as a preview.
 -------------------------------------------------------------------------- -/
 
 /-- Two devices, differing only in whether their chime is a function of
@@ -663,15 +738,14 @@ example :
     direct evidence that "a model of the theory" is a buildable Lean
     object, and that facts about a concrete instance are provable at
     `rfl`-level once the instance is fixed. That is the tool a later
-    independence result needs: fix a small `Grid`, add a second `Config`/
-    `rePitch` step for a being's own future reception, phrase whatever
-    "privilege" would have to assert as a further `Prop` over `Grid` +
-    `Config`, and show it fails in the instance. That construction is not
-    carried out here — prudence needs the reach-back apparatus (§2)
-    applied across an actual pair of receptions, and deciding how to
-    phrase "privilege" formally is itself a nontrivial choice belonging to
-    whoever proves the theorem, not to the scaffolding. What this section
-    checks is only that the scaffolding does not get in the way. -/
+    independence result needs: fix a small `Grid`, choose an actual
+    `ReceptionPair`, run the relevant `Config`/`rePitch` steps, phrase
+    whatever "privilege" would have to assert as a further `Prop` over that
+    data, and show it fails in the instance. That construction is not
+    carried out here — deciding how to phrase "privilege" formally is itself
+    a nontrivial choice belonging to whoever proves the theorem, not to the
+    scaffolding. What this section checks is only that the scaffolding does
+    not get in the way. -/
 
 end Preview
 
