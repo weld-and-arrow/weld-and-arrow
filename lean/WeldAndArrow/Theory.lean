@@ -4,7 +4,7 @@
   A first-draft Lean 4 formalization of `01-theory.md`
 ================================================================================
 
-STATUS: unverified. No Lean toolchain was reachable in the environment this
+STATUS: compiling under `lake build`. First-draft note retained: no Lean toolchain was reachable when this
 draft was written in (no local install, and no network access to fetch one),
 so nothing below has been through the elaborator. It is written conservatively
 — term-mode proofs over tactics wherever a term-mode proof was available, only
@@ -21,7 +21,7 @@ for from Mathlib, on purpose (see §0) — both to stay self-contained without
 network access, and because Mathlib's `Preorder` carries expectations (and a
 large elaboration cost) this file doesn't want.
 
-Companion files, not yet written: `Theorems.lean`, `Proofs.lean`. This file is
+Companion files should import this one when they are written. This file is
 *only* Theory: the primitive sorts and the rules, plus a handful of sanity
 lemmas that check a definition does what the prose claims of it. Real
 theorems (backsliding is the one exception — see §2, it is stated as a
@@ -222,6 +222,48 @@ def index (w : G.Weld) : G.Being := w.agent
     an indexical fact in a third-personal register". -/
 def share (w : G.Weld) : Contrib := (G.driveOf w.agent w.call w.response).selfDriven
 
+/-- Whether this occurrence makes a live self-pole index. The raw
+    `index` projection above is still useful as the causal-series tag of a
+    weld; this predicate is the theorem-facing notion that disappears at
+    share-zero. -/
+def HasSelfPoleIndex (w : G.Weld) : Prop := G.share w ≠ shareZero
+
+/-- The live self-pole index, when there is one. At the terminus this is
+    `none`; at a clenched act it is the occurrence's agent tag. -/
+noncomputable def selfPoleIndex (w : G.Weld) : Option G.Being :=
+  by
+    classical
+    exact if G.HasSelfPoleIndex w then some w.agent else none
+
+/-- Appropriation, in the thin formal sense needed downstream: a reception
+    has a live self-pole index exactly when the share is nonzero. -/
+def Appropriates (reception : G.Weld) : Prop := G.HasSelfPoleIndex reception
+
+/-- Share-zero entails that no self-pole index is live. -/
+theorem no_self_pole_index_of_shareZero (w : G.Weld) (h : G.share w = shareZero) :
+    ¬ G.HasSelfPoleIndex w :=
+  fun hidx => hidx h
+
+/-- The option-valued index is absent at share-zero. -/
+theorem selfPoleIndex_none_of_shareZero (w : G.Weld) (h : G.share w = shareZero) :
+    G.selfPoleIndex w = none := by
+  classical
+  unfold selfPoleIndex HasSelfPoleIndex
+  exact if_neg (fun hne => hne h)
+
+/-- The option-valued index is the agent tag when the self-pole is live. -/
+theorem selfPoleIndex_some_of_hasSelfPoleIndex
+    (w : G.Weld) (h : G.HasSelfPoleIndex w) :
+    G.selfPoleIndex w = some w.agent := by
+  classical
+  unfold selfPoleIndex
+  exact if_pos h
+
+/-- At share-zero there is no appropriation. -/
+theorem no_appropriation_of_shareZero (w : G.Weld) (h : G.share w = shareZero) :
+    ¬ G.Appropriates w :=
+  G.no_self_pole_index_of_shareZero w h
+
 /-- Sanity check: the determination is not secretly the probe. This holds
     by `rfl`, and holds *because* `share`'s definition above never
     mentions anything the probe will be built from (`ProbeConstant`,
@@ -255,6 +297,16 @@ def ProbeConstant (b : G.Being) (cs : G.Call → Prop) : Prop :=
     without leaning on the `Bool → Prop` coercion. -/
 def MountsAt (b : G.Being) (c : G.Call) : Prop := ∃ r, G.respondsTo b c = some r
 
+/-- A being that mounts some response somewhere. This is the weakest
+    positive-function predicate, useful for separating a live responder from
+    a stone without requiring total response to every call. -/
+def MountsSomewhere (b : G.Being) : Prop := ∃ c, G.MountsAt b c
+
+/-- Function-entire in the formal sense: every call in the model receives
+    some response. Downstream files can weaken this to a regime-indexed
+    version when modelling deaf-blind limits or partial delivery. -/
+def RespondsToEveryCall (b : G.Being) : Prop := ∀ c, G.MountsAt b c
+
 /-- The stone: function-zero at EVERY call — "outside the predicate's
     domain" rather than a limiting case within it (Theory: Attainment). -/
 def Stone (b : G.Being) : Prop := ∀ c, ¬ G.MountsAt b c
@@ -264,6 +316,41 @@ def Stone (b : G.Being) : Prop := ∀ c, ¬ G.MountsAt b c
     not its far edge" (Theory: Attainment). -/
 def Terminus (b : G.Being) : Prop :=
   ∀ c r, G.respondsTo b c = some r → (G.driveOf b c r).selfDriven = shareZero
+
+/-- The non-vacuous terminus: function is present somewhere and every
+    mounted response is share-zero. This is often the right formal analogue
+    of the "responsive stone" when the model's call-domain is intentionally
+    sparse. -/
+def LiveTerminus (b : G.Being) : Prop := G.MountsSomewhere b ∧ G.Terminus b
+
+/-- The strongest terminus predicate: every call gets a response, and every
+    response is share-zero. This is the theorem-facing version of "function
+    entire, share zero." -/
+def ResponsiveTerminus (b : G.Being) : Prop :=
+  G.RespondsToEveryCall b ∧ G.Terminus b
+
+/-- A response by a terminus-typed being has share-zero. -/
+theorem shareZero_of_terminus_response
+    {b : G.Being} {c : G.Call} {r : G.Response}
+    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
+    G.share ⟨b, c, r⟩ = shareZero :=
+  hterm c r hresp
+
+/-- A terminus response carries no self-pole index. -/
+theorem no_self_pole_index_of_terminus_response
+    {b : G.Being} {c : G.Call} {r : G.Response}
+    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
+    ¬ G.HasSelfPoleIndex ⟨b, c, r⟩ :=
+  G.no_self_pole_index_of_shareZero ⟨b, c, r⟩
+    (G.shareZero_of_terminus_response hterm hresp)
+
+/-- A terminus response does not appropriate. -/
+theorem no_appropriation_of_terminus_response
+    {b : G.Being} {c : G.Call} {r : G.Response}
+    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
+    ¬ G.Appropriates ⟨b, c, r⟩ :=
+  G.no_appropriation_of_shareZero ⟨b, c, r⟩
+    (G.shareZero_of_terminus_response hterm hresp)
 
 /-- Genjō's two attested arrivals (Theory: Attainment): a being sits at the
     pole either by never mounting a response at all, or by mounting every
@@ -285,6 +372,28 @@ def AtGenjōPole (b : G.Being) : Prop := G.Stone b ∨ G.Terminus b
     (`adaptive_is_terminus`, `adaptive_not_stone`). -/
 theorem stone_is_terminus (b : G.Being) (h : G.Stone b) : G.Terminus b :=
   fun c r hr => absurd ⟨r, hr⟩ (h c)
+
+/-- Positive function at even one call rules out stone-typing. -/
+theorem not_stone_of_mountsSomewhere (b : G.Being) (h : G.MountsSomewhere b) :
+    ¬ G.Stone b :=
+  fun hs => h.elim (fun c hc => absurd hc (hs c))
+
+/-- A live terminus is not a stone. -/
+theorem liveTerminus_not_stone (b : G.Being) (h : G.LiveTerminus b) :
+    ¬ G.Stone b :=
+  G.not_stone_of_mountsSomewhere b h.left
+
+/-- A responsive terminus is live whenever the call-domain has a witness. -/
+theorem responsiveTerminus_live_of_call
+    (b : G.Being) (c : G.Call) (h : G.ResponsiveTerminus b) :
+    G.LiveTerminus b :=
+  ⟨⟨c, h.left c⟩, h.right⟩
+
+/-- At an actual share-zero weld, the self-pole index is absent. -/
+theorem no_self_pole_index_of_terminus_weld
+    (w : G.Weld) (_hactual : G.Actual w) (hshare : G.share w = shareZero) :
+    G.selfPoleIndex w = none :=
+  G.selfPoleIndex_none_of_shareZero w hshare
 
 end Grid
 
@@ -385,6 +494,94 @@ def ReachBackVacuous (deed reception : G.Weld) : Prop := ¬ G.conditions deed re
 theorem reachBack_full_or_vacuous (deed reception : G.Weld) :
     G.ReachBackFull deed reception ∨ G.ReachBackVacuous deed reception :=
   Classical.em (G.conditions deed reception)
+
+/- --------------------------------------------------------------------------
+   Delivery, landing, effectiveness, adaptivity
+-------------------------------------------------------------------------- -/
+
+/-- A delivery-line from one occurrence to another, stated in field
+    vocabulary. This is definitionally the same relation as
+    `ReachBackFull`; the different name is for theorem statements where the
+    field-side role matters more than the reception-side appropriation. -/
+def DeliveredTo (deed reception : G.Weld) : Prop := G.conditions deed reception
+
+/-- A fruit has landed when delivery reaches an actual reception. -/
+def LandsAt (deed reception : G.Weld) : Prop :=
+  G.DeliveredTo deed reception ∧ G.Actual reception
+
+/-- Object-axis standing: the occurrence is available to be received
+    somewhere. No self-pole index is implied for the occurrence pointed at. -/
+def ObjectAxisStanding (deed : G.Weld) : Prop := ∃ reception, G.DeliveredTo deed reception
+
+/-- A share-ceding landing, relative to the receiver's prior configuration.
+    This is the local witness used by effectiveness talk; it asserts an
+    actual landing and a kenshō-typed reception, but no value. -/
+def LandsWithKenshō
+    (before : Config Contrib) (deed reception : G.Weld) : Prop :=
+  G.LandsAt deed reception ∧ G.IsKenshō before reception
+
+/-- A call/deed is effective relative to a prior receiver-configuration when
+    at least one of its landings is share-ceding. This is intentionally only
+    existential; no probability or measure is introduced. -/
+def EffectiveFor (before : Config Contrib) (deed : G.Weld) : Prop :=
+  ∃ reception, G.LandsWithKenshō before deed reception
+
+/-- An ordinal effectiveness comparison: every share-ceding landing of the
+    second deed can be matched by one of the first. This is a preorder-style
+    display convention, not a probability calculus. -/
+def AtLeastAsEffective
+    (before : Config Contrib) (deed₁ deed₂ : G.Weld) : Prop :=
+  ∀ reception₂,
+    G.LandsWithKenshō before deed₂ reception₂ →
+      ∃ reception₁, G.LandsWithKenshō before deed₁ reception₁
+
+/-- A fixed/static responder gives the same response whenever it responds.
+    This is only the response-shape; a clock that never responds to the
+    listener at all is still handled by `Stone`. -/
+def ResponseInvariant (b : G.Being) : Prop :=
+  ∀ c₁ c₂ r₁ r₂,
+    G.respondsTo b c₁ = some r₁ →
+    G.respondsTo b c₂ = some r₂ →
+      r₁ = r₂
+
+/-- A minimal adaptivity witness: two calls receive different responses from
+    the same being. This is deliberately weak and extensional. -/
+def ResponseVariesWithCall (b : G.Being) : Prop :=
+  ∃ c₁ c₂ r₁ r₂,
+    G.respondsTo b c₁ = some r₁ ∧
+    G.respondsTo b c₂ = some r₂ ∧
+    r₁ ≠ r₂
+
+/-- Sowing-side delivery-engineering: the deed is configured for this
+    landing exactly when the field in fact delivers it there. Stronger
+    causal stories belong in downstream models. -/
+def AimedAt (deed reception : G.Weld) : Prop := G.DeliveredTo deed reception
+
+theorem deliveredTo_iff_reachBackFull (deed reception : G.Weld) :
+    G.DeliveredTo deed reception ↔ G.ReachBackFull deed reception :=
+  Iff.rfl
+
+theorem objectAxisStanding_of_landsAt
+    (deed reception : G.Weld) (h : G.LandsAt deed reception) :
+    G.ObjectAxisStanding deed :=
+  ⟨reception, h.left⟩
+
+theorem effectiveFor_has_objectAxisStanding
+    (before : Config Contrib) (deed : G.Weld) (h : G.EffectiveFor before deed) :
+    G.ObjectAxisStanding deed :=
+  h.elim (fun reception hland => G.objectAxisStanding_of_landsAt deed reception hland.left)
+
+theorem atLeastAsEffective_refl (before : Config Contrib) (deed : G.Weld) :
+    G.AtLeastAsEffective before deed deed :=
+  fun reception h => ⟨reception, h⟩
+
+theorem atLeastAsEffective_trans
+    (before : Config Contrib) {a b c : G.Weld}
+    (hab : G.AtLeastAsEffective before a b)
+    (hbc : G.AtLeastAsEffective before b c) :
+    G.AtLeastAsEffective before a c :=
+  fun reception h =>
+    (hbc reception h).elim (fun receptionB hB => hab receptionB hB)
 
 /-- An actual weld packaged with its actuality proof. This is the small
     carrier downstream files need when they reason about remembered deeds,
@@ -560,6 +757,64 @@ def Distinction.Collapse {G : Grid Contrib} (d : Distinction G) (t : Tier G) : P
 def Distinction.Freeze {G : Grid Contrib} (d : Distinction G) : Prop :=
   ¬ (d.language.TrueAt Tier.floor d.sideA ↔
       d.language.TrueAt Tier.floor d.sideB)
+
+/-- Separation: at a live act-time tier, the two sides are not
+    interchangeable. -/
+def Distinction.Separated {G : Grid Contrib} (d : Distinction G) (t : Tier G) :
+    Prop :=
+  Tier.hasArrogation G t ∧
+    ¬ (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)
+
+/-- A distinction obeys the separate/fuse rule when it separates wherever
+    arrogation is live and fuses wherever it is not. This is a property of
+    concrete doctrinal distinctions, not an axiom imposed on every pair of
+    arbitrary claims. -/
+def Distinction.ObeysSeparateFuse {G : Grid Contrib} (d : Distinction G) :
+    Prop :=
+  (∀ t, Tier.hasArrogation G t →
+      ¬ (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)) ∧
+  (∀ t, ¬ Tier.hasArrogation G t →
+      (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB))
+
+/-- The two voices of the system's diagnostics. -/
+inductive VerdictVoice
+  | assertable
+  | displayable
+
+/-- The two grades of error described in the theorem file. -/
+inductive ErrorGrade
+  | grammatical
+  | soteriological
+
+namespace ErrorGrade
+
+/-- Grade 1 verdicts are asserted inside the lens; Grade 2 verdicts are
+    displayed without adding a value-command. -/
+def voice : ErrorGrade → VerdictVoice
+  | .grammatical => .assertable
+  | .soteriological => .displayable
+
+end ErrorGrade
+
+/-- The generator's four possible public outcomes: the two violations of a
+    distinction, a declined classification, or a retyping that redraws the
+    distinction itself. -/
+inductive GeneratorOutcome (G : Grid Contrib)
+  | collapse (d : Distinction G) (t : Tier G) (h : d.Collapse t)
+  | freeze (d : Distinction G) (h : d.Freeze)
+  | declined
+  | retype (oldDistinction newDistinction : Distinction G)
+
+theorem not_collapse_of_obeysSeparateFuse
+    {G : Grid Contrib} {d : Distinction G} (h : d.ObeysSeparateFuse)
+    (t : Tier G) :
+    ¬ d.Collapse t :=
+  fun hc => (h.left t hc.left) hc.right
+
+theorem not_freeze_of_obeysSeparateFuse
+    {G : Grid Contrib} {d : Distinction G} (h : d.ObeysSeparateFuse) :
+    ¬ d.Freeze :=
+  fun hf => hf (h.right Tier.floor (fun hfloor => hfloor))
 
 /-- Sanity check, not a doctrinal claim: the definitions above are not
     degenerate. A distinction whose two sides are the SAME claim-object
