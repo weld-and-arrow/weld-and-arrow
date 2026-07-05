@@ -16,7 +16,7 @@ canonical texts are Lean hypotheses; it gives the internal grid-shape the paper
 uses when placing them.
 -/
 
-import WeldAndArrow.Theorems
+import WeldAndArrow.Sraddha
 
 /-
 ================================================================================
@@ -142,6 +142,26 @@ there.
 
 `SelfLineWitness` records that self-lines are permitted by the signature. The
 paper's shushō-ittō discussion is a reading of that permission, not an axiom.
+
+C.4 FourTruths.lean and Sraddha.lean
+
+`MismatchGrade` is definitionally `share`; this is the formal honesty clause
+for dukkha-talk as covariation rather than a second measure. `MismatchLive`
+adds occurrence actuality to the self-pole-index condition, so stones fall
+outside the domain by `not_actual_of_stone`, and terminus responses fall to the
+pole-class by the existing terminus theorem.
+
+`SradAversionContext` treats sraddha reception per call: it packages a live
+prior tendency and an actual live-mismatch reception, not a stored faith
+possession. `SradFullyEnlightened` deliberately has two conjuncts: terminus
+typing and universal shortfall closure for delivered deeds. The physician
+simile belongs exactly there: the grid can prove `sradPathOught_conditional`,
+but the antecedents are faith-shaped and are never discharged by field facts.
+
+The negative witnesses keep that conditional honest. `SradNegative` shows that
+dropping faith or dropping the live-aversion antecedent loses the landing, and
+`OrthogonalityNegative` shows that a responsive terminus need not be
+`SradFullyEnlightened`.
 -/
 
 namespace WAA
@@ -504,6 +524,8 @@ inductive Disclaimer
   | hareHornRegister
   | modalRealismFreeze
   | aptnessConditionality
+  | sraddhaConditional
+  | faithBothConjuncts
 
 namespace Disclaimer
 
@@ -550,6 +572,8 @@ def number : Disclaimer → Nat
   | .hareHornRegister => 38
   | .modalRealismFreeze => 39
   | .aptnessConditionality => 40
+  | .sraddhaConditional => 41
+  | .faithBothConjuncts => 42
 
 theorem waaKarmaIdentification_number :
     number Disclaimer.waaKarmaIdentification = 9 := rfl
@@ -559,6 +583,12 @@ theorem modalRealismFreeze_number :
 
 theorem aptnessConditionality_number :
     number Disclaimer.aptnessConditionality = 40 := rfl
+
+theorem sraddhaConditional_number :
+    number Disclaimer.sraddhaConditional = 41 := rfl
+
+theorem faithBothConjuncts_number :
+    number Disclaimer.faithBothConjuncts = 42 := rfl
 
 end Disclaimer
 

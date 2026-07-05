@@ -44,4 +44,28 @@ info: 'WAA.Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfCondi
 #guard_msgs in
 #print axioms Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfConditioningTag_iff
 
+/--
+info: 'WAA.Grid.DirectedConvention.sradPathOught_conditional' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.DirectedConvention.sradPathOught_conditional
+
+/--
+info: 'WAA.Grid.DirectedConvention.no_srad_path_at_pole' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.DirectedConvention.no_srad_path_at_pole
+
+/--
+info: 'WAA.Grid.DirectedConvention.map_sradAversionContext_iff' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.DirectedConvention.map_sradAversionContext_iff
+
+/--
+info: 'WAA.OrthogonalityNegative.sradFullyEnlightened_stronger_than_terminus' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms OrthogonalityNegative.sradFullyEnlightened_stronger_than_terminus
+
 end WAA

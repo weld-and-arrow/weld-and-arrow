@@ -12,6 +12,7 @@ Reading and motivation: Identification.lean, Commentary C.3.
 -/
 
 import WeldAndArrow.Identification
+import WeldAndArrow.Sraddha
 
 namespace WAA
 
@@ -252,6 +253,21 @@ theorem map_hasSelfPoleIndex_iff (w : G.Weld) :
   · intro h hbot
     exact h ((f.atBot_iff (G.share w)).mp hbot)
 
+@[simp]
+theorem map_mismatchGrade (w : G.Weld) :
+    (G.map f).MismatchGrade w = f.toFun (G.MismatchGrade w) :=
+  rfl
+
+theorem map_mismatchLive_iff (w : G.Weld) :
+    (G.map f).MismatchLive w ↔ G.MismatchLive w := by
+  constructor
+  · intro h
+    exact ⟨(G.map_actual_iff f w).mp h.left,
+      (G.map_hasSelfPoleIndex_iff f w).mp h.right⟩
+  · intro h
+    exact ⟨(G.map_actual_iff f w).mpr h.left,
+      (G.map_hasSelfPoleIndex_iff f w).mpr h.right⟩
+
 theorem map_probeConstant_iff (b : G.Being) (cs : G.Call → Prop) :
     (G.map f).ProbeConstant b cs ↔ G.ProbeConstant b cs := by
   constructor
@@ -487,6 +503,16 @@ theorem map_landsWithShareDrop_iff
     exact ⟨(map_landsAt_iff G f deed reception).mpr h.left,
       (G.map_isShareDrop_iff f before reception).mpr h.right⟩
 
+theorem map_hasShareDropLanding_iff
+    (before : Config Contrib) (deed : G.Weld) :
+    HasShareDropLanding (G.map f) (before.map f) deed ↔
+      HasShareDropLanding G before deed := by
+  constructor
+  · rintro ⟨reception, hland⟩
+    exact ⟨reception, (map_landsWithShareDrop_iff G f before deed reception).mp hland⟩
+  · rintro ⟨reception, hland⟩
+    exact ⟨reception, (map_landsWithShareDrop_iff G f before deed reception).mpr hland⟩
+
 theorem map_shareDropLine_iff
     (before : Config Contrib) (b : G.Being) (deed reception : G.Weld) :
     ShareDropLine (G.map f) (before.map f) b deed reception ↔
@@ -498,6 +524,83 @@ theorem map_shareDropLine_iff
   · intro h
     exact ⟨(map_environsLine_iff G f b deed reception).mpr h.left,
       (G.map_isShareDrop_iff f before reception).mpr h.right⟩
+
+theorem map_shortfallClosedAt_iff
+    (before : Config Contrib) (deed reception : G.Weld) :
+    ShortfallClosedAt (G.map f) (before.map f) deed reception ↔
+      ShortfallClosedAt G before deed reception := by
+  constructor
+  · intro h hlive hdel
+    have hmappedLive : ¬ AtBot (f.toFun before.tendency) := by
+      intro hbot
+      exact hlive ((f.atBot_iff before.tendency).mp hbot)
+    have hlanding :=
+      h hmappedLive ((map_deliveredTo_iff G f deed reception).mpr hdel)
+    exact (map_hasShareDropLanding_iff G f before deed).mp hlanding
+  · intro h hlive hdel
+    have horigLive : ¬ AtBot before.tendency := by
+      intro hbot
+      exact hlive ((f.atBot_iff before.tendency).mpr hbot)
+    have hlanding :=
+      h horigLive ((map_deliveredTo_iff G f deed reception).mp hdel)
+    exact (map_hasShareDropLanding_iff G f before deed).mpr hlanding
+
+theorem map_sradFullyEnlightened_reflect
+    {b : G.Being} (h : SradFullyEnlightened (G.map f) b) :
+    SradFullyEnlightened G b := by
+  constructor
+  · exact (G.map_responsiveTerminus_iff f b).mp h.left
+  · intro before deed reception hdeed
+    exact (map_shortfallClosedAt_iff G f before deed reception).mp
+      (h.right (before.map f) deed reception hdeed)
+
+/-- Preservation of the universally quantified faith closure needs the target
+    display carrier to be covered by the reparameterization. -/
+theorem map_sradFullyEnlightened_of_surjective
+    (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
+    {b : G.Being} (h : SradFullyEnlightened G b) :
+    SradFullyEnlightened (G.map f) b := by
+  constructor
+  · exact (G.map_responsiveTerminus_iff f b).mpr h.left
+  · intro before' deed reception hdeed
+    cases before' with
+    | mk tendency =>
+        rcases hsurj tendency with ⟨a, ha⟩
+        let before : Config Contrib := { tendency := a }
+        intro hlive hdel
+        have horigLive : ¬ AtBot before.tendency := by
+          intro hbot
+          apply hlive
+          have hmapped : AtBot (f.toFun a) :=
+            (f.atBot_iff a).mpr hbot
+          simpa [before, ha] using hmapped
+        have horigDel : DeliveredTo G deed reception :=
+          (map_deliveredTo_iff G f deed reception).mp hdel
+        have hlanding :=
+          h.right before deed reception hdeed horigLive horigDel
+        have hmapped :=
+          (map_hasShareDropLanding_iff G f before deed).mpr hlanding
+        simpa [Config.map, before, ha] using hmapped
+
+theorem map_sradAversionContext_iff
+    (before : Config Contrib) (reception : G.Weld) :
+    SradAversionContext (G.map f) (before.map f) reception ↔
+      SradAversionContext G before reception := by
+  constructor
+  · intro h
+    refine
+      { liveBefore := ?_
+        mismatchLive := ?_ }
+    · intro hbot
+      exact h.liveBefore ((f.atBot_iff before.tendency).mpr hbot)
+    · exact (G.map_mismatchLive_iff f reception).mp h.mismatchLive
+  · intro h
+    refine
+      { liveBefore := ?_
+        mismatchLive := ?_ }
+    · intro hbot
+      exact h.liveBefore ((f.atBot_iff before.tendency).mp hbot)
+    · exact (G.map_mismatchLive_iff f reception).mpr h.mismatchLive
 
 end DirectedConvention
 
@@ -853,6 +956,47 @@ theorem contentBeforeAfterRow_not_obeys_twoBottom :
       (Grid.Tier.actTime twoBottomWeld))
 
 end ContentNegative
+
+/- ==============================================================================
+   Sraddha orthogonality countermodel
+============================================================================== -/
+
+namespace OrthogonalityNegative
+
+open Grid.DirectedConvention
+
+/-- The same zero-effectiveness witness used by `SradNegative`: a responsive
+    terminus whose delivered deed does not land as a share-drop for the live
+    receiver context. -/
+abbrev zeroEffectGrid : Grid Nat :=
+  SradNegative.zeroEffectGrid
+
+theorem responsiveTerminus_with_no_shareDropLanding :
+    zeroEffectGrid.ResponsiveTerminus SradNegative.Being.srad ∧
+      ¬ HasShareDropLanding zeroEffectGrid SradNegative.liveBefore SradNegative.deed :=
+  ⟨SradNegative.srad_responsiveTerminus,
+    SradNegative.not_hasShareDropLanding_liveBefore⟩
+
+theorem terminus_not_sradFullyEnlightened :
+    zeroEffectGrid.Terminus SradNegative.Being.srad ∧
+      ¬ SradFullyEnlightened zeroEffectGrid SradNegative.Being.srad :=
+  ⟨SradNegative.srad_responsiveTerminus.right,
+    SradNegative.not_sradFullyEnlightened⟩
+
+/-- `SradFullyEnlightened` is strictly stronger than terminus typing: it
+    implies terminus, and this concrete responsive terminus still fails the
+    shortfall-closure conjunct. -/
+theorem sradFullyEnlightened_stronger_than_terminus :
+    (SradFullyEnlightened zeroEffectGrid SradNegative.Being.srad →
+        zeroEffectGrid.Terminus SradNegative.Being.srad) ∧
+      zeroEffectGrid.Terminus SradNegative.Being.srad ∧
+      ¬ SradFullyEnlightened zeroEffectGrid SradNegative.Being.srad := by
+  constructor
+  · intro h
+    exact (responsiveTerminus_of_sradFullyEnlightened zeroEffectGrid h).right
+  · exact terminus_not_sradFullyEnlightened
+
+end OrthogonalityNegative
 
 /- ==============================================================================
    §N  Being-boundary freedom: designation is not grid-carried

@@ -211,6 +211,48 @@ theorem hasShareDropLanding_of_shareDropLine_actual
     HasShareDropLanding G before deed :=
   ⟨reception, ⟨⟨hline.left.right.right, hact⟩, hline.right⟩⟩
 
+/-- Shortfall is closed at a delivered pair when, for any live prior tendency,
+    delivery of the deed is enough to yield a share-drop landing for that deed.
+    This is regime-relational effectiveness talk, not a nature possessed by a
+    being. -/
+def ShortfallClosedAt
+    (before : Config Contrib) (deed reception : G.Weld) : Prop :=
+  ¬ AtBot before.tendency →
+    DeliveredTo G deed reception →
+      HasShareDropLanding G before deed
+
+/-- An explicit share-drop line with an actual reception supplies the local
+    closure predicate. -/
+theorem shortfallClosedAt_of_shareDropLine_actual
+    {before : Config Contrib} {b : G.Being} {deed reception : G.Weld}
+    (hline : ShareDropLine G before b deed reception)
+    (hact : G.Actual reception) :
+    ShortfallClosedAt G before deed reception :=
+  fun _hlive _hdel =>
+    hasShareDropLanding_of_shareDropLine_actual G hline hact
+
+/-- Srad faith, stated as a hypothesis: the being is a responsive terminus and
+    every delivered reception of one of its deeds closes shortfall for a live
+    prior tendency. The universal closure conjunct is exactly the component no
+    field-recovery theorem can verify for free. -/
+def SradFullyEnlightened (b : G.Being) : Prop :=
+  G.ResponsiveTerminus b ∧
+    ∀ before deed reception,
+      deed.agent = b →
+        ShortfallClosedAt G before deed reception
+
+theorem responsiveTerminus_of_sradFullyEnlightened
+    {b : G.Being} (h : SradFullyEnlightened G b) :
+    G.ResponsiveTerminus b :=
+  h.left
+
+theorem shortfallClosedAt_of_sradFullyEnlightened
+    {b : G.Being} (h : SradFullyEnlightened G b)
+    {before : Config Contrib} {deed reception : G.Weld}
+    (hdeed : deed.agent = b) :
+    ShortfallClosedAt G before deed reception :=
+  h.right before deed reception hdeed
+
 end DirectedConvention
 
 /- Reading and motivation: Identification.lean, Commentary C.2. -/
