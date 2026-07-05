@@ -94,6 +94,19 @@ def FiberAtPole (b : Macro) : Prop :=
 def LiveFiberAtPole (b : Macro) : Prop :=
   κ.ActualFiberInhabited b ∧ κ.FiberAtPole b
 
+/-- A fiber reads at the pole on a supplied call-class. This is neutral fiber
+    vocabulary: downstream doctrines supply the class predicate. -/
+def FiberAtPoleOn (b : Macro) (cs : G.Call → Prop) : Prop :=
+  ∀ w : G.Weld, G.Actual w → κ.InFiber b w → cs w.call → AtBot (G.share w)
+
+/-- A fiber has an actual weld in the supplied call-class. -/
+def ActualFiberInhabitedOn (b : Macro) (cs : G.Call → Prop) : Prop :=
+  ∃ w : G.Weld, G.Actual w ∧ κ.InFiber b w ∧ cs w.call
+
+/-- The live, non-vacuous class-restricted fiber-at-pole predicate. -/
+def LiveFiberAtPoleOn (b : Macro) (cs : G.Call → Prop) : Prop :=
+  κ.ActualFiberInhabitedOn b cs ∧ κ.FiberAtPoleOn b cs
+
 /-- Every actual weld in the fiber carries a live self-pole index.
     Vacuous on empty or no-actual fibers; use `LiveSelfAptTag` when
     inhabitation matters. -/
@@ -123,6 +136,26 @@ theorem no_live_index_under_fiberAtPole {b : Macro}
     (hactual : G.Actual w) (hfiber : κ.InFiber b w) :
     ¬ G.HasSelfPoleIndex w :=
   G.no_self_pole_index_of_atBot w (h w hactual hfiber)
+
+theorem fiberAtPoleOn_mono {b : Macro} {cs ds : G.Call → Prop}
+    (h : κ.FiberAtPoleOn b cs)
+    (hsub : ∀ c : G.Call, ds c → cs c) :
+    κ.FiberAtPoleOn b ds :=
+  fun w hactual hfiber hds => h w hactual hfiber (hsub w.call hds)
+
+theorem fiberAtPoleOn_univ_iff (b : Macro) :
+    κ.FiberAtPoleOn b (fun _ => True) ↔ κ.FiberAtPole b := by
+  constructor
+  · intro h w hactual hfiber
+    exact h w hactual hfiber True.intro
+  · intro h w hactual hfiber _hclass
+    exact h w hactual hfiber
+
+theorem no_live_index_under_fiberAtPoleOn {b : Macro} {cs : G.Call → Prop}
+    (h : κ.FiberAtPoleOn b cs) {w : G.Weld}
+    (hactual : G.Actual w) (hfiber : κ.InFiber b w) (hclass : cs w.call) :
+    ¬ G.HasSelfPoleIndex w :=
+  G.no_self_pole_index_of_atBot w (h w hactual hfiber hclass)
 
 /-- Fiber soul-guard: even where the self-convention is apt, the index is
     only the per-weld agent tag. No macro owner is produced. -/

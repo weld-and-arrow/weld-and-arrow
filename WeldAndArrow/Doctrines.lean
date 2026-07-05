@@ -2,3 +2,7 @@ import WeldAndArrow.Doctrines.FourTruths
 import WeldAndArrow.Doctrines.Sraddha
 import WeldAndArrow.Doctrines.SraddhaNegative
 import WeldAndArrow.Doctrines.Deliberation
+import WeldAndArrow.Doctrines.Correlations
+import WeldAndArrow.Doctrines.CorrelationsNegative
+import WeldAndArrow.Doctrines.Fetters
+import WeldAndArrow.Doctrines.FettersNegative

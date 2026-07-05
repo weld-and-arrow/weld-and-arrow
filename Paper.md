@@ -40,7 +40,7 @@ transitivity for `conditions`. Role-asymmetry is not temporal asymmetry: the
 
 `Grid.DirectedConvention.TimeDirection` is an abbreviation of `Strict`; all
 strictness theorems apply to it transparently. The formal modules keep their
-comments mathematical and point to `Identification/Commentary.lean` C.1-C.5 for
+comments mathematical and point to `Identification/Commentary.lean` C.1-C.7 for
 the paper-facing readings.
 
 The namespace tree now records ontological ordering. Floor/genjō and the bare
@@ -447,7 +447,7 @@ is the content instance under the non-stone aptness hypothesis.
 
 ---
 
-## 3. Doctrines (`Doctrines/FourTruths.lean`, `Doctrines/Sraddha.lean`, `Doctrines/SraddhaNegative.lean`, `Doctrines/Deliberation.lean`)
+## 3. Doctrines (`Doctrines/FourTruths.lean`, `Doctrines/Sraddha*.lean`, `Doctrines/Deliberation.lean`, `Doctrines/Correlations*.lean`, `Doctrines/Fetters*.lean`)
 
 `waaMismatchGrade_eq_share` is definitional. `waaMismatchGrade_le_of_share_le` is the
 ordinal covariation theorem: any share comparison is the corresponding
@@ -494,6 +494,38 @@ cetana witnesses check same-field/different-share and live-share/no-standing
 cases. `DeliveryArrogationNegative` instantiates the
 `ClaimLanguage` machinery for a command-shaped delivery claim and checks that a
 recorded plan fails `FitsOfferedTier` where delivery is absent.
+
+**Correlations.** `StageScheme` is `BeingCoarsening`; `FiftyTwoStageScheme`
+adds no signature field. `ShareDropRun` and `BullAscent` type Bulls 1-6 as
+per-call drops. `WaaBullSeven` is probe-constancy plus a live self-pole index,
+with `bullSeven_not_bullEight` checking that this half-weld is not the
+pole-class. Bull 8 is `AtPoleClass`, Bull 9 is `ResponsiveTerminus`, and Bull
+10 is `WaaBullTen`, an existential cross-fiber delivery into another sentient
+fiber. `StrongWaaBullTen` names the stronger all-sentient-fibers asymptote
+without using it. `bullTen_to_bullNine`, `bullNine_to_terminus`, and
+`bullNine_to_bullEight` give the checked chain, while
+`CorrelationsNegative.pratyekabuddha_countermodel` shows Bull 9 without Bull
+10. `CorrelationsNegative.no_stage_boundary_recovery` is the stage-scheme
+version of the no-recovered-partition witness.
+
+`FiveRank`, `RankReading`, and `rankLanguage` keep the Five Ranks as
+utterance-diagnosis data. `kenChuTo_implies_waaBullTen` records the 到/Bull 10
+shape under the same coarsening.
+
+**Fetters.** `FiberAtPoleOn` and `LiveFiberAtPoleOn` are neutral
+class-restricted fiber predicates in `Signature/BeingConvention.lean`.
+`FetterReading` supplies model-side provocation classes, and `FetterCut` means
+quietness at pole on the relevant class. `Path.cutClasses` gives the nested
+path profiles; `arhatPathQuiet_iff_fiberAtPole` closes arhatship back to
+ordinary `FiberAtPole`. The checked anchors are
+`classQuiet_no_clench_in_class`, `identityView_excluded_at_arhatFiber`,
+`conceit_excluded_at_arhatFiber`, and `arhatFiber_of_termini`.
+
+The forward-looking face is conditional and diagnostic: `RunQuiet` is finite
+track-record quietness, `waaIrreversibleRegime_conditional` promotes it only
+under a supplied regime, and
+`FettersNegative.seen_run_underdetermines_fetterCut` shows that a seen quiet
+track does not determine a fresh call.
 
 ---
 
@@ -570,21 +602,25 @@ regime fact to be supplied by a model, not a structural axiom.
 The contemporary placement checks are `siderits_waaPlacement`,
 `ganeri_waaPlacement`, `zahavi_waaPlacement`, and `sartre_waaPlacement`.
 
-**Disclaimers.** `Disclaimer.number` now runs through 47. The recent entries are
+**Disclaimers.** `Disclaimer.number` now runs through 51. The recent entries are
 `beingConvention` (35), `pilotGeneratedRows` (36), `beingTrichotomy` (37),
 `hareHornRegister` (38), `modalRealismFreeze` (39), and
 `aptnessConditionality` (40), `sraddhaConditional` (41), and
 `faithBothConjuncts` (42). The table-generation entries append after those
 existing pins: `generatedTableStructure` (43), `poleAffirmingSemantics` (44),
 `proseRows` (45), and `errorFreeReading` (46). `misFeedFence` (47) records the
-avyākata fence-and-gate pair.
+avyākata fence-and-gate pair. The correlation entries are `tenBullsTyped` (48),
+`fiveRanksRetype` (49), `stageSchemeCoarsening` (50), and
+`fetterCutTyping` (51).
 `waaKarmaIdentification_number` pins `waaKarmaIdentification = 9`, and
 `modalRealismFreeze_number` pins `modalRealismFreeze = 39`.
 `aptnessConditionality_number` pins `aptnessConditionality = 40`;
 `sraddhaConditional_number` and `faithBothConjuncts_number` pin the two new
 Sraddha entries, while `generatedTableStructure_number`,
 `poleAffirmingSemantics_number`, `errorFreeReading_number`, and
-`misFeedFence_number` pin the table and mis-feed entries.
+`misFeedFence_number` pin the table and mis-feed entries; the four new
+correlation pins are `tenBullsTyped_number`, `fiveRanksRetype_number`,
+`stageSchemeCoarsening_number`, and `fetterCutTyping_number`.
 
 ---
 
@@ -627,6 +663,7 @@ Grade-facing transport facts:
 - `map_hasSelfPoleIndex_iff`
 - `map_waaMismatchGrade` and `map_waaMismatchLive_iff`
 - `map_probeConstant_iff`
+- `map_waaBullSeven_iff` and `map_waaBullTen_iff`
 - `map_stateToolFits_iff`
 - `Tier.map` and `map_tier_hasLiveShare_iff`
 - `map_rePitch`
@@ -640,7 +677,8 @@ Grade-facing transport facts:
   `map_waaFullyEnlightened_of_surjective`
 - `BeingCoarsening.displayMap` and its `map_*_iff` lemmas for
   `InFiber`, `SameFiber`, `FiberInhabited`, `ActualFiberInhabited`,
-  `SentientTag`, `FiberAtPole`, `LiveFiberAtPole`, `SelfAptTag`,
+  `SentientTag`, `FiberAtPole`, `ActualFiberInhabitedOn`, `FiberAtPoleOn`,
+  `LiveFiberAtPole`, `LiveFiberAtPoleOn`, `SelfAptTag`,
   `LiveSelfAptTag`, `Patchy`, `SelfConditioningTag`, and
   `StrongSelfConditioningTag`
 
@@ -744,8 +782,8 @@ that the being-boundary is a reading, not grid-carried structure.
 
 `Meta/Audit.lean` imports `Meta/Invariance.lean`,
 `Meta/InvarianceNegative.lean`, `Doctrines/SraddhaNegative.lean`, and
-`Doctrines/Deliberation.lean`, then pins selected `#print axioms` outputs with
-`#guard_msgs`.
+`Doctrines/Deliberation.lean`, plus the new correlations and fetters negative
+modules, then pins selected `#print axioms` outputs with `#guard_msgs`.
 
 The audited declarations are:
 
@@ -756,6 +794,19 @@ The audited declarations are:
 - `Grid.map_isShareDrop_iff`
 - `Grid.DirectedConvention.map_landsWithShareDrop_iff`
 - `Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfConditioningTag_iff`
+- `Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_fiberAtPoleOn_iff`
+- `Grid.map_waaBullSeven_iff`
+- `Grid.map_waaBullTen_iff`
+- `Grid.bullSeven_not_bullEight`
+- `Grid.bullTen_to_bullNine`
+- `CorrelationsNegative.pratyekabuddha_countermodel`
+- `CorrelationsNegative.no_stage_boundary_recovery`
+- `Grid.classQuiet_no_clench_in_class`
+- `Grid.arhatPathQuiet_iff_fiberAtPole`
+- `Grid.identityView_excluded_at_arhatFiber`
+- `Grid.conceit_excluded_at_arhatFiber`
+- `Grid.waaIrreversibleRegime_conditional`
+- `FettersNegative.seen_run_underdetermines_fetterCut`
 - `Grid.DirectedConvention.waaPathOught_conditional`
 - `Grid.DirectedConvention.no_waa_path_at_pole`
 - `Grid.DirectedConvention.map_waaAversionContext_iff`
@@ -765,7 +816,9 @@ The audited declarations are:
 The pinned result is: no audited theorem depends on `sorry` or
 `Classical.choice`. All audited declarations are axiom-free except
 `DirectionNegative.no_direction_recovery_from_conditionsEither`, which depends
-on exactly `[propext, Quot.sound]`.
+on exactly `[propext, Quot.sound]`, and
+`FettersNegative.seen_run_underdetermines_fetterCut`, which depends on
+`[propext]`.
 
 The Lake build now targets the library `WeldAndArrow`; there is no `lean_exe`
 target and no `Main.lean`.

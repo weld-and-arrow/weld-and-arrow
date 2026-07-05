@@ -232,4 +232,56 @@ definition rather than asserted as a separate theorem. The
 `nothing_selfIndexed_carried` check is the enumerated face of the same
 discipline enforced architecturally by `Config`: no owner or self-index field is
 stored between deeds.
+
+C.7 Doctrines/Correlations.lean, Doctrines/CorrelationsNegative.lean,
+    Doctrines/Fetters.lean, and Doctrines/FettersNegative.lean
+
+`Doctrines/Correlations.lean` treats the Ten Bulls, Five Ranks, and stage
+schemes as checked correlations over existing machinery. `StageScheme` is just
+`BeingCoarsening`; the warning belongs to holding a coarsening as grid-carried
+structure, not to any one ladder. `CorrelationsNegative.no_stage_boundary_recovery`
+duplicates the being-boundary no-recovery pattern for stage schemes so the
+uniform freeze clause is witnessed without importing `Meta` upward into
+`Doctrines`.
+
+For the Ten Bulls, Bulls 1-6 are a `ShareDropRun`; Bull 7 is
+`WaaBullSeven`, probe-constancy plus a live self-pole index. The theorem
+`bullSeven_not_bullEight` checks that this half-weld is not the empty-circle
+pole-class. Bull 8 is `AtPoleClass`, Bull 9 is `ResponsiveTerminus`, and Bull 10
+is the existential cross-fiber delivery predicate `WaaBullTen`. The stronger
+`StrongWaaBullTen` is named and shelved: delivery into every sentient fiber is a
+stronger bodhisattva reading than the picture asserts. The pratyekabuddha
+countermodel shows Bull 9 without Bull 10.
+
+The Five Ranks are data plus reading pins; `kenChuTo_implies_waaBullTen` names
+the 到/Bull 10 shape under the same coarsening. This is a retype of ranks as
+utterance-diagnosis and index-placement, not a second stage ladder.
+
+`FiberAtPoleOn` and `LiveFiberAtPoleOn` sit in `Signature/BeingConvention.lean`
+because they are neutral class-restricted fiber vocabulary. Fetters merely
+consume them: `FetterReading` supplies the provocation classes as model-side
+data, and `FetterCut` means the fiber is at pole on that fetter's class. Thus a
+cut is cessation of enactment in the class, not possession of an anti-fetter.
+`classQuiet_no_clench_in_class` is the checked soul-guard: where the class cut
+holds, no actual weld in that class carries a live self-pole index.
+
+The path scheme is nested class quietness. `Path.cutClasses` gives the stream,
+once-return, non-return, and arhat call-classes; once-return adds no new cut
+class, matching the prose weakening clause. `arhatPathQuiet_iff_fiberAtPole`
+says the arhat class is total, so arhat path-quietness is ordinary
+`FiberAtPole`. The older arhat anchors remain: `identityView_excluded_at_arhatFiber`,
+`conceit_excluded_at_arhatFiber`, and `arhatFiber_of_termini`.
+
+Identity-view is the coarsening-freeze enacted: the macro tag held as stored
+owner. Its cut is quietness on the identity-view provocation class, so
+stream-entry is typed as the cessation of the same attachment the uniform
+coarsening clause warns against.
+
+Irreversibility is three-layered. Whole-fiber `FetterCut` is internally
+irreversible by quantifier logic: if a later clenched class-weld exists, the cut
+never held. Run-assigned path tags are only display over seen data, and
+`FettersNegative.seen_run_underdetermines_fetterCut` gives the fresh-call
+transfer countermodel. A forward guarantee is hostable only as the conditional
+`waaIrreversibleRegime_conditional`, parallel in voice to the sraddha
+conditional.
 -/

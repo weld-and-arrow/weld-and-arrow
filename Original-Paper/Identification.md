@@ -107,6 +107,10 @@ The following are conventional and my own -- original moves, each flagged agains
 45. **Prose rows** -- being/non-being, ladder/terminus, genjō/shō, shō/satori, Row 2/Row 3, and description/injunction remain prose by stated reasons, with nearby theorem anchors rather than generated cell content.
 46. **Error-free reading** -- 破邪顕正 is checked as the `rowOf_obeys_iff_errorFree` biconditional on the primary language, and `ladder_obeys_of_errorFree` is the cumulative strengthening that vindicates the implemented ladder operator.
 47. **The mis-feed fence** -- the avyākata verdict's boundary formalized as an original move: the index-seeking question-form fenced by a schematic non-derivability theorem over a modeled designation-universe (`MisFeedNegative`), with a concrete collision witness and an answered delivery twin in the same model; the universe's adequacy to the canonical avyākata owned as a modeling claim. The tradition sets the questions aside; the fence-and-gate pair, and the claim that one grammatical joint sorts them, are mine.
+48. **Ten Bulls typed as correlation** -- Bulls 1-6 as per-call share-drop run, Bull 7 as the checked half-weld, Bull 8 as pole-class, Bull 9 as responsive terminus, and Bull 10 as existential cross-fiber delivery; the stronger all-fibers reading named but shelved.
+49. **Five Ranks retyped** -- ranks read as utterance-diagnosis and index-placement, with 到 checked by the Bull 10 shape rather than treated as a stage attained and stored.
+50. **Stage-schemes as coarsenings** -- the 52 stages, Bulls, and Ranks are legal as diagnosis-time `BeingCoarsening`s; the freeze warning attaches uniformly to holding any scheme as grid-carried structure.
+51. **Fetter-cut typing** -- fetter cutting read as class-restricted fiber-at-pole typing (`FiberAtPoleOn`), with provocation classes model-supplied; whole-fiber irreversibility is definitional, finite-run diagnosis is underdetermined, and the practical forward guarantee remains conditional.
 
 ## Glossary
 

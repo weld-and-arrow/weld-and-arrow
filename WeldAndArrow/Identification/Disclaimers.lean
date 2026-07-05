@@ -65,6 +65,10 @@ inductive Disclaimer
   | proseRows
   | errorFreeReading
   | misFeedFence
+  | tenBullsTyped
+  | fiveRanksRetype
+  | stageSchemeCoarsening
+  | fetterCutTyping
 
 namespace Disclaimer
 
@@ -118,6 +122,10 @@ def number : Disclaimer → Nat
   | .proseRows => 45
   | .errorFreeReading => 46
   | .misFeedFence => 47
+  | .tenBullsTyped => 48
+  | .fiveRanksRetype => 49
+  | .stageSchemeCoarsening => 50
+  | .fetterCutTyping => 51
 
 theorem waaKarmaIdentification_number :
     number Disclaimer.waaKarmaIdentification = 9 := rfl
@@ -145,6 +153,18 @@ theorem errorFreeReading_number :
 
 theorem misFeedFence_number :
     number Disclaimer.misFeedFence = 47 := rfl
+
+theorem tenBullsTyped_number :
+    number Disclaimer.tenBullsTyped = 48 := rfl
+
+theorem fiveRanksRetype_number :
+    number Disclaimer.fiveRanksRetype = 49 := rfl
+
+theorem stageSchemeCoarsening_number :
+    number Disclaimer.stageSchemeCoarsening = 50 := rfl
+
+theorem fetterCutTyping_number :
+    number Disclaimer.fetterCutTyping = 51 := rfl
 
 end Disclaimer
 

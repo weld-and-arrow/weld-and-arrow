@@ -13,6 +13,7 @@ Reading and motivation: Identification/Commentary.lean, C.3.
 import WeldAndArrow.Consequences.ContentRows
 import WeldAndArrow.Identification
 import WeldAndArrow.Doctrines.Sraddha
+import WeldAndArrow.Doctrines.Correlations
 
 /-!
 Any predicate over the contribution carrier added anywhere in the library owes
@@ -284,6 +285,18 @@ theorem map_probeConstant_iff (b : G.Being) (cs : G.Call → Prop) :
     exact (f.orderEq_iff (G.grade b c₁ r₁) (G.grade b c₂ r₂)).mpr
       (h c₁ c₂ hc₁ hc₂ r₁ r₂ hr₁ hr₂)
 
+theorem map_waaBullSeven_iff (b : G.Being) :
+    (G.map f).WaaBullSeven b ↔ G.WaaBullSeven b := by
+  constructor
+  · rintro ⟨hprobe, w, hactual, hagent, hidx⟩
+    exact ⟨(G.map_probeConstant_iff f b (fun _ => True)).mp hprobe,
+      ⟨w, (G.map_actual_iff f w).mp hactual, hagent,
+        (G.map_hasSelfPoleIndex_iff f w).mp hidx⟩⟩
+  · rintro ⟨hprobe, w, hactual, hagent, hidx⟩
+    exact ⟨(G.map_probeConstant_iff f b (fun _ => True)).mpr hprobe,
+      ⟨w, (G.map_actual_iff f w).mpr hactual, hagent,
+        (G.map_hasSelfPoleIndex_iff f w).mpr hidx⟩⟩
+
 namespace DirectedConvention
 namespace BeingConvention
 namespace BeingCoarsening
@@ -351,6 +364,47 @@ theorem map_fiberAtPole_iff
     have hmapped : AtBot (f.toFun (G.share w)) :=
       (f.atBot_iff (G.share w)).mpr horig
     simpa [Grid.map_share] using hmapped
+
+theorem map_actualFiberInhabitedOn_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (cs : G.Call → Prop) :
+    (displayMap κ f).ActualFiberInhabitedOn b cs ↔
+      κ.ActualFiberInhabitedOn b cs := by
+  constructor
+  · rintro ⟨w, hactual, hfiber, hclass⟩
+    exact ⟨w, (G.map_actual_iff f w).mp hactual, hfiber, hclass⟩
+  · rintro ⟨w, hactual, hfiber, hclass⟩
+    exact ⟨w, (G.map_actual_iff f w).mpr hactual, hfiber, hclass⟩
+
+theorem map_fiberAtPoleOn_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (cs : G.Call → Prop) :
+    (displayMap κ f).FiberAtPoleOn b cs ↔ κ.FiberAtPoleOn b cs := by
+  constructor
+  · intro h w hactual hfiber hclass
+    have hmapped : AtBot (f.toFun (G.share w)) := by
+      simpa [Grid.map_share] using
+        h w ((G.map_actual_iff f w).mpr hactual) hfiber hclass
+    exact (f.atBot_iff (G.share w)).mp hmapped
+  · intro h w hactual hfiber hclass
+    have horig : AtBot (G.share w) :=
+      h w ((G.map_actual_iff f w).mp hactual) hfiber hclass
+    have hmapped : AtBot (f.toFun (G.share w)) :=
+      (f.atBot_iff (G.share w)).mpr horig
+    simpa [Grid.map_share] using hmapped
+
+theorem map_liveFiberAtPoleOn_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (cs : G.Call → Prop) :
+    (displayMap κ f).LiveFiberAtPoleOn b cs ↔
+      κ.LiveFiberAtPoleOn b cs := by
+  constructor
+  · intro h
+    exact ⟨(map_actualFiberInhabitedOn_iff κ f b cs).mp h.left,
+      (map_fiberAtPoleOn_iff κ f b cs).mp h.right⟩
+  · intro h
+    exact ⟨(map_actualFiberInhabitedOn_iff κ f b cs).mpr h.left,
+      (map_fiberAtPoleOn_iff κ f b cs).mpr h.right⟩
 
 theorem map_liveFiberAtPole_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
@@ -440,6 +494,42 @@ end BeingCoarsening
 end BeingConvention
 end DirectedConvention
 
+theorem map_waaBullTen_iff {Macro : Type}
+    (κ : DirectedConvention.BeingConvention.BeingCoarsening G Macro)
+    (b : G.Being) :
+    (G.map f).WaaBullTen (κ.displayMap f) b ↔ G.WaaBullTen κ b := by
+  constructor
+  · intro h
+    refine ⟨(G.map_responsiveTerminus_iff f b).mp h.left, ?_⟩
+    rcases h.right with
+      ⟨deed, reception, hdeed, hactual, hnotSame, hsentient, hdel⟩
+    exact ⟨deed, reception,
+      (DirectedConvention.BeingConvention.BeingCoarsening.map_inFiber_iff
+        κ f (κ.proj b) deed).mp hdeed,
+      (G.map_actual_iff f reception).mp hactual,
+      (fun hsame =>
+        hnotSame
+          ((DirectedConvention.BeingConvention.BeingCoarsening.map_sameFiber_iff
+            κ f deed.agent reception.agent).mpr hsame)),
+      (DirectedConvention.BeingConvention.BeingCoarsening.map_sentientTag_iff
+        κ f (κ.proj reception.agent)).mp hsentient,
+      (DirectedConvention.map_deliveredTo_iff G f deed reception).mp hdel⟩
+  · intro h
+    refine ⟨(G.map_responsiveTerminus_iff f b).mpr h.left, ?_⟩
+    rcases h.right with
+      ⟨deed, reception, hdeed, hactual, hnotSame, hsentient, hdel⟩
+    exact ⟨deed, reception,
+      (DirectedConvention.BeingConvention.BeingCoarsening.map_inFiber_iff
+        κ f (κ.proj b) deed).mpr hdeed,
+      (G.map_actual_iff f reception).mpr hactual,
+      (fun hsame =>
+        hnotSame
+          ((DirectedConvention.BeingConvention.BeingCoarsening.map_sameFiber_iff
+            κ f deed.agent reception.agent).mp hsame)),
+      (DirectedConvention.BeingConvention.BeingCoarsening.map_sentientTag_iff
+        κ f (κ.proj reception.agent)).mpr hsentient,
+      (DirectedConvention.map_deliveredTo_iff G f deed reception).mpr hdel⟩
+
 theorem map_stateToolFits_iff (w : G.Weld) :
     (G.map f).StateToolFits w ↔ G.StateToolFits w := by
   constructor
@@ -494,6 +584,26 @@ theorem map_isShareDrop_iff
   · intro h
     exact ⟨(f.le_iff (G.share received) before.tendency).mp h.left,
       fun hle => h.right ((f.le_iff before.tendency (G.share received)).mpr hle)⟩
+
+theorem map_shareDropRun
+    {before : Config Contrib} {run : List G.Weld}
+    (h : G.ShareDropRun before run) :
+    (G.map f).ShareDropRun (before.map f) run := by
+  induction h with
+  | nil before =>
+      exact ShareDropRun.nil (before.map f)
+  | cons hactual hdrop _hrest ih =>
+      exact ShareDropRun.cons
+        ((G.map_actual_iff f _).mpr hactual)
+        ((G.map_isShareDrop_iff f _ _).mpr hdrop)
+        (by simpa [Grid.map_rePitch] using ih)
+
+/-- Transport a Bull-ascent run across a display reparameterization. -/
+def map_bullAscent (a : G.BullAscent) :
+    (G.map f).BullAscent where
+  before := a.before.map f
+  run    := a.run
+  drops  := G.map_shareDropRun f a.drops
 
 namespace DirectedConvention
 

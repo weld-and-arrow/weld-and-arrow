@@ -2,6 +2,8 @@ import WeldAndArrow.Meta.Invariance
 import WeldAndArrow.Meta.InvarianceNegative
 import WeldAndArrow.Doctrines.SraddhaNegative
 import WeldAndArrow.Doctrines.Deliberation
+import WeldAndArrow.Doctrines.CorrelationsNegative
+import WeldAndArrow.Doctrines.FettersNegative
 
 namespace WAA
 
@@ -46,6 +48,84 @@ info: 'WAA.Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfCondi
 -/
 #guard_msgs in
 #print axioms Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfConditioningTag_iff
+
+/--
+info: 'WAA.Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_fiberAtPoleOn_iff' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_fiberAtPoleOn_iff
+
+/--
+info: 'WAA.Grid.map_waaBullSeven_iff' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.map_waaBullSeven_iff
+
+/--
+info: 'WAA.Grid.map_waaBullTen_iff' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.map_waaBullTen_iff
+
+/--
+info: 'WAA.Grid.bullSeven_not_bullEight' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.bullSeven_not_bullEight
+
+/--
+info: 'WAA.Grid.bullTen_to_bullNine' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.bullTen_to_bullNine
+
+/--
+info: 'WAA.CorrelationsNegative.pratyekabuddha_countermodel' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms CorrelationsNegative.pratyekabuddha_countermodel
+
+/--
+info: 'WAA.CorrelationsNegative.no_stage_boundary_recovery' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms CorrelationsNegative.no_stage_boundary_recovery
+
+/--
+info: 'WAA.Grid.classQuiet_no_clench_in_class' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.classQuiet_no_clench_in_class
+
+/--
+info: 'WAA.Grid.arhatPathQuiet_iff_fiberAtPole' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.arhatPathQuiet_iff_fiberAtPole
+
+/--
+info: 'WAA.Grid.identityView_excluded_at_arhatFiber' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.identityView_excluded_at_arhatFiber
+
+/--
+info: 'WAA.Grid.conceit_excluded_at_arhatFiber' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.conceit_excluded_at_arhatFiber
+
+/--
+info: 'WAA.Grid.waaIrreversibleRegime_conditional' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.waaIrreversibleRegime_conditional
+
+/--
+info: 'WAA.FettersNegative.seen_run_underdetermines_fetterCut' depends on axioms: [propext]
+-/
+#guard_msgs in
+#print axioms FettersNegative.seen_run_underdetermines_fetterCut
 
 /--
 info: 'WAA.Grid.DirectedConvention.waaPathOught_conditional' does not depend on any axioms
