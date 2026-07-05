@@ -531,7 +531,7 @@ end Delegation
 
 end BeingCoarsening
 
-/- The innermost `GridConvention` namespace is opened in Consequences/Basic.lean for the
+/- The innermost `GridConvention` namespace is opened in Consequences/Taxonomy.lean for the
    concrete claim-language rows. Keeping the abstract machinery at `Grid`
    level for now avoids a churn-only migration of structure fields whose
    eventual home may simply remain signature rather than reading. -/

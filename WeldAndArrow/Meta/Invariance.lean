@@ -11,6 +11,7 @@ partition recovery.
 Reading and motivation: Identification/Commentary.lean, C.3.
 -/
 
+import WeldAndArrow.Consequences.Taxonomy
 import WeldAndArrow.Identification
 import WeldAndArrow.Doctrines.Sraddha
 
@@ -977,47 +978,6 @@ theorem contentBeforeAfterRow_not_obeys_twoBottom :
 end ContentNegative
 
 /- ==============================================================================
-   Sraddha orthogonality countermodel
-============================================================================== -/
-
-namespace OrthogonalityNegative
-
-open Grid.DirectedConvention
-
-/-- The same zero-effectiveness witness used by `SraddhaNegative`: a responsive
-    terminus whose delivered deed does not land as a share-drop for the live
-    receiver context. -/
-abbrev zeroEffectGrid : Grid Nat :=
-  SraddhaNegative.zeroEffectGrid
-
-theorem responsiveTerminus_with_no_shareDropLanding :
-    zeroEffectGrid.ResponsiveTerminus SraddhaNegative.Being.sraddha ∧
-      ¬ HasShareDropLanding zeroEffectGrid SraddhaNegative.liveBefore SraddhaNegative.deed :=
-  ⟨SraddhaNegative.sraddha_responsiveTerminus,
-    SraddhaNegative.not_hasShareDropLanding_liveBefore⟩
-
-theorem terminus_not_waaFullyEnlightened :
-    zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha ∧
-      ¬ WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha :=
-  ⟨SraddhaNegative.sraddha_responsiveTerminus.right,
-    SraddhaNegative.not_waaFullyEnlightened⟩
-
-/-- `WaaFullyEnlightened` is strictly stronger than terminus typing: it
-    implies terminus, and this concrete responsive terminus still fails the
-    shortfall-closure conjunct. -/
-theorem waaFullyEnlightened_stronger_than_terminus :
-    (WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha →
-        zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha) ∧
-      zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha ∧
-      ¬ WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha := by
-  constructor
-  · intro h
-    exact (responsiveTerminus_of_waaFullyEnlightened zeroEffectGrid h).right
-  · exact terminus_not_waaFullyEnlightened
-
-end OrthogonalityNegative
-
-/- ==============================================================================
    §N  Being-boundary freedom: designation is not grid-carried
 
    The witness is parallel in scope to `DirectionNegative`. A single grid has
@@ -1086,45 +1046,5 @@ theorem no_partition_recovery :
   exact hsplitNot hmerged
 
 end BeingNegative
-
-/- Reading and motivation: Identification/Commentary.lean, C.3. -/
-
-namespace SelfLineWitness
-
-inductive Being
-  | one
-
-inductive Call
-  | call
-
-inductive Response
-  | response
-
-def selfLineGrid : Grid Nat where
-  Being      := Being
-  Call       := Call
-  Response   := Response
-  respondsTo _ _ := some Response.response
-  grade _ _ _ := 1
-  conditions _ _ := True
-
-def w : selfLineGrid.Weld :=
-  ⟨Being.one, Call.call, Response.response⟩
-
-theorem w_has_live_share : selfLineGrid.WaaAppropriates w := by
-  intro hbot
-  cases hbot
-
-theorem selfLine_conditions_self : selfLineGrid.conditions w w :=
-  True.intro
-
-theorem selfLine_landsAt_self : Grid.DirectedConvention.LandsAt selfLineGrid w w :=
-  ⟨True.intro, rfl⟩
-
-theorem selfLine_waaOwnershipFace_self :
-    Grid.DirectedConvention.WaaOwnershipFace selfLineGrid w w :=
-  ⟨⟨True.intro, rfl⟩, w_has_live_share⟩
-
-end SelfLineWitness
 
 end WAA

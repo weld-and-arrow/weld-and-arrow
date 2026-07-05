@@ -1,6 +1,6 @@
 /-
 ================================================================================
-  WeldAndArrow.Meta.Deliberation
+  WeldAndArrow.Doctrines.Deliberation
   Consequentialist display and deliberator-side underdetermination
 ================================================================================
 
@@ -12,7 +12,7 @@ claim-language witness for delivery-arrogation.
 Reading and motivation: Identification/Commentary.lean, C.5.
 -/
 
-import WeldAndArrow.Meta.Invariance
+import WeldAndArrow.Consequences.Basic
 
 namespace WAA
 
@@ -20,76 +20,6 @@ namespace Grid
 
 variable {Contrib : Type} [PreorderBot Contrib]
 variable (G : Grid Contrib)
-
-/- ==============================================================================
-   Conditions-free grade checks
-============================================================================== -/
-
-/-- Replace only the delivery relation of a grid. Function and grade data are
-    left untouched. -/
-def withConditions (conditions' : G.Weld -> G.Weld -> Prop) : Grid Contrib where
-  Being      := G.Being
-  Call       := G.Call
-  Response   := G.Response
-  respondsTo := G.respondsTo
-  grade      := G.grade
-  conditions := conditions'
-
-@[simp]
-theorem withConditions_respondsTo
-    (conditions' : G.Weld -> G.Weld -> Prop)
-    (b : G.Being) (c : G.Call) :
-    (G.withConditions conditions').respondsTo b c = G.respondsTo b c :=
-  rfl
-
-@[simp]
-theorem withConditions_grade
-    (conditions' : G.Weld -> G.Weld -> Prop)
-    (b : G.Being) (c : G.Call) (r : G.Response) :
-    (G.withConditions conditions').grade b c r = G.grade b c r :=
-  rfl
-
-@[simp]
-theorem withConditions_share
-    (conditions' : G.Weld -> G.Weld -> Prop) (w : G.Weld) :
-    (G.withConditions conditions').share w = G.share w :=
-  rfl
-
-/-- Changing only `conditions` cannot change the grade assigned to a mounted
-    response. -/
-theorem grade_independent_of_conditions
-    (conditions₁ conditions₂ : G.Weld -> G.Weld -> Prop)
-    (b : G.Being) (c : G.Call) (r : G.Response) :
-    (G.withConditions conditions₁).grade b c r =
-      (G.withConditions conditions₂).grade b c r :=
-  rfl
-
-/-- The same check at the weld/share projection. -/
-theorem share_independent_of_conditions
-    (conditions₁ conditions₂ : G.Weld -> G.Weld -> Prop) (w : G.Weld) :
-    (G.withConditions conditions₁).share w =
-      (G.withConditions conditions₂).share w :=
-  rfl
-
-/- ==============================================================================
-   Accumulation: `rePitch` has no history register
-============================================================================== -/
-
-/-- The post-reception configuration ignores the prior configuration and reads
-    only the received weld's share. -/
-theorem rePitch_forgets
-    (before₁ before₂ : Config Contrib) (received : G.Weld) :
-    G.rePitch before₁ received = G.rePitch before₂ received :=
-  rfl
-
-/-- Any run-valued score that factors through the post-reception `Config` is
-    constant across histories that share their final reception. -/
-theorem accumulated_attainment_constant_of_same_final
-    {α : Type} (score : Config Contrib -> α)
-    (before₁ before₂ : Config Contrib) (received : G.Weld) :
-    score (G.rePitch before₁ received) =
-      score (G.rePitch before₂ received) :=
-  congrArg score (G.rePitch_forgets before₁ before₂ received)
 
 /- ==============================================================================
    Consequentialist convention: descriptive readings only

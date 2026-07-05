@@ -1,7 +1,7 @@
 /-
 ================================================================================
-  WeldAndArrow.Identification.Rows
-  Generated rows, table order, content rows, ladders, and witnesses
+  WeldAndArrow.Consequences.Taxonomy
+  Error taxonomy, table order, content rows, ladders, and witnesses
 ================================================================================
 
 Reading and motivation: Identification/Commentary.lean, C.2.

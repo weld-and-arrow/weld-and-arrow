@@ -227,4 +227,44 @@ theorem assignedTier_hasLiveShare_iff
 
 end WaaOwnershipOffice
 
+/- Reading and motivation: Identification/Commentary.lean, C.1. -/
+
+namespace SelfLineWitness
+
+inductive Being
+  | one
+
+inductive Call
+  | call
+
+inductive Response
+  | response
+
+def selfLineGrid : Grid Nat where
+  Being      := Being
+  Call       := Call
+  Response   := Response
+  respondsTo _ _ := some Response.response
+  grade _ _ _ := 1
+  conditions _ _ := True
+
+def w : selfLineGrid.Weld :=
+  ⟨Being.one, Call.call, Response.response⟩
+
+theorem w_has_live_share : selfLineGrid.WaaAppropriates w := by
+  intro hbot
+  cases hbot
+
+theorem selfLine_conditions_self : selfLineGrid.conditions w w :=
+  True.intro
+
+theorem selfLine_landsAt_self : Grid.DirectedConvention.LandsAt selfLineGrid w w :=
+  ⟨True.intro, rfl⟩
+
+theorem selfLine_waaOwnershipFace_self :
+    Grid.DirectedConvention.WaaOwnershipFace selfLineGrid w w :=
+  ⟨⟨True.intro, rfl⟩, w_has_live_share⟩
+
+end SelfLineWitness
+
 end WAA

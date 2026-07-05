@@ -230,4 +230,45 @@ theorem drop_aversion_antecedent_fails :
 
 end SraddhaNegative
 
+/- ==============================================================================
+   Sraddha orthogonality countermodel
+============================================================================== -/
+
+namespace OrthogonalityNegative
+
+open Grid.DirectedConvention
+
+/-- The same zero-effectiveness witness used by `SraddhaNegative`: a responsive
+    terminus whose delivered deed does not land as a share-drop for the live
+    receiver context. -/
+abbrev zeroEffectGrid : Grid Nat :=
+  SraddhaNegative.zeroEffectGrid
+
+theorem responsiveTerminus_with_no_shareDropLanding :
+    zeroEffectGrid.ResponsiveTerminus SraddhaNegative.Being.sraddha ∧
+      ¬ HasShareDropLanding zeroEffectGrid SraddhaNegative.liveBefore SraddhaNegative.deed :=
+  ⟨SraddhaNegative.sraddha_responsiveTerminus,
+    SraddhaNegative.not_hasShareDropLanding_liveBefore⟩
+
+theorem terminus_not_waaFullyEnlightened :
+    zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha ∧
+      ¬ WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha :=
+  ⟨SraddhaNegative.sraddha_responsiveTerminus.right,
+    SraddhaNegative.not_waaFullyEnlightened⟩
+
+/-- `WaaFullyEnlightened` is strictly stronger than terminus typing: it
+    implies terminus, and this concrete responsive terminus still fails the
+    shortfall-closure conjunct. -/
+theorem waaFullyEnlightened_stronger_than_terminus :
+    (WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha →
+        zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha) ∧
+      zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha ∧
+      ¬ WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha := by
+  constructor
+  · intro h
+    exact (responsiveTerminus_of_waaFullyEnlightened zeroEffectGrid h).right
+  · exact terminus_not_waaFullyEnlightened
+
+end OrthogonalityNegative
+
 end WAA

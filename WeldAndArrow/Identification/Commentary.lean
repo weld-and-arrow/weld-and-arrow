@@ -50,6 +50,11 @@ separate prior act or performer inside the formal signature: the index and share
 are projections from a completed weld. `no_agent_recovery_of_field_collision`
 is the internal recovery obstruction corresponding to that gloss.
 
+`SelfLineWitness` records that self-lines are permitted by the signature and
+can satisfy the ownership-face vocabulary when the model supplies reflexive
+delivery. The paper's shushō-ittō discussion is a reading of that permission,
+not an axiom.
+
 The hand-rolled `Preorder` is used for dependency-freedom and to keep the exact
 assumptions visible. Mathlib has the counterparts `Preorder`, `OrderBot`, and
 `IsBot`; the local `AtBot` is the order-class of the chosen bottom and is
@@ -78,14 +83,14 @@ The separate/fuse interface (`ClaimLanguage`, `Distinction`,
 Baizhang, shō/shu, genjō, and verdict-tier discussions. The formal module keeps
 only the abstract interface; this commentary retains the textual motivation.
 
-C.2 Consequences/Basic.lean and Identification/Rows.lean
+C.2 Consequences/Basic.lean and Consequences/Taxonomy.lean
 
 The consequence layer proves neutral facts about the definitions: function/share
 facts, share-drop obstruction at the pole, delivery and landing projections, and
-tier diagnostics. The generated table rows live in `Identification/Rows.lean`
-because they are paper-facing placements of the separate/fuse interface. The
-paper's readings of these facts live here as commentary only; the theorem
-statements consume only the neutral definitions.
+tier diagnostics. The generated table rows live in `Consequences/Taxonomy.lean`
+because their statements consume the neutral separate/fuse interface. The paper's
+readings of these facts live here as commentary only; the theorem statements
+consume only the neutral definitions.
 
 The strictness facts are now in `Signature/Order.lean` as `Strict`, `strict_irrefl`,
 `not_strict_of_orderEq`, and `no_strict_of_all_orderEq`. The arrow-of-time gloss
@@ -150,9 +155,6 @@ content rows: an all-stone/no-live grid and the two-bottom direction-void
 carrier make the relevant denials true at non-live act-time, so fusion fails
 there.
 
-`SelfLineWitness` records that self-lines are permitted by the signature. The
-paper's shushō-ittō discussion is a reading of that permission, not an axiom.
-
 C.4 Doctrines/FourTruths.lean and Doctrines/Sraddha.lean
 
 `WaaMismatchGrade` is definitionally `share`; this is the formal honesty clause
@@ -173,7 +175,7 @@ dropping faith or dropping the live-aversion antecedent loses the landing, and
 `OrthogonalityNegative` shows that a responsive terminus need not be
 `WaaFullyEnlightened`.
 
-C.5 Meta/Deliberation.lean
+C.5 Doctrines/Deliberation.lean
 
 `ConsequentialistConvention` is a descriptive reading layer. `DropCount` and
 `DropCountInFiber` count share-drop receptions across finite actual runs without

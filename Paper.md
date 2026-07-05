@@ -1,10 +1,10 @@
 # A Plain-English Reading of the Lean Theorems
 
 **Scope.** This document states, in plain English, what the Lean declarations in
-`Signature/*`, `Consequences/Basic.lean`, `Doctrines/*`, `Identification/*`,
-and `Meta/*` assert. It reads the checked Lean surface: definitions, theorem
-statements, and proof status where that matters. Interpretive prose remains
-secondary to the formal statements.
+`Signature/*`, `Consequences/{Basic,Taxonomy}.lean`, `Doctrines/*`,
+`Identification/*`, and `Meta/*` assert. It reads the checked Lean surface:
+definitions, theorem statements, and proof status where that matters.
+Interpretive prose remains secondary to the formal statements.
 
 The project is pinned to `leanprover/lean4:v4.31.0` in `lean-toolchain`.
 
@@ -267,7 +267,7 @@ fine registers into one macro tag at diagnosis-time. The checked facts are
 
 ---
 
-## 2. Consequences and Rows (`Consequences/Basic.lean`, `Identification/Rows.lean`)
+## 2. Consequences and Taxonomy (`Consequences/Basic.lean`, `Consequences/Taxonomy.lean`)
 
 **Function/share and poles.** `share_eq_grade` is definitional. The response
 facts `mountsAt_of_actual`, `mountsSomewhere_of_actual`,
@@ -416,7 +416,7 @@ is the content instance under the non-stone aptness hypothesis.
 
 ---
 
-## 3. Doctrines (`Doctrines/FourTruths.lean`, `Doctrines/Sraddha.lean`)
+## 3. Doctrines (`Doctrines/FourTruths.lean`, `Doctrines/Sraddha.lean`, `Doctrines/Deliberation.lean`)
 
 `waaMismatchGrade_eq_share` is definitional. `waaMismatchGrade_le_of_share_le` is the
 ordinal covariation theorem: any share comparison is the corresponding
@@ -438,6 +438,27 @@ implication type, and `waaPathOught_conditional` proves it.
 from an `AtBot` prior tendency. `no_waa_aversion_context_at_pole` shows the
 live-aversion antecedent fails there. `SraddhaNegative` supplies concrete
 countermodels for dropping faith or dropping aversion.
+
+`OrthogonalityNegative` reuses the `SraddhaNegative` zero-effectiveness grid:
+a responsive terminus can fail `WaaFullyEnlightened` because the delivered
+deed has no share-drop landing for the receiver's live prior tendency.
+`waaFullyEnlightened_stronger_than_terminus` proves the strictness.
+
+**Deliberation.** `ConsequentialistConvention` is a descriptive reading layer.
+`DropCount` and `DropCountInFiber` count share-drop receptions across finite
+actual runs without adding probability, utility, or a command register.
+`ObjectiveNegative` reuses the merge/split being-convention pattern to show
+that "my drops" is not a function of grid data alone.
+
+`rePitch_forgets` and
+`accumulated_attainment_constant_of_same_final` restate backsliding in the form
+a maximizer needs: no accumulated attainment variable is stored in `Config`.
+`TransferNegative` records the adaptive track-record obstruction and the
+`ResponseInvariant` contrast case. `grade_independent_of_conditions` keeps the
+cetana claim at signature level: grade and share do not consume downstream
+delivery conditions. `DeliveryArrogationNegative` instantiates the
+`ClaimLanguage` machinery for a command-shaped delivery claim and checks that a
+recorded plan fails `FitsOfferedTier` where delivery is absent.
 
 ---
 
@@ -488,6 +509,20 @@ The two facts that this unfolds to `Tier.actTime w` and has exactly the weld's
 `assignedTier_hasLiveShare_iff`. `retype_constructor_exists` checks the
 generator's retype constructor. The placement and disclaimer checks are named
 below.
+
+**Self-line witness.** `SelfLineWitness.selfLineGrid` is a minimal `Nat` grid
+with one being, one call, one response, total response, grade `1`, and
+`conditions _ _ := True`. The checked examples show:
+
+- `selfLine_conditions_self`: `conditions w w` holds.
+- `selfLine_landsAt_self`: `Grid.DirectedConvention.LandsAt selfLineGrid w w`
+  holds.
+- `selfLine_waaOwnershipFace_self`:
+  `Grid.DirectedConvention.WaaOwnershipFace selfLineGrid w w` holds.
+
+The scope is narrow and deliberate: the signature permits self-lines; it does
+not say that any real regime contains them. Irreflexivity of delivery is a
+regime fact to be supplied by a model, not a structural axiom.
 
 The contemporary placement checks are `siderits_waaPlacement`,
 `ganeri_waaPlacement`, `zahavi_waaPlacement`, and `sartre_waaPlacement`.
@@ -651,11 +686,6 @@ owned as such. The third layer cannot be discharged in Lean, and the paper does
 not pretend otherwise; it is an aptness claim of the same standing as the
 content-row hypotheses beside `ContentNegative`.
 
-**`OrthogonalityNegative`.** Reuses the `SraddhaNegative` zero-effectiveness grid:
-a responsive terminus can fail `WaaFullyEnlightened` because the delivered
-deed has no share-drop landing for the receiver's live prior tendency.
-`waaFullyEnlightened_stronger_than_terminus` proves the strictness.
-
 **`BeingNegative`.** `twoBeingGrid` has two fine tags with identical response,
 grade, and symmetric delivery behavior. `κmerge` reads them as one macro tag;
 `κsplit` keeps them split. `merge_same_fiber` and `split_not_same_fiber` show
@@ -663,26 +693,13 @@ the readings disagree at `false`/`true`, and `no_partition_recovery` proves no
 function of the shared grid data recovers both. This is the formal certificate
 that the being-boundary is a reading, not grid-carried structure.
 
-**Self-line witness.** `SelfLineWitness.selfLineGrid` is a minimal `Nat` grid
-with one being, one call, one response, total response, grade `1`, and
-`conditions _ _ := True`. The checked examples show:
-
-- `selfLine_conditions_self`: `conditions w w` holds.
-- `selfLine_landsAt_self`: `Grid.DirectedConvention.LandsAt selfLineGrid w w`
-  holds.
-- `selfLine_waaOwnershipFace_self`:
-  `Grid.DirectedConvention.WaaOwnershipFace selfLineGrid w w` holds.
-
-The scope is narrow and deliberate: the signature permits self-lines; it does
-not say that any real regime contains them. Irreflexivity of delivery is a
-regime fact to be supplied by a model, not a structural axiom.
-
 ---
 
 ## 6. Meta/Audit.lean
 
-`Meta/Audit.lean` imports `Meta/Deliberation.lean` and pins selected `#print axioms`
-outputs with `#guard_msgs`.
+`Meta/Audit.lean` imports `Meta/Invariance.lean` and
+`Doctrines/Deliberation.lean`, then pins selected `#print axioms` outputs with
+`#guard_msgs`.
 
 The audited declarations are:
 

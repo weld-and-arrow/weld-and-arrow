@@ -1,4 +1,5 @@
-import WeldAndArrow.Meta.Deliberation
+import WeldAndArrow.Meta.Invariance
+import WeldAndArrow.Doctrines.Deliberation
 
 namespace WAA
 
