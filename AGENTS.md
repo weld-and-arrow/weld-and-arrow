@@ -116,3 +116,4 @@ conflict check:
   make a separate post-rebase adaptation commit after user approval.
 - Do not remove a worktree while the shell is inside it.
 - Remove the task worktree before deleting its branch.
+- Use `git -c core.editor=true rebase --continue` so VS Code editor isn't atempted
