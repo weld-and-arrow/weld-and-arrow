@@ -116,6 +116,7 @@ The following are conventional and my own -- original moves, each flagged agains
 54. **Ethics as a bundled conditional code** -- faith-transmitted truth times the receiver's own live aversion, held as one hypothesis-free implication theorem; the detached injunction remains outside the assertable voice.
 55. **The code's three honesty clauses** -- empty at the pole, unsatisfiable over false testimony, relative to the faith-object.
 56. **Verdict record as data** -- `generatorRecord` stores the verdict history at episode grain: three retypes as three entries, `restraintKind` as the six-kind coarsening, theorem anchors pinned by name beside prose anchors, and `misFeed_entries_carry_decomposition` checking the structural falsifier while the rate trend remains prose.
+57. **Compound positions as cell-stacks** -- skepticism, solipsism, the exit-premise, and existentialism are Lean data over existing `TableRow`s, with facets, roles, voice checks, and core-cell counts in `Consequences/Compounds.lean`; value-creation is recorded as legal rather than erroneous.
 
 ## Glossary
 

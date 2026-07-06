@@ -87,7 +87,8 @@ Baizhang, shō/shu, genjō, and verdict-tier discussions. The formal module keep
 only the abstract interface; this commentary retains the textual motivation.
 
 C.2 Consequences/Basic.lean, Consequences/Taxonomy.lean,
-    Consequences/Ladder.lean, and Consequences/ContentRows.lean
+    Consequences/Compounds.lean, Consequences/Ladder.lean, and
+    Consequences/ContentRows.lean
 
 The consequence layer proves neutral facts about the definitions: function/share
 facts, share-drop obstruction at the pole, delivery and landing projections, and
@@ -112,6 +113,15 @@ schema rows with pole-affirming semantics. `beforeAfterRow`, `beingsRow`, and
 collapse and freeze checks remain hypothesis-free; their obedience theorems
 carry only the local `AtBot` stability needed for non-live genjo fusion. The
 full row list is Lean data as `tableOrder`.
+
+`Consequences/Compounds.lean` records the compound-position decompositions as
+the same kind of paper-facing data plus `rfl` pins used by placements and the
+table order. Its components are classificatory rather than probative: citing a
+cell does not prove a row collapses or freezes, because the generated rows
+already carry their own refutations. The type-level guard is that components
+can cite only `TableRow`s already in the Grade-1 table; facets mark distinct
+prose faces of repeated rows, roles separate stacked cells from Grade-1 cells
+riding alongside, and legal elements carry no verdict voice.
 
 The `contentLayerLanguage` keeps the convention-live side as the live-share
 condition and gives row-specific content to the denial side. Its obedience
