@@ -78,6 +78,7 @@ def task_worktree_to_main():
     run("git merge --ff-only <task-branch>")
 
     run("lake build")
+    run("git push")
 
     # Cleanup only after main verifies cleanly.
     run("cd <main-worktree>")
