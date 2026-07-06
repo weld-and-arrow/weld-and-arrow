@@ -1,5 +1,6 @@
 import WeldAndArrow.Meta.Invariance
 import WeldAndArrow.Meta.InvarianceNegative
+import WeldAndArrow.Meta.VerdictLedger
 import WeldAndArrow.Doctrines.SraddhaNegative
 import WeldAndArrow.Doctrines.FaithNegative
 import WeldAndArrow.Doctrines.Deliberation
@@ -218,6 +219,12 @@ info: 'WAA.MisFeedNegative.fence_and_gate' does not depend on any axioms
 -/
 #guard_msgs in
 #print axioms MisFeedNegative.fence_and_gate
+
+/--
+info: 'WAA.misFeed_entries_carry_decomposition' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms misFeed_entries_carry_decomposition
 
 /--
 info: 'WAA.Grid.grade_independent_of_conditions' does not depend on any axioms

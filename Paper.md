@@ -956,12 +956,24 @@ the readings disagree at `false`/`true`, and `no_partition_recovery` proves no
 function of the shared grid data recovers both. This is the formal certificate
 that the being-boundary is a reading, not grid-carried structure.
 
+**Verdict ledger.** `Meta/VerdictLedger.lean` records the verdict-history
+paragraph as `generatorRecord`. The three retypes are three entries; the
+checked count is `generatorRecord_retype_count`, and
+`generatorRecord_newCell_count` records that no new row is added. The six-kind
+view is the projection `restraintKind`, checked by
+`generatorRecord_restraintKind_seen_count` and
+`restraintKind_exhaustive_on_record`. Lean anchors are pinned by examples that
+name `DirectionNegative`, the transposition pair, the fox theorem, and
+`MisFeedNegative.fence_and_gate`. The checkable half of the falsifier is
+`misFeed_entries_carry_decomposition`; the rate-trend half remains prose.
+
 ---
 
 ## 6. Meta/Audit.lean
 
 `Meta/Audit.lean` imports `Meta/Invariance.lean`,
-`Meta/InvarianceNegative.lean`, `Doctrines/SraddhaNegative.lean`,
+`Meta/InvarianceNegative.lean`, `Meta/VerdictLedger.lean`,
+`Doctrines/SraddhaNegative.lean`,
 `Doctrines/FaithNegative.lean`, and `Doctrines/Deliberation.lean`, plus the
 new correlations and fetters negative modules, then pins selected
 `#print axioms` outputs with `#guard_msgs`.
@@ -995,6 +1007,7 @@ The audited declarations are:
 - `Grid.DirectedConvention.no_waa_path_at_pole`
 - `Grid.DirectedConvention.map_waaAversionContext_iff`
 - `MisFeedNegative.fence_and_gate`
+- `misFeed_entries_carry_decomposition`
 - `OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus`
 
 The pinned result is: no audited theorem depends on `sorry` or

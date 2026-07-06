@@ -537,4 +537,26 @@ record by definition. The koan-form identification, the normative rule "may
 grade only where the call is carried", the quotable/gradeable genre contrast,
 and the Hakuin-epigram pedigree flag remain prose. The code checks the
 underdetermination fact and the carried-call architecture only.
+
+C.11 Meta/VerdictLedger.lean
+
+`generatorRecord` is the theorem-file verdict history rendered as data, not as
+a semantic interpretation of the generator. Its entries are episode-grained:
+Zahavi, the disposition/act cell, and the arrow are three retypes, so
+`generatorRecord_retype_count` is a check over the list rather than a stored
+multiplicity. The `anchors` field records the heterogeneity the paragraph
+needs: Zahavi and the disposition/act retype are prose-anchored, the arrow pins
+`DirectionNegative`, and the answered cases name their theorem anchors.
+
+`restraintKind` is the legal coarsening. It projects the eight entries to the
+six display kinds, while `generatorRecord_restraintKind_seen_count` and
+`restraintKind_exhaustive_on_record` check the image. No `RowTag` is added:
+`generatorRecord_newCell_count` is zero, so the ledger records the generator's
+self-restraint without expanding the table.
+
+`misFeed_entries_carry_decomposition` checks only the structural half of the
+falsifier: entries tagged as requiring a mis-feed decomposition carry one. The
+rate-trend clause and the claims that the retypes were forced, timely, and
+historically prior remain prose, because they quantify over the history rather
+than over the current record.
 -/

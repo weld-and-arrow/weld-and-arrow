@@ -13,7 +13,8 @@ Layers:
 * `Doctrines`: discourse-facing checked conditionals with sibling negatives.
 * `Identification`: the naming claim, ownership vocabulary, placements,
   disclaimers, commentary, and placement-gating results.
-* `Meta`: invariance discipline, sibling countermodels, and audit.
+* `Meta`: invariance discipline, sibling countermodels, verdict ledger, and
+  audit.
 
 Placement rules:
 1. Place a declaration by the vocabulary its statement consumes.
