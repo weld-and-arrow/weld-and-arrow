@@ -118,3 +118,4 @@ conflict check:
 - Do not remove a worktree while the shell is inside it.
 - Remove the task worktree before deleting its branch.
 - Use `git -c core.editor=true rebase --continue` so VS Code editor isn't atempted
+- Don't worry that the task worktree is still present at C:/Users/alicl/.codex/worktrees/ afterwards, it's locked by the process
