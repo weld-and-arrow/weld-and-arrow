@@ -29,7 +29,7 @@ jobs:
           gh api "repos/${SITE_REPO}/dispatches" \
             --method POST \
             --field event_type=source-push \
-            --raw-field client_payload="{\"sha\":\"${SOURCE_SHA}\"}"
+            --raw-field "client_payload[sha]=${SOURCE_SHA}"
 
       - name: Skip dispatch without token
         if: ${{ env.SITE_APP_ID == '' || env.SITE_APP_PRIVATE_KEY == '' }}
