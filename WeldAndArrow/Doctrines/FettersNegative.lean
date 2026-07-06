@@ -149,6 +149,121 @@ theorem seen_run_underdetermines_fetterCut :
   ⟨seen_track_agrees, quiet_seen_runQuiet, fresh_seen_runQuiet,
     quiet_fetterCut, fresh_not_fetterCut⟩
 
+theorem quiet_seen_runQuietWithin :
+    quietGrid.RunQuietWithin quietPath Path.streamEntry
+      (quietReading.provocationClass Fetter.identityView)
+      (fun _ => True) quietRun := by
+  intro w hmem hactual hfiber hclass _htag
+  exact quiet_seen_runQuiet w hmem hactual hfiber hclass
+
+theorem fresh_seen_runQuietWithin :
+    freshClenchGrid.RunQuietWithin freshPath Path.streamEntry
+      (freshReading.provocationClass Fetter.identityView)
+      (fun _ => True) freshRun := by
+  intro w hmem hactual hfiber hclass _htag
+  exact fresh_seen_runQuiet w hmem hactual hfiber hclass
+
+theorem quiet_fetterCutWithin :
+    quietGrid.FetterCutWithin quietPath Path.streamEntry quietReading
+      Fetter.identityView (fun _ => True) := by
+  intro w hactual hfiber hclass _htag
+  exact quiet_fetterCut w hactual hfiber hclass
+
+theorem fresh_not_fetterCutWithin :
+    ¬ freshClenchGrid.FetterCutWithin freshPath Path.streamEntry freshReading
+      Fetter.identityView (fun _ => True) := by
+  intro hcut
+  have hbot : AtBot (freshClenchGrid.share freshWeld) :=
+    hcut freshWeld rfl rfl True.intro True.intro
+  dsimp [Grid.share, freshClenchGrid, freshWeld, AtBot, shareBot] at hbot
+  exact Nat.not_succ_le_zero 4 hbot
+
+/-- A finite seen class-quiet track in a tag-region does not determine the
+    fresh call. The tag class is total here, so the old fresh-call obstruction
+    transfers directly to the product predicate. -/
+theorem seen_run_underdetermines_fetterCutWithin :
+    quietSeenTrackData = freshSeenTrackData ∧
+      quietGrid.RunQuietWithin quietPath Path.streamEntry
+        (quietReading.provocationClass Fetter.identityView)
+        (fun _ => True) quietRun ∧
+      freshClenchGrid.RunQuietWithin freshPath Path.streamEntry
+        (freshReading.provocationClass Fetter.identityView)
+        (fun _ => True) freshRun ∧
+      quietGrid.FetterCutWithin quietPath Path.streamEntry quietReading
+        Fetter.identityView (fun _ => True) ∧
+      ¬ freshClenchGrid.FetterCutWithin freshPath Path.streamEntry freshReading
+        Fetter.identityView (fun _ => True) :=
+  ⟨seen_track_agrees, quiet_seen_runQuietWithin, fresh_seen_runQuietWithin,
+    quiet_fetterCutWithin, fresh_not_fetterCutWithin⟩
+
+/- ==============================================================================
+   No grid-carried recovery of a unique soma boundary
+============================================================================== -/
+
+/-- Two fine tags with identical grid data and incompatible region readings. -/
+def somaGrid : Grid Nat where
+  Being      := Bool
+  Call       := Unit
+  Response   := Unit
+  respondsTo _ _ := some ()
+  grade _ _ _ := 0
+  conditions _ _ := True
+
+def somaMergeReading : somaGrid.SomaReading where
+  speechThoughtTag _ := True
+
+def somaSplitReading : somaGrid.SomaReading where
+  speechThoughtTag p := p = false
+
+theorem somaMerge_true_in_region :
+    somaMergeReading.speechThoughtTag true :=
+  True.intro
+
+theorem somaSplit_true_not_in_region :
+    ¬ somaSplitReading.speechThoughtTag true := by
+  intro h
+  cases h
+
+abbrev SomaW := RawWeld Bool Unit Unit
+
+abbrev SomaGridData : Type :=
+  (Bool → Unit → Option Unit) ×
+    (Bool → Unit → Unit → Nat) ×
+      (SomaW → SomaW → Prop)
+
+def somaGridData : SomaGridData :=
+  (somaGrid.respondsTo, somaGrid.grade, somaGrid.conditions)
+
+def mergedRegion (_p : Bool) : Prop := True
+
+def splitRegion (p : Bool) : Prop := p = false
+
+/-- The same grid data supports incompatible supplied soma-readings. Holding a
+    speech/thought region as recovered from the grid is the uniform freeze on
+    the tag axis. -/
+theorem no_region_boundary_recovery :
+    ¬ ∃ recover : SomaGridData → Bool → Prop,
+        recover somaGridData = mergedRegion ∧
+        recover somaGridData = splitRegion := by
+  rintro ⟨recover, hmerge, hsplit⟩
+  have hmerged : recover somaGridData true := by
+    rw [hmerge]
+    exact True.intro
+  have hsplitNot : ¬ recover somaGridData true := by
+    rw [hsplit]
+    intro h
+    cases h
+  exact hsplitNot hmerged
+
+theorem soma_boundary_underdetermined :
+    somaMergeReading.speechThoughtTag true ∧
+      ¬ somaSplitReading.speechThoughtTag true ∧
+        ¬ ∃ recover : SomaGridData → Bool → Prop,
+          recover somaGridData = mergedRegion ∧
+            recover somaGridData = splitRegion :=
+  ⟨somaMerge_true_in_region, somaSplit_true_not_in_region,
+    no_region_boundary_recovery⟩
+
 end FettersNegative
 
 end WAA

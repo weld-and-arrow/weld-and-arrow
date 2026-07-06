@@ -133,11 +133,32 @@ abbrev PathScheme : Type :=
 structure FetterReading where
   provocationClass : Fetter → G.Call → Prop
 
+/-- The model-supplied assignment of fine tags to the speech/thought region.
+    The grid cannot recover "speech/thought tag" or "instinctual tag"
+    unaided; the boundary is diagnosis-time data, never grid-carried
+    anatomy. -/
+structure SomaReading where
+  speechThoughtTag : G.Being → Prop
+
 /-- A fetter is cut in a fiber when that fiber reads at pole on the fetter's
     supplied provocation class. -/
 def FetterCut {Macro : Type} (κ : BeingCoarsening G Macro) (b : Macro)
     (fr : G.FetterReading) (f : Fetter) : Prop :=
   κ.FiberAtPoleOn b (fr.provocationClass f)
+
+/-- A fetter is cut within a tag-region when the fiber reads at pole on the
+    fetter's provocation class restricted to that region. Cessation of
+    enactment in the rectangle; no anti-fetter is possessed. -/
+def FetterCutWithin {Macro : Type} (κ : BeingCoarsening G Macro) (b : Macro)
+    (fr : G.FetterReading) (f : Fetter) (ts : G.Being → Prop) : Prop :=
+  κ.FiberAtPoleOnWithin b (fr.provocationClass f) ts
+
+theorem fetterCutWithin_univ_iff_fetterCut {Macro : Type}
+    (κ : BeingCoarsening G Macro) (b : Macro)
+    (fr : G.FetterReading) (f : Fetter) :
+    G.FetterCutWithin κ b fr f (fun _ => True) ↔
+      G.FetterCut κ b fr f :=
+  κ.fiberAtPoleOnWithin_univTags_iff b (fr.provocationClass f)
 
 /-- A seen run is quiet on a class. This is display over a finite track record,
     not a claim about fresh calls. -/
@@ -150,12 +171,33 @@ def RunQuiet {Macro : Type} (κ : BeingCoarsening G Macro) (b : Macro)
           cs w.call →
             AtBot (G.share w)
 
+/-- A seen run is quiet on a call-class within a tag-region. This remains
+    finite display, not a claim about fresh calls or fresh tags. -/
+def RunQuietWithin {Macro : Type} (κ : BeingCoarsening G Macro) (b : Macro)
+    (cs : G.Call → Prop) (ts : G.Being → Prop) (run : List G.Weld) : Prop :=
+  ∀ w : G.Weld,
+    w ∈ run →
+      G.Actual w →
+        κ.InFiber b w →
+          cs w.call →
+            ts w.agent →
+              AtBot (G.share w)
+
 theorem runQuiet_of_fetterCut {Macro : Type}
     {κ : BeingCoarsening G Macro} {b : Macro}
     {fr : G.FetterReading} {f : Fetter} {run : List G.Weld}
     (h : G.FetterCut κ b fr f) :
     G.RunQuiet κ b (fr.provocationClass f) run :=
   fun w _hmem hactual hfiber hclass => h w hactual hfiber hclass
+
+theorem runQuietWithin_of_fetterCutWithin {Macro : Type}
+    {κ : BeingCoarsening G Macro} {b : Macro}
+    {fr : G.FetterReading} {f : Fetter} {ts : G.Being → Prop}
+    {run : List G.Weld}
+    (h : G.FetterCutWithin κ b fr f ts) :
+    G.RunQuietWithin κ b (fr.provocationClass f) ts run :=
+  fun w _hmem hactual hfiber hclass htag =>
+    h w hactual hfiber hclass htag
 
 /-- The forward-looking guarantee as a conditional: a regime may promote a
     finite class-quiet track record to a whole-fiber cut, but the grid does not
@@ -172,6 +214,24 @@ theorem waaIrreversibleRegime_conditional {Macro : Type}
     (hregime : G.WaaIrreversibleRegime κ b fr run)
     (hseen : G.RunQuiet κ b (fr.provocationClass f) run) :
     G.FetterCut κ b fr f :=
+  hregime f hseen
+
+/-- The same forward-looking guarantee restricted to a supplied tag-region.
+    The guarantee remains conditional; the grid does not infer the regime. -/
+def WaaIrreversibleRegimeWithin {Macro : Type}
+    (κ : BeingCoarsening G Macro) (b : Macro)
+    (fr : G.FetterReading) (ts : G.Being → Prop) (run : List G.Weld) : Prop :=
+  ∀ f : Fetter,
+    G.RunQuietWithin κ b (fr.provocationClass f) ts run →
+      G.FetterCutWithin κ b fr f ts
+
+theorem waaIrreversibleRegimeWithin_conditional {Macro : Type}
+    {κ : BeingCoarsening G Macro} {b : Macro}
+    {fr : G.FetterReading} {ts : G.Being → Prop}
+    {run : List G.Weld} {f : Fetter}
+    (hregime : G.WaaIrreversibleRegimeWithin κ b fr ts run)
+    (hseen : G.RunQuietWithin κ b (fr.provocationClass f) ts run) :
+    G.FetterCutWithin κ b fr f ts :=
   hregime f hseen
 
 end Grid
@@ -267,6 +327,12 @@ theorem fiberAtPole_iff_classQuiet_univ {Macro : Type}
     κ.FiberAtPole b ↔ κ.FiberAtPoleOn b (fun _ => True) :=
   (κ.fiberAtPoleOn_univ_iff b).symm
 
+/-- Path quietness inside a supplied tag-region: the same path call-class
+    lattice, now restricted to a fine tag-class as well. -/
+def PathQuietWithin {Macro : Type} (κ : BeingCoarsening G Macro) (b : Macro)
+    (fr : G.FetterReading) (p : Path) (ts : G.Being → Prop) : Prop :=
+  κ.FiberAtPoleOnWithin b (Path.cutClasses fr p) ts
+
 /-- The arhat path-class is total, so path quietness at arhatship is ordinary
     fiber-at-pole typing. -/
 theorem arhatPathQuiet_iff_fiberAtPole
@@ -276,6 +342,30 @@ theorem arhatPathQuiet_iff_fiberAtPole
   change κ.FiberAtPoleOn Path.arhatship (fun _ => True) ↔
     κ.FiberAtPole Path.arhatship
   exact (G.fiberAtPole_iff_classQuiet_univ κ Path.arhatship).symm
+
+/-- At arhatship the call-class is total, so path quietness within a region is
+    exactly tag-restricted fiber-at-pole. -/
+theorem arhatPathQuietWithin_iff_fiberAtPoleWithin
+    {κ : G.PathScheme} (fr : G.FetterReading)
+    (ts : G.Being → Prop) :
+    G.PathQuietWithin κ Path.arhatship fr Path.arhatship ts ↔
+      κ.FiberAtPoleWithin Path.arhatship ts := by
+  change κ.FiberAtPoleOnWithin Path.arhatship (fun _ => True) ts ↔
+    κ.FiberAtPoleWithin Path.arhatship ts
+  exact κ.fiberAtPoleOnWithin_univCalls_iff Path.arhatship ts
+
+/-- The arhat-typing at the total tag-class is ordinary fiber-at-pole: the
+    lattice's top point adds no new predicate. Arhat reading is
+    `PathQuietWithin` at a supplied `SomaReading.speechThoughtTag`; the
+    all-tag point is the old fiber predicate, leaving residual clench in the
+    complement as an existing-cell reading. -/
+theorem arhatWithin_univTags_iff_fiberAtPole
+    {κ : G.PathScheme} (fr : G.FetterReading) :
+    G.PathQuietWithin κ Path.arhatship fr Path.arhatship (fun _ => True) ↔
+      κ.FiberAtPole Path.arhatship := by
+  change κ.FiberAtPoleOnWithin Path.arhatship
+    (fun _ => True) (fun _ => True) ↔ κ.FiberAtPole Path.arhatship
+  exact κ.fiberAtPoleOnWithin_univ_univ_iff Path.arhatship
 
 /-- If a class-restricted cut holds, no actual weld in that fiber and class
     carries a live self-pole index. -/
@@ -296,6 +386,15 @@ theorem identityView_excluded_at_arhatFiber
     ¬ κ.SelfAptTag Path.arhatship :=
   κ.liveFiberAtPole_not_selfAptTag h
 
+/-- Identity-view is excluded in the supplied speech/thought region once that
+    region is live at pole. -/
+theorem identityView_excluded_at_speechThoughtRegion {Macro : Type}
+    {κ : BeingCoarsening G Macro} {b : Macro}
+    (sr : G.SomaReading)
+    (h : κ.LiveFiberAtPoleWithin b sr.speechThoughtTag) :
+    ¬ κ.SelfAptTagWithin b sr.speechThoughtTag :=
+  κ.liveFiberAtPoleWithin_not_selfAptTagWithin h
+
 /-- Conceit as a live self-share is refuted fiber-wide by `FiberAtPole`. -/
 theorem conceit_excluded_at_arhatFiber
     {κ : G.PathScheme}
@@ -307,6 +406,20 @@ theorem conceit_excluded_at_arhatFiber
   fun _w hactual hfiber =>
     κ.no_live_index_under_fiberAtPole h hactual hfiber
 
+/-- Conceit as a live self-share is refuted throughout the supplied region by
+    tag-restricted fiber-at-pole. -/
+theorem conceit_excluded_within {Macro : Type}
+    {κ : BeingCoarsening G Macro} {b : Macro} {ts : G.Being → Prop}
+    (h : κ.FiberAtPoleWithin b ts) :
+    ∀ w : G.Weld,
+      G.Actual w →
+        κ.InFiber b w →
+          ts w.agent →
+            ¬ G.HasSelfPoleIndex w :=
+  fun _w hactual hfiber htag =>
+    κ.no_live_index_under_fiberAtPoleOnWithin h
+      hactual hfiber True.intro htag
+
 /-- If every fine tag under the arhat fiber is terminus-typed, the whole
     actual fiber is at pole. -/
 theorem arhatFiber_of_termini
@@ -314,6 +427,63 @@ theorem arhatFiber_of_termini
     (h : ∀ p : G.Being, κ.proj p = Path.arhatship → G.Terminus p) :
     κ.FiberAtPole Path.arhatship :=
   κ.fiberAtPole_of_fiber_termini h
+
+/-- Doctrine-facing name for region-restricted termini sufficiency. -/
+theorem regionFiber_of_termini {Macro : Type}
+    {κ : BeingCoarsening G Macro} {b : Macro} {ts : G.Being → Prop}
+    (h : ∀ p : G.Being, κ.proj p = b → ts p → G.Terminus p) :
+    κ.FiberAtPoleWithin b ts :=
+  κ.fiberAtPoleWithin_of_class_termini h
+
+/-- The speech/thought region in the register-clock witness: register `0`.
+    The boundary is supplied data, not recovered from the grid. -/
+def registerSpeechThoughtTag (p : registerClockGrid.Being) : Prop :=
+  p = (0 : Nat)
+
+theorem registerSpeechThoughtTag_cut :
+    registerClockCoarsening.FiberAtPoleWithin () registerSpeechThoughtTag := by
+  intro w _hactual _hfiber _hclass htag
+  cases w with
+  | mk agent call response =>
+      dsimp [registerSpeechThoughtTag] at htag
+      rw [htag]
+      dsimp [Grid.share, registerClockGrid, AtBot, shareBot]
+      show (0 : Nat) ≤ 0
+      decide
+
+theorem registerSpeechThoughtTag_mounts :
+    registerClockGrid.MountsSomewhere (0 : Nat) :=
+  ⟨(), ⟨(1 : Nat), rfl⟩⟩
+
+def registerUncutWeld : registerClockGrid.Weld :=
+  ⟨(1 : Nat), (), (2 : Nat)⟩
+
+theorem registerUncutWeld_live_index :
+    registerClockGrid.HasSelfPoleIndex registerUncutWeld := by
+  dsimp [Grid.HasSelfPoleIndex, Grid.share, registerClockGrid,
+    registerUncutWeld, AtBot, shareBot]
+  change ¬ (1 : Nat) ≤ 0
+  exact Nat.not_succ_le_zero 0
+
+/-- Region cuts constrain share, not function. In the register-clock witness,
+    the cut region mounts a response at the pole, while an uncut tag outside
+    the region also mounts a response and carries a live self-pole index. -/
+theorem unquiet_region_still_functions_witness :
+    registerClockCoarsening.FiberAtPoleWithin () registerSpeechThoughtTag ∧
+      registerClockGrid.MountsSomewhere (0 : Nat) ∧
+        ∃ p : registerClockGrid.Being,
+          ¬ registerSpeechThoughtTag p ∧
+            registerClockGrid.MountsSomewhere p ∧
+              ∃ w : registerClockGrid.Weld,
+                registerClockGrid.Actual w ∧
+                  w.agent = p ∧ registerClockGrid.HasSelfPoleIndex w :=
+  ⟨registerSpeechThoughtTag_cut, registerSpeechThoughtTag_mounts,
+    ⟨(1 : Nat), by
+      intro h
+      dsimp [registerSpeechThoughtTag] at h
+      exact Nat.succ_ne_zero 0 h,
+      ⟨(), ⟨(2 : Nat), rfl⟩⟩,
+      ⟨registerUncutWeld, rfl, rfl, registerUncutWeld_live_index⟩⟩⟩
 
 end Grid
 

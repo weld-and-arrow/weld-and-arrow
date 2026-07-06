@@ -377,6 +377,17 @@ theorem map_actualFiberInhabitedOn_iff
   · rintro ⟨w, hactual, hfiber, hclass⟩
     exact ⟨w, (G.map_actual_iff f w).mpr hactual, hfiber, hclass⟩
 
+theorem map_actualFiberInhabitedWithin_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (ts : G.Being → Prop) :
+    (displayMap κ f).ActualFiberInhabitedWithin b ts ↔
+      κ.ActualFiberInhabitedWithin b ts := by
+  constructor
+  · rintro ⟨w, hactual, hfiber, htag⟩
+    exact ⟨w, (G.map_actual_iff f w).mp hactual, hfiber, htag⟩
+  · rintro ⟨w, hactual, hfiber, htag⟩
+    exact ⟨w, (G.map_actual_iff f w).mpr hactual, hfiber, htag⟩
+
 theorem map_fiberAtPoleOn_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
     (b : Macro) (cs : G.Call → Prop) :
@@ -394,6 +405,31 @@ theorem map_fiberAtPoleOn_iff
       (f.atBot_iff (G.share w)).mpr horig
     simpa [Grid.map_share] using hmapped
 
+theorem map_fiberAtPoleOnWithin_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (cs : G.Call → Prop) (ts : G.Being → Prop) :
+    (displayMap κ f).FiberAtPoleOnWithin b cs ts ↔
+      κ.FiberAtPoleOnWithin b cs ts := by
+  constructor
+  · intro h w hactual hfiber hclass htag
+    have hmapped : AtBot (f.toFun (G.share w)) := by
+      simpa [Grid.map_share] using
+        h w ((G.map_actual_iff f w).mpr hactual) hfiber hclass htag
+    exact (f.atBot_iff (G.share w)).mp hmapped
+  · intro h w hactual hfiber hclass htag
+    have horig : AtBot (G.share w) :=
+      h w ((G.map_actual_iff f w).mp hactual) hfiber hclass htag
+    have hmapped : AtBot (f.toFun (G.share w)) :=
+      (f.atBot_iff (G.share w)).mpr horig
+    simpa [Grid.map_share] using hmapped
+
+theorem map_fiberAtPoleWithin_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (ts : G.Being → Prop) :
+    (displayMap κ f).FiberAtPoleWithin b ts ↔
+      κ.FiberAtPoleWithin b ts :=
+  map_fiberAtPoleOnWithin_iff κ f b (fun _ => True) ts
+
 theorem map_liveFiberAtPoleOn_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
     (b : Macro) (cs : G.Call → Prop) :
@@ -406,6 +442,19 @@ theorem map_liveFiberAtPoleOn_iff
   · intro h
     exact ⟨(map_actualFiberInhabitedOn_iff κ f b cs).mpr h.left,
       (map_fiberAtPoleOn_iff κ f b cs).mpr h.right⟩
+
+theorem map_liveFiberAtPoleWithin_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (ts : G.Being → Prop) :
+    (displayMap κ f).LiveFiberAtPoleWithin b ts ↔
+      κ.LiveFiberAtPoleWithin b ts := by
+  constructor
+  · intro h
+    exact ⟨(map_actualFiberInhabitedWithin_iff κ f b ts).mp h.left,
+      (map_fiberAtPoleWithin_iff κ f b ts).mp h.right⟩
+  · intro h
+    exact ⟨(map_actualFiberInhabitedWithin_iff κ f b ts).mpr h.left,
+      (map_fiberAtPoleWithin_iff κ f b ts).mpr h.right⟩
 
 theorem map_liveFiberAtPole_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
@@ -431,6 +480,21 @@ theorem map_selfAptTag_iff
   · intro h w hactual hfiber
     have hidx : G.HasSelfPoleIndex w :=
       h w ((G.map_actual_iff f w).mp hactual) hfiber
+    exact (G.map_hasSelfPoleIndex_iff f w).mpr hidx
+
+theorem map_selfAptTagWithin_iff
+    (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
+    (b : Macro) (ts : G.Being → Prop) :
+    (displayMap κ f).SelfAptTagWithin b ts ↔
+      κ.SelfAptTagWithin b ts := by
+  constructor
+  · intro h w hactual hfiber htag
+    have hidx : (G.map f).HasSelfPoleIndex w :=
+      h w ((G.map_actual_iff f w).mpr hactual) hfiber htag
+    exact (G.map_hasSelfPoleIndex_iff f w).mp hidx
+  · intro h w hactual hfiber htag
+    have hidx : G.HasSelfPoleIndex w :=
+      h w ((G.map_actual_iff f w).mp hactual) hfiber htag
     exact (G.map_hasSelfPoleIndex_iff f w).mpr hidx
 
 theorem map_liveSelfAptTag_iff

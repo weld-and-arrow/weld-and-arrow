@@ -129,8 +129,13 @@ Under a coarsening `κ`:
 - `SentientTag b` means some fine tag in the fiber mounts a response somewhere.
 - `not_sentientTag_iff_fiber_all_stone` proves that non-sentience is exactly
   the all-stone fiber; there is no separate `InsentientTag`.
-- `FiberAtPole b`, `SelfAptTag b`, and `Patchy b` are fiber-level readings.
-  `LiveFiberAtPole` and `LiveSelfAptTag` add actual-fiber inhabitation.
+- `FiberAtPole b`, `FiberAtPoleOn b cs`, `FiberAtPoleOnWithin b cs ts`,
+  and `FiberAtPoleWithin b ts` are whole-fiber, call-class, product, and
+  tag-region pole readings. `ActualFiberInhabitedWithin`,
+  `LiveFiberAtPoleWithin`, and `SelfAptTagWithin` are the tag-axis live and
+  self-apt companions.
+- `SelfAptTag b`, `LiveSelfAptTag b`, and `Patchy b` are the whole-fiber
+  self-apt and mixed readings.
 - `fiberAtPole_of_fiber_termini`, `no_live_index_under_fiberAtPole`,
   `selfAptTag_indices_are_per_weld_only`, and the live exclusivity theorems are
   the checked fiber facts.
@@ -526,20 +531,28 @@ version of the no-recovered-partition witness.
 utterance-diagnosis data. `kenChuTo_implies_waaBullTen` records the 到/Bull 10
 shape under the same coarsening.
 
-**Fetters.** `FiberAtPoleOn` and `LiveFiberAtPoleOn` are neutral
-class-restricted fiber predicates in `Signature/BeingConvention.lean`.
-`FetterReading` supplies model-side provocation classes, and `FetterCut` means
-quietness at pole on the relevant class. `Path.cutClasses` gives the nested
-path profiles; `arhatPathQuiet_iff_fiberAtPole` closes arhatship back to
-ordinary `FiberAtPole`. The checked anchors are
+**Fetters.** `FiberAtPoleOn`, `LiveFiberAtPoleOn`, `FiberAtPoleOnWithin`, and
+`FiberAtPoleWithin` are neutral fiber predicates in
+`Signature/BeingConvention.lean`. `FetterReading` supplies model-side
+provocation classes, `SomaReading` supplies model-side tag-regions, and
+`FetterCutWithin` means quietness at pole on the relevant call-class inside
+the supplied tag-class. `Path.cutClasses` gives the nested path profiles;
+`PathQuietWithin`, `arhatPathQuietWithin_iff_fiberAtPoleWithin`, and
+`arhatWithin_univTags_iff_fiberAtPole` close the two-axis lattice back to
+ordinary `FiberAtPole` at total calls and total tags. The checked anchors are
 `classQuiet_no_clench_in_class`, `identityView_excluded_at_arhatFiber`,
-`conceit_excluded_at_arhatFiber`, and `arhatFiber_of_termini`.
+`conceit_excluded_at_arhatFiber`, `arhatFiber_of_termini`,
+`identityView_excluded_at_speechThoughtRegion`, `conceit_excluded_within`,
+`regionFiber_of_termini`, and `unquiet_region_still_functions_witness`.
 
-The forward-looking face is conditional and diagnostic: `RunQuiet` is finite
-track-record quietness, `waaIrreversibleRegime_conditional` promotes it only
-under a supplied regime, and
-`FettersNegative.seen_run_underdetermines_fetterCut` shows that a seen quiet
-track does not determine a fresh call.
+The forward-looking face is conditional and diagnostic: `RunQuiet` and
+`RunQuietWithin` are finite track-record quietness,
+`waaIrreversibleRegime_conditional` and
+`waaIrreversibleRegimeWithin_conditional` promote them only under supplied
+regimes, and `FettersNegative.seen_run_underdetermines_fetterCut`,
+`FettersNegative.seen_run_underdetermines_fetterCutWithin`, and
+`FettersNegative.no_region_boundary_recovery` give the fresh-call and
+tag-boundary underdetermination witnesses.
 
 ---
 
@@ -616,7 +629,7 @@ regime fact to be supplied by a model, not a structural axiom.
 The contemporary placement checks are `siderits_waaPlacement`,
 `ganeri_waaPlacement`, `zahavi_waaPlacement`, and `sartre_waaPlacement`.
 
-**Disclaimers.** `Disclaimer.number` now runs through 51. The recent entries are
+**Disclaimers.** `Disclaimer.number` now runs through 52. The recent entries are
 `beingConvention` (35), `pilotGeneratedRows` (36), `beingTrichotomy` (37),
 `hareHornRegister` (38), `modalRealismFreeze` (39), and
 `aptnessConditionality` (40), `sraddhaConditional` (41), and
@@ -625,7 +638,8 @@ existing pins: `generatedTableStructure` (43), `poleAffirmingSemantics` (44),
 `proseRows` (45), and `errorFreeReading` (46). `misFeedFence` (47) records the
 avyākata fence-and-gate pair. The correlation entries are `tenBullsTyped` (48),
 `fiveRanksRetype` (49), `stageSchemeCoarsening` (50), and
-`fetterCutTyping` (51).
+`fetterCutTyping` (51). `twoAxisFetterLattice` (52) records the product
+call/tag fetter lattice.
 `waaKarmaIdentification_number` pins `waaKarmaIdentification = 9`, and
 `modalRealismFreeze_number` pins `modalRealismFreeze = 39`.
 `aptnessConditionality_number` pins `aptnessConditionality = 40`;
@@ -634,7 +648,8 @@ Sraddha entries, while `generatedTableStructure_number`,
 `poleAffirmingSemantics_number`, `errorFreeReading_number`, and
 `misFeedFence_number` pin the table and mis-feed entries; the four new
 correlation pins are `tenBullsTyped_number`, `fiveRanksRetype_number`,
-`stageSchemeCoarsening_number`, and `fetterCutTyping_number`.
+`stageSchemeCoarsening_number`, `fetterCutTyping_number`, and
+`twoAxisFetterLattice_number`.
 
 ---
 
@@ -694,8 +709,10 @@ Grade-facing transport facts:
   `map_faith_object_eq`, and `map_waaFaithPrinciple_reflect`
 - `BeingCoarsening.displayMap` and its `map_*_iff` lemmas for
   `InFiber`, `SameFiber`, `FiberInhabited`, `ActualFiberInhabited`,
-  `SentientTag`, `FiberAtPole`, `ActualFiberInhabitedOn`, `FiberAtPoleOn`,
-  `LiveFiberAtPole`, `LiveFiberAtPoleOn`, `SelfAptTag`,
+  `SentientTag`, `FiberAtPole`, `ActualFiberInhabitedOn`,
+  `ActualFiberInhabitedWithin`, `FiberAtPoleOn`, `FiberAtPoleOnWithin`,
+  `FiberAtPoleWithin`, `LiveFiberAtPole`, `LiveFiberAtPoleOn`,
+  `LiveFiberAtPoleWithin`, `SelfAptTag`, `SelfAptTagWithin`,
   `LiveSelfAptTag`, `Patchy`, `SelfConditioningTag`, and
   `StrongSelfConditioningTag`
 

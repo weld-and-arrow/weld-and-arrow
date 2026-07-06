@@ -69,6 +69,7 @@ inductive Disclaimer
   | fiveRanksRetype
   | stageSchemeCoarsening
   | fetterCutTyping
+  | twoAxisFetterLattice
 
 namespace Disclaimer
 
@@ -126,6 +127,7 @@ def number : Disclaimer → Nat
   | .fiveRanksRetype => 49
   | .stageSchemeCoarsening => 50
   | .fetterCutTyping => 51
+  | .twoAxisFetterLattice => 52
 
 theorem waaKarmaIdentification_number :
     number Disclaimer.waaKarmaIdentification = 9 := rfl
@@ -165,6 +167,9 @@ theorem stageSchemeCoarsening_number :
 
 theorem fetterCutTyping_number :
     number Disclaimer.fetterCutTyping = 51 := rfl
+
+theorem twoAxisFetterLattice_number :
+    number Disclaimer.twoAxisFetterLattice = 52 := rfl
 
 end Disclaimer
 

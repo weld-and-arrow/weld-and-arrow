@@ -264,31 +264,51 @@ The Five Ranks are data plus reading pins; `kenChuTo_implies_waaBullTen` names
 the 到/Bull 10 shape under the same coarsening. This is a retype of ranks as
 utterance-diagnosis and index-placement, not a second stage ladder.
 
-`FiberAtPoleOn` and `LiveFiberAtPoleOn` sit in `Signature/BeingConvention.lean`
-because they are neutral class-restricted fiber vocabulary. Fetters merely
-consume them: `FetterReading` supplies the provocation classes as model-side
-data, and `FetterCut` means the fiber is at pole on that fetter's class. Thus a
-cut is cessation of enactment in the class, not possession of an anti-fetter.
-`classQuiet_no_clench_in_class` is the checked soul-guard: where the class cut
-holds, no actual weld in that class carries a live self-pole index.
+`FiberAtPoleOn`, `LiveFiberAtPoleOn`, `FiberAtPoleOnWithin`, and the tag-axis
+within vocabulary sit in `Signature/BeingConvention.lean` because they are
+neutral fiber restrictions. The restriction now has two axes: call-class and
+fine tag-class. `FiberAtPoleOnWithin` is the product, monotone in both
+coordinates; the old call-axis and the new tag-axis are its total-class
+specializations. Fetters merely consume them: `FetterReading` supplies the
+provocation classes as model-side data, `SomaReading` supplies the tag-region
+with the same diagnosis-time status, and `FetterCutWithin` means the fiber is
+at pole on that fetter's call-class inside that tag-region. Thus a cut is
+cessation of enactment in a region, not possession of an anti-fetter.
+`classQuiet_no_clench_in_class` and `conceit_excluded_within` are the checked
+soul-guards: where the relevant cut holds, no actual weld in that region
+carries a live self-pole index. `FettersNegative.no_region_boundary_recovery`
+is the freedom witness on the tag axis.
 
 The path scheme is nested class quietness. `Path.cutClasses` gives the stream,
 once-return, non-return, and arhat call-classes; once-return adds no new cut
 class, matching the prose weakening clause. `arhatPathQuiet_iff_fiberAtPole`
 says the arhat class is total, so arhat path-quietness is ordinary
-`FiberAtPole`. The older arhat anchors remain: `identityView_excluded_at_arhatFiber`,
-`conceit_excluded_at_arhatFiber`, and `arhatFiber_of_termini`.
+`FiberAtPole`. The within-family adds the tag cut: arhat-typing is
+`PathQuietWithin` at `SomaReading.speechThoughtTag`, while buddha-typing is the
+total-tag point, theorem-identical to ordinary `FiberAtPole` by
+`arhatWithin_univTags_iff_fiberAtPole`. The buddha enters this fetter model as
+a theorem about the lattice's total point, not as a fresh definition; vāsanā is
+residual clench enacted in the complement region after the call-axis closes, an
+existing-cell reading. The older arhat anchors remain and have region duals:
+`identityView_excluded_at_arhatFiber`, `conceit_excluded_at_arhatFiber`,
+`arhatFiber_of_termini`, `identityView_excluded_at_speechThoughtRegion`,
+`conceit_excluded_within`, and `regionFiber_of_termini`.
 
 Identity-view is the coarsening-freeze enacted: the macro tag held as stored
 owner. Its cut is quietness on the identity-view provocation class, so
 stream-entry is typed as the cessation of the same attachment the uniform
 coarsening clause warns against.
 
-Irreversibility is three-layered. Whole-fiber `FetterCut` is internally
-irreversible by quantifier logic: if a later clenched class-weld exists, the cut
-never held. Run-assigned path tags are only display over seen data, and
-`FettersNegative.seen_run_underdetermines_fetterCut` gives the fresh-call
-transfer countermodel. A forward guarantee is hostable only as the conditional
-`waaIrreversibleRegime_conditional`, parallel in voice to the sraddha
-conditional.
+Irreversibility is three-layered on both axes. Whole-region `FetterCut` and
+`FetterCutWithin` are internally irreversible by quantifier logic: if a later
+clenched weld in the relevant rectangle exists, the cut never held. Run-assigned
+path tags are only display over seen data, and
+`FettersNegative.seen_run_underdetermines_fetterCut` with
+`FettersNegative.seen_run_underdetermines_fetterCutWithin` gives the fresh-call
+transfer countermodel. A forward guarantee is hostable only as the conditionals
+`waaIrreversibleRegime_conditional` and
+`waaIrreversibleRegimeWithin_conditional`, parallel in voice to the sraddha
+conditional. The orthogonality note is checked by
+`unquiet_region_still_functions_witness`: region cuts speak to share; the uncut
+region's tags act as fully as the cut region's tags.
 -/

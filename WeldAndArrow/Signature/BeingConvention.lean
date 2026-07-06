@@ -99,19 +99,45 @@ def LiveFiberAtPole (b : Macro) : Prop :=
 def FiberAtPoleOn (b : Macro) (cs : G.Call → Prop) : Prop :=
   ∀ w : G.Weld, G.Actual w → κ.InFiber b w → cs w.call → AtBot (G.share w)
 
+/-- Fiber-at-pole restricted on both axes: over a call-class `cs` and a fine
+    tag-class `ts`. The single-axis restrictions and plain fiber reading are
+    its specializations. -/
+def FiberAtPoleOnWithin (b : Macro) (cs : G.Call → Prop)
+    (ts : G.Being → Prop) : Prop :=
+  ∀ w : G.Weld, G.Actual w → κ.InFiber b w →
+    cs w.call → ts w.agent → AtBot (G.share w)
+
+/-- A fiber reads at the pole within a supplied fine tag-class. -/
+def FiberAtPoleWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+  κ.FiberAtPoleOnWithin b (fun _ => True) ts
+
 /-- A fiber has an actual weld in the supplied call-class. -/
 def ActualFiberInhabitedOn (b : Macro) (cs : G.Call → Prop) : Prop :=
   ∃ w : G.Weld, G.Actual w ∧ κ.InFiber b w ∧ cs w.call
 
+/-- A fiber has an actual weld whose agent lies in the supplied tag-class. -/
+def ActualFiberInhabitedWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+  ∃ w : G.Weld, G.Actual w ∧ κ.InFiber b w ∧ ts w.agent
+
 /-- The live, non-vacuous class-restricted fiber-at-pole predicate. -/
 def LiveFiberAtPoleOn (b : Macro) (cs : G.Call → Prop) : Prop :=
   κ.ActualFiberInhabitedOn b cs ∧ κ.FiberAtPoleOn b cs
+
+/-- The live, non-vacuous tag-restricted fiber-at-pole predicate. -/
+def LiveFiberAtPoleWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+  κ.ActualFiberInhabitedWithin b ts ∧ κ.FiberAtPoleWithin b ts
 
 /-- Every actual weld in the fiber carries a live self-pole index.
     Vacuous on empty or no-actual fibers; use `LiveSelfAptTag` when
     inhabitation matters. -/
 def SelfAptTag (b : Macro) : Prop :=
   ∀ w : G.Weld, G.Actual w → κ.InFiber b w → G.HasSelfPoleIndex w
+
+/-- Every actual weld in the supplied tag-class carries a live self-pole index.
+    Vacuous unless paired with a live/inhabited hypothesis. -/
+def SelfAptTagWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+  ∀ w : G.Weld, G.Actual w → κ.InFiber b w →
+    ts w.agent → G.HasSelfPoleIndex w
 
 /-- The live, non-vacuous self-apt predicate. -/
 def LiveSelfAptTag (b : Macro) : Prop :=
@@ -129,6 +155,15 @@ theorem fiberAtPole_of_fiber_termini {b : Macro}
   intro w hactual hfiber
   exact G.atBot_of_terminus_response (h w.agent hfiber) hactual
 
+/-- If every fine tag in the fiber and supplied tag-class is terminus-typed,
+    the tag-restricted actual fiber reads at the pole. -/
+theorem fiberAtPoleWithin_of_class_termini {b : Macro}
+    {ts : G.Being → Prop}
+    (h : ∀ p : G.Being, κ.proj p = b → ts p → G.Terminus p) :
+    κ.FiberAtPoleWithin b ts := by
+  intro w hactual hfiber _hclass htag
+  exact G.atBot_of_terminus_response (h w.agent hfiber htag) hactual
+
 /-- Under a fiber-at-pole reading, no actual weld in the fiber has a live
     self-pole index. -/
 theorem no_live_index_under_fiberAtPole {b : Macro}
@@ -143,6 +178,22 @@ theorem fiberAtPoleOn_mono {b : Macro} {cs ds : G.Call → Prop}
     κ.FiberAtPoleOn b ds :=
   fun w hactual hfiber hds => h w hactual hfiber (hsub w.call hds)
 
+theorem fiberAtPoleOnWithin_mono_call {b : Macro}
+    {cs ds : G.Call → Prop} {ts : G.Being → Prop}
+    (h : κ.FiberAtPoleOnWithin b cs ts)
+    (hsub : ∀ c : G.Call, ds c → cs c) :
+    κ.FiberAtPoleOnWithin b ds ts :=
+  fun w hactual hfiber hds htag =>
+    h w hactual hfiber (hsub w.call hds) htag
+
+theorem fiberAtPoleOnWithin_mono_tag {b : Macro}
+    {cs : G.Call → Prop} {ts us : G.Being → Prop}
+    (h : κ.FiberAtPoleOnWithin b cs ts)
+    (hsub : ∀ p : G.Being, us p → ts p) :
+    κ.FiberAtPoleOnWithin b cs us :=
+  fun w hactual hfiber hclass hus =>
+    h w hactual hfiber hclass (hsub w.agent hus)
+
 theorem fiberAtPoleOn_univ_iff (b : Macro) :
     κ.FiberAtPoleOn b (fun _ => True) ↔ κ.FiberAtPole b := by
   constructor
@@ -151,11 +202,51 @@ theorem fiberAtPoleOn_univ_iff (b : Macro) :
   · intro h w hactual hfiber _hclass
     exact h w hactual hfiber
 
+theorem fiberAtPoleOnWithin_univTags_iff
+    (b : Macro) (cs : G.Call → Prop) :
+    κ.FiberAtPoleOnWithin b cs (fun _ => True) ↔
+      κ.FiberAtPoleOn b cs := by
+  constructor
+  · intro h w hactual hfiber hclass
+    exact h w hactual hfiber hclass True.intro
+  · intro h w hactual hfiber hclass _htag
+    exact h w hactual hfiber hclass
+
+theorem fiberAtPoleOnWithin_univCalls_iff
+    (b : Macro) (ts : G.Being → Prop) :
+    κ.FiberAtPoleOnWithin b (fun _ => True) ts ↔
+      κ.FiberAtPoleWithin b ts :=
+  Iff.rfl
+
+theorem fiberAtPoleOnWithin_univ_univ_iff (b : Macro) :
+    κ.FiberAtPoleOnWithin b (fun _ => True) (fun _ => True) ↔
+      κ.FiberAtPole b := by
+  constructor
+  · intro h w hactual hfiber
+    exact h w hactual hfiber True.intro True.intro
+  · intro h w hactual hfiber _hclass _htag
+    exact h w hactual hfiber
+
+theorem fiberAtPoleWithin_of_fiberAtPole {b : Macro}
+    {ts : G.Being → Prop}
+    (h : κ.FiberAtPole b) :
+    κ.FiberAtPoleWithin b ts := by
+  intro w hactual hfiber _hclass _htag
+  exact h w hactual hfiber
+
 theorem no_live_index_under_fiberAtPoleOn {b : Macro} {cs : G.Call → Prop}
     (h : κ.FiberAtPoleOn b cs) {w : G.Weld}
     (hactual : G.Actual w) (hfiber : κ.InFiber b w) (hclass : cs w.call) :
     ¬ G.HasSelfPoleIndex w :=
   G.no_self_pole_index_of_atBot w (h w hactual hfiber hclass)
+
+theorem no_live_index_under_fiberAtPoleOnWithin {b : Macro}
+    {cs : G.Call → Prop} {ts : G.Being → Prop}
+    (h : κ.FiberAtPoleOnWithin b cs ts) {w : G.Weld}
+    (hactual : G.Actual w) (hfiber : κ.InFiber b w)
+    (hclass : cs w.call) (htag : ts w.agent) :
+    ¬ G.HasSelfPoleIndex w :=
+  G.no_self_pole_index_of_atBot w (h w hactual hfiber hclass htag)
 
 /-- Fiber soul-guard: even where the self-convention is apt, the index is
     only the per-weld agent tag. No macro owner is produced. -/
@@ -178,6 +269,15 @@ theorem liveFiberAtPole_not_selfAptTag {b : Macro}
     (h : κ.LiveFiberAtPole b) :
     ¬ κ.SelfAptTag b :=
   fun hself => κ.fiberAtPole_selfAptTag_exclusive h.left h.right hself
+
+theorem liveFiberAtPoleWithin_not_selfAptTagWithin {b : Macro}
+    {ts : G.Being → Prop}
+    (h : κ.LiveFiberAtPoleWithin b ts) :
+    ¬ κ.SelfAptTagWithin b ts := by
+  intro hself
+  rcases h.left with ⟨w, hactual, hfiber, htag⟩
+  exact hself w hactual hfiber htag
+    (h.right w hactual hfiber True.intro htag)
 
 theorem liveSelfAptTag_not_fiberAtPole {b : Macro}
     (h : κ.LiveSelfAptTag b) :

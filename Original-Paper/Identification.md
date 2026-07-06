@@ -111,6 +111,7 @@ The following are conventional and my own -- original moves, each flagged agains
 49. **Five Ranks retyped** -- ranks read as utterance-diagnosis and index-placement, with 到 checked by the Bull 10 shape rather than treated as a stage attained and stored.
 50. **Stage-schemes as coarsenings** -- the 52 stages, Bulls, and Ranks are legal as diagnosis-time `BeingCoarsening`s; the freeze warning attaches uniformly to holding any scheme as grid-carried structure.
 51. **Fetter-cut typing** -- fetter cutting read as class-restricted fiber-at-pole typing (`FiberAtPoleOn`), with provocation classes model-supplied; whole-fiber irreversibility is definitional, finite-run diagnosis is underdetermined, and the practical forward guarantee remains conditional.
+52. **Two-axis fetter lattice** -- fetter cutting extended to the (call-class × tag-class) product; arhat and buddha typed as two cut-points of one predicate family, the buddha as the univ-point identical to `FiberAtPole` by theorem; region boundary shown underdetermined.
 
 ## Glossary
 
