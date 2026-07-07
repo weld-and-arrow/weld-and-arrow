@@ -2,7 +2,7 @@ import WeldAndArrow.Exposition.Basic
 
 namespace WAA.Exposition
 
-def identificationBody : String := r#"# The Weld and the Arrow — III. The Identification and Placements
+def identificationBody : String := r#"# Weld and Arrow — III. The Identification and Placements
 
 *Third of three files: the identification claim, the act-time placements that earn the name karma, the contemporary placements, the pole-typing corollary, and the disclaimers, enumerated. Cross-references to the companion files are marked (Theory) and (Theorems).*
 

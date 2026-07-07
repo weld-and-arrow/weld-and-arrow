@@ -2,7 +2,7 @@ import WeldAndArrow.Exposition.Basic
 
 namespace WAA.Exposition
 
-def theoremsBody : String := r#"# The Weld and the Arrow — II. Theorems
+def theoremsBody : String := r#"# Weld and Arrow — II. Theorems
 
 *Second of three files. Nothing in this file is posited: everything is derived from the rules stated in Theory. §1 collects what falls out of the typing directly; §2 the derivations that meet existing discourses on their own ground; §3 gathers the instructive absences in both. Cross-references to the companion files are marked (Theory) and (Identification).*
 
