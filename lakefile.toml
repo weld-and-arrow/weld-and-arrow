@@ -18,5 +18,5 @@ name = "exposition_gen"
 root = "WeldAndArrow.Gen.Exposition"
 
 [[lean_exe]]
-name = "exposition_generation_test"
+name = "exposition_generation_full"
 root = "WeldAndArrow.Gen.FullExpositionGeneration"
