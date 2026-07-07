@@ -122,10 +122,6 @@ The following are conventional and my own -- original moves, each flagged agains
 56. **Verdict record as data** -- `generatorRecord` stores the verdict history at episode grain: four retypes as four entries, `restraintKind` as the six-kind coarsening, theorem anchors pinned by name beside prose anchors, and `misFeed_entries_carry_decomposition` checking the structural falsifier while the rate trend remains prose.
 57. **Compound positions as cell-stacks** -- skepticism, solipsism, the exit-premise, existentialism, and the ledger-picture are Lean data over existing `TableRow`s, with facets, roles, voice checks, legal-element checks, and core-cell counts in `Consequences/Compounds.lean`; value-creation and the ledger-picture's causal skeleton are recorded as legal rather than erroneous.
 
-## Glossary
-
-See [Glossary.md](Glossary.md). The canonical source is `WeldAndArrow/Meta/Glossary.lean`, rendered through `WeldAndArrow/Exposition/Glossary.lean`; exercise the full generated prose surface with `lake exe exposition_generation_test`.
-
 ---
 
 *With thanks to Claude (Anthropic) -- sparring partner and midwife to a more resonant theory, and ChatGPT (OpenAI) for the Lean proofs and for systematic refactorings.*

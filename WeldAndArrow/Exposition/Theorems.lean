@@ -274,10 +274,6 @@ Absences the system generates deliberately, in both of the categories above — 
 - **No stage immune to error.** The taxonomy has no terminal safe cell — a stage immune to error would be a rank, and a rank is the shit-stick. Even the buddha's immunity is per-call, not possessed.
 - **Prudential privilege underivable.** The special rational authority of self-concern is an absence owned as theorem, not cost — in Śāntideva's company, with the bodhisattva's impartiality falling out as its display-face.
 - **No measure over the grade.** Row 2 states a partial ordering only; the scalar is display. The absent metric is priced deliberately — the soteriology consumes only the ordering, so no measure is owed. (And none over delivery either: effectiveness enters as an ordering within a regime, never as a probability apparatus — the standing declines, §1.)
-
-## Glossary
-
-See [Glossary.md](Glossary.md). The canonical source is `WeldAndArrow/Meta/Glossary.lean`, rendered through `WeldAndArrow/Exposition/Glossary.lean`; exercise the full generated prose surface with `lake exe exposition_generation_test`.
 "#
 
 def theoremsDoc : Doc :=
