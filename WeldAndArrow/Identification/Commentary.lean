@@ -270,6 +270,12 @@ content rows: an all-stone/no-live grid and the two-bottom direction-void
 carrier make the relevant denials true at non-live act-time, so fusion fails
 there.
 
+`CoverageNegative` certifies the coverage hypotheses on
+`directionVoid_of_surjective` and `map_waaFullyEnlightened_of_surjective`:
+strictness outside the image of a display reparameterization can make
+direction-voidness and faith-closure fail to preserve, parallel in duty to the
+aptness countermodels above.
+
 C.4 Doctrines/FourTruths.lean, Doctrines/Sraddha.lean,
     Doctrines/Faith.lean, Doctrines/Ethics.lean, and the sibling negative modules
 

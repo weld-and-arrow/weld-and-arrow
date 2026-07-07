@@ -23,6 +23,18 @@ info: 'WAA.DirectionNegative.no_direction_recovery_from_conditionsEither' depend
 #print axioms DirectionNegative.no_direction_recovery_from_conditionsEither
 
 /--
+info: 'WAA.CoverageNegative.directionVoid_needs_coverage' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms CoverageNegative.directionVoid_needs_coverage
+
+/--
+info: 'WAA.CoverageNegative.waaFullyEnlightened_needs_coverage' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms CoverageNegative.waaFullyEnlightened_needs_coverage
+
+/--
 info: 'WAA.Grid.stateToolFits_iff_atBot' does not depend on any axioms
 -/
 #guard_msgs in

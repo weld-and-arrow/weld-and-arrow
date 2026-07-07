@@ -106,7 +106,9 @@ theorem directionVoid_reflect (f : DisplayReparam Contrib Contrib')
     h (f.toFun a) (f.toFun b) ((f.strict_iff a b).mpr hstrict)
 
 /-- Full preservation of carrier-wide direction-voidness needs the target
-    display to be covered by the reparameterization. -/
+    display to be covered by the reparameterization.
+    `CoverageNegative.directionVoid_needs_coverage` shows the hypothesis is
+    needed. -/
 theorem directionVoid_of_surjective
     (hsurj : ∀ b : Contrib', ∃ a : Contrib, f.toFun a = b)
     (h : DirectionVoid Contrib) :
@@ -789,7 +791,9 @@ theorem map_waaFullyEnlightened_reflect
       (h.right (before.map f) deed reception hdeed)
 
 /-- Preservation of the universally quantified faith closure needs the target
-    display carrier to be covered by the reparameterization. -/
+    display carrier to be covered by the reparameterization.
+    `CoverageNegative.waaFullyEnlightened_needs_coverage` shows the hypothesis
+    is needed. -/
 theorem map_waaFullyEnlightened_of_surjective
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
     {b : G.Being} (h : WaaFullyEnlightened G b) :

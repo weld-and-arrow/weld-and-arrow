@@ -412,6 +412,105 @@ theorem no_partition_recovery :
 end BeingNegative
 
 /- ==============================================================================
+   Coverage countermodels
+
+   Reading and motivation: Identification/Commentary.lean, C.3.
+
+   The same strict pair `(0, 1)` does double duty here: it refutes
+   carrier-wide direction-voidness after mapping, and it supplies the live
+   tendency that the source carrier never quantified over. The
+   `WaaFullyEnlightened` witness also gates the coverage-carrying corollaries
+   `map_waaFullyEnlightened_iff`, `map_faith_object_eq`, and
+   `map_waaFaithPrinciple_reflect`.
+============================================================================== -/
+
+namespace CoverageNegative
+
+open Grid.DirectedConvention
+
+def embedIntoNat : DisplayReparam Unit Nat where
+  toFun _ := 0
+  le_iff _ _ := ⟨fun _ => Nat.le_refl 0, fun _ => True.intro⟩
+  atBot_bot := Nat.le_refl 0
+
+theorem embedIntoNat_not_surjective (u : Unit) :
+    embedIntoNat.toFun u ≠ 1 := by
+  intro h
+  cases h
+
+theorem directionVoid_unit : DirectionVoid Unit :=
+  no_strict_of_all_orderEq (fun _ _ => ⟨True.intro, True.intro⟩)
+
+theorem strict_zero_one : Strict (0 : Nat) 1 :=
+  ⟨Nat.zero_le 1, fun h => Nat.not_succ_le_zero 0 h⟩
+
+theorem not_directionVoid_nat : ¬ DirectionVoid Nat :=
+  fun h => h 0 1 strict_zero_one
+
+/-- Packaged in the `oldEqTerminus_not_invariant` style: the
+    reparameterization exists, coverage fails at `1`, the source is
+    direction-void, and the target is not. -/
+theorem directionVoid_needs_coverage :
+    (∀ u : Unit, embedIntoNat.toFun u ≠ 1) ∧
+      DirectionVoid Unit ∧ ¬ DirectionVoid Nat :=
+  ⟨embedIntoNat_not_surjective, directionVoid_unit, not_directionVoid_nat⟩
+
+def phantomGrid : Grid Unit where
+  Being      := Unit
+  Call       := Unit
+  Response   := Bool
+  respondsTo _ _ := some true
+  grade _ _ _ := ()
+  conditions _deed reception := reception.response = false
+
+def phantomDeed : phantomGrid.Weld := ⟨(), (), true⟩
+
+def phantomReception : phantomGrid.Weld := ⟨(), (), false⟩
+
+theorem phantom_waaFullyEnlightened :
+    WaaFullyEnlightened phantomGrid () := by
+  refine ⟨?_, ?_⟩
+  · exact ⟨fun _ => ⟨true, rfl⟩, fun _ _ _ => True.intro⟩
+  · intro before _deed _reception _hdeed hlive _hdel
+    exact False.elim (hlive True.intro)
+
+theorem not_waaFullyEnlightened_map :
+    ¬ WaaFullyEnlightened (phantomGrid.map embedIntoNat) () := by
+  intro h
+  let liveBefore : Config Nat := ⟨1⟩
+  have hlive : ¬ AtBot liveBefore.tendency := by
+    intro hbot
+    exact Nat.not_succ_le_zero 0 hbot
+  have hdel :
+      DeliveredTo (phantomGrid.map embedIntoNat) phantomDeed phantomReception := rfl
+  have hlanding :
+      HasShareDropLanding (phantomGrid.map embedIntoNat) liveBefore phantomDeed :=
+    h.right liveBefore phantomDeed phantomReception rfl hlive hdel
+  rcases hlanding with ⟨reception, hland⟩
+  have hlands :
+      LandsAt (phantomGrid.map embedIntoNat) phantomDeed reception :=
+    hland.left
+  have hdelivered : reception.response = false := hlands.left
+  have hactual :
+      (phantomGrid.map embedIntoNat).respondsTo reception.agent reception.call =
+        some reception.response :=
+    hlands.right
+  cases reception with
+  | mk agent call response =>
+      cases agent
+      cases call
+      cases response
+      · cases hactual
+      · cases hdelivered
+
+theorem waaFullyEnlightened_needs_coverage :
+    WaaFullyEnlightened phantomGrid () ∧
+      ¬ WaaFullyEnlightened (phantomGrid.map embedIntoNat) () :=
+  ⟨phantom_waaFullyEnlightened, not_waaFullyEnlightened_map⟩
+
+end CoverageNegative
+
+/- ==============================================================================
    §O  Weld-boundary freedom: pairing is not grid-carried
 
    This is one level below the being-boundary witness. `no_partition_recovery`

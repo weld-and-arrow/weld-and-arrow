@@ -852,6 +852,9 @@ preservation/reflection theorem `a ≼ b ↔ toFun a ≼ toFun b`, and a proof t
 `DisplayReparam.atBot_iff` proves `AtBot (toFun a) ↔ AtBot a`.
 `DisplayReparam.orderEq_iff` proves that order-equivalence is preserved and
 reflected.
+`DisplayReparam.directionVoid_reflect` is hypothesis-free, while
+`directionVoid_of_surjective` needs target-carrier coverage;
+`CoverageNegative.directionVoid_needs_coverage` shows why.
 `DisplayReparam.id` is the identity reparameterization, with `id_toFun` as its
 definitional projection lemma. `DisplayReparam.comp` composes
 reparameterizations, with `comp_toFun` as its definitional projection lemma.
@@ -889,10 +892,12 @@ Grade-facing transport facts:
 - `Grid.DirectedConvention.map_shortfallClosedAt_iff`
 - `Grid.DirectedConvention.map_waaAversionContext_iff`
 - `Grid.DirectedConvention.map_waaFullyEnlightened_reflect` and
-  `map_waaFullyEnlightened_of_surjective`
+  `map_waaFullyEnlightened_of_surjective`; the latter's coverage hypothesis is
+  witnessed by `CoverageNegative.waaFullyEnlightened_needs_coverage`
 - `Grid.DirectedConvention.WaaPathClaim.map`,
   `map_waaPathClaim_holds_iff`, `map_waaFullyEnlightened_iff`,
-  `map_faith_object_eq`, and `map_waaFaithPrinciple_reflect`
+  `map_faith_object_eq`, and `map_waaFaithPrinciple_reflect`; the
+  coverage-carrying entries share that same witness
 - `BeingCoarsening.displayMap` and its `map_*_iff` lemmas for
   `InFiber`, `SameFiber`, `FiberInhabited`, `ActualFiberInhabited`,
   `SentientTag`, `FiberAtPole`, `ActualFiberInhabitedOn`,
@@ -983,6 +988,15 @@ all stone-typed and whose act-time tiers have no live share. It proves
 `contentBeforeAfterRow_not_obeys_twoBottom` shows the directed-time content row
 also needs its strict-direction aptness hypothesis.
 
+**`CoverageNegative`.** `embedIntoNat` sends the one-point carrier to `0` in
+`Nat`, leaving all target strictness at and above `1` outside the image.
+`directionVoid_needs_coverage` shows that carrier-wide direction-voidness does
+not push forward when the target has strict comparisons outside the image.
+`phantomGrid` gives the parallel faith-closure witness:
+`waaFullyEnlightened_needs_coverage` shows that the mapped carrier introduces
+live tendencies the source never quantified over, so full enlightenment does
+not preserve without coverage.
+
 **`MisFeedNegative` in `Identification/Residues.lean`.** `IndexSeekingForm` is the type of candidate
 answer-functions for the index-seeking question-shape: one designation per
 field residue (`Call × Response`), each purporting to name the residue's
@@ -1066,6 +1080,8 @@ The audited declarations are:
 
 - `no_agent_recovery_of_field_collision`
 - `DirectionNegative.no_direction_recovery_from_conditionsEither`
+- `CoverageNegative.directionVoid_needs_coverage`
+- `CoverageNegative.waaFullyEnlightened_needs_coverage`
 - `Grid.stateToolFits_iff_atBot`
 - `Grid.map_actual_iff`
 - `Grid.map_isShareDrop_iff`
