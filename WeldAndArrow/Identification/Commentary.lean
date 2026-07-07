@@ -559,6 +559,49 @@ owner. Its cut is quietness on the identity-view provocation class, so
 stream-entry is typed as the cessation of the same attachment the uniform
 coarsening clause warns against.
 
+`Doctrines/Factors.lean` adds the path-factor reading over that same fetter
+table. `PathFactor.blockerClass` is derived from `FetterReading`, so the factor
+scheme is a regrouping of the canonical classes rather than a second taxonomy:
+rites is the floor component, view covers identity-view and doubt, and resolve
+covers sensual desire and ill will. `FactorHeld` and `FactorReleased` are a
+new factor-relation frame. Hold is a witnessed live in-fiber weld in the
+factor's blocker class; release is the whole-class `FiberAtPoleOn` cut. Hold is
+not an error by itself, since a stage-appropriate hold is correct. The error
+taxonomy remains freeze/collapse on utterance distinctions, and clench remains
+the share-frame live-index vocabulary. The raft simile lands exactly at
+`factorReleased_rites_iff_ritesGrasp_cut`: rites-grasp is the grasping mode of
+the first hold, and cutting it is the first release.
+
+The bridge reading over the existing cells is deliberately prose-only: freeze
+is a hold maintained past its use, while collapse is a release enacted before
+its use. Each stage's characteristic mistakes can therefore be diagnosed as
+overstayed hold and premature release on that stage's factor. The four
+hold/release combinations, and the eight once-return-to-non-return gradations
+they generate when applied across the view and resolve pairs, are
+diagnosis-time readings over welds and classes, never stored ranks.
+`WaaResolveAttenuation` gives once-return positive content without adding a cut
+class: a resolve-class share-drop run can be strict while still stopping short
+of the pole. `WaaSerialFactorRegime` is the matching "usually in order"
+conditional; `FactorsNegative.seen_run_underdetermines_factorOrder` blocks
+deriving that order from the grid alone.
+
+One level up, the Theravada-side risk is overstaying the hold on the scheme
+itself: rank, the shit-stick, the coarsening read as carried structure. The
+Mahayana-side risk is premature release of diagnosis: the lens-dismissal cell,
+checked elsewhere as `lens_denial_collapse_self_refuting`. Emptiness is not
+the absence of the coarsening, but the refusal to hold it as grid-carried.
+Lineages differ in where the supplied reading puts its weight, not in type
+signature; `FactorsNegative.lineage_underdetermined_by_seen_run` specializes
+`CorrelationsNegative.no_stage_boundary_recovery` to that switch.
+
+Speech and conduct are named as `PathFactor.speech` and `PathFactor.conduct`,
+but their blocker classes are `False` in this phase. The open question is what
+"holding a factor" should mean for the upper pair if an arhat is already at
+`FiberAtPole`: current `FactorHeld` requires `HasSelfPoleIndex`, and the arhat
+anchors refute that fiber-wide. This commit therefore leaves
+`arhatPathQuiet_iff_fiberAtPole`, `all_fetters_cut_at_arhatFiber`, the total
+arhat class, and `SomaReading.speechThoughtTag` untouched.
+
 Irreversibility is three-layered on both axes. Whole-region `FetterCut` and
 `FetterCutWithin` are internally irreversible by quantifier logic: if a later
 clenched weld in the relevant rectangle exists, the cut never held. Run-assigned

@@ -239,7 +239,9 @@ end Grid
 namespace Path
 
 /-- Which named fetters have been abandoned at a path. Once-return adds no new
-    cut classes; it is retained as a path tag for the prose weakening clause. -/
+    cut classes; it is retained as a path tag for the prose weakening clause.
+    `Doctrines/Factors.lean` gives that weakening checked content as
+    `WaaResolveAttenuation`. -/
 def cutsFetter : Path → Fetter → Prop
   | .streamEntry, f => Fetter.abandonedAt f = .streamEntry
   | .onceReturn, f => Fetter.abandonedAt f = .streamEntry

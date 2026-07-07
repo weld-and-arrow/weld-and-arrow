@@ -630,6 +630,57 @@ def glossary : List GlossaryEntry := [
     anchors := [``Grid.WaaSuddenArrival, ``Grid.WaaGradualArrival,
       ``Grid.rate_invisible_to_config, ``SuddenGradualNegative.subitism_frequency_underdetermined]
     seeAlso := ["re-pitch", "per-call/global freeze"] },
+  { term := "PathFactor"
+    kind := .leanConvention
+    gloss := "PathFactor names the factor-side regrouping of the existing fetter table. Rites, view, and resolve are active; speech and conduct are named but inert until the upper-pair question is settled."
+    anchors := [``PathFactor, ``PathFactor.blockerClass]
+    seeAlso := ["coarsening", "tag/fiber"] },
+  { term := "FactorHeld"
+    kind := .leanConvention
+    gloss := "FactorHeld is a seen-run witness: an actual in-fiber weld in the factor blocker class carries a live self-pole index. It is not itself an error; it is factor-frame vocabulary, not freeze/collapse and not clench alone."
+    anchors := [``Grid.FactorHeld]
+    seeAlso := ["PathFactor", "clench", "weld"] },
+  { term := "FactorReleased"
+    kind := .leanConvention
+    gloss := "FactorReleased is the release half of the factor pair: the fiber is at pole on the factor blocker class. One actual live weld in that class refutes it."
+    anchors := [``Grid.FactorReleased, ``Grid.not_factorHeld_of_factorReleased]
+    seeAlso := ["PathFactor", "FactorHeld", "pole"] },
+  { term := "WaaStreamEnterer"
+    kind := .leanConvention
+    gloss := "WaaStreamEnterer is the path-position reading over the first pair: rites released, view held on the seen run. It deliberately separates path display from the fruit cut."
+    anchors := [``Grid.WaaStreamEnterer]
+    seeAlso := ["FactorHeld", "FactorReleased"] },
+  { term := "WaaStreamWinner"
+    kind := .leanConvention
+    gloss := "WaaStreamWinner is the fruit-position reading for stream entry: rites and view are released, and Lean proves it coincides with the existing stream-entry cut class. The terminology is a checked departure from treating sotapanna as only one undivided label."
+    anchors := [``Grid.WaaStreamWinner,
+      ``Grid.waaStreamWinner_iff_streamEntry_cutClasses]
+    seeAlso := ["WaaStreamEnterer", "FactorReleased"] },
+  { term := "WaaOnceReturner"
+    kind := .leanConvention
+    gloss := "WaaOnceReturner keeps the stream-winning fruit and adds a witnessed resolve hold on the seen run. Its extra checked content is attenuation, not a new cut class."
+    anchors := [``Grid.WaaOnceReturner]
+    seeAlso := ["WaaStreamWinner", "FactorHeld"] },
+  { term := "WaaNonReturner"
+    kind := .leanConvention
+    gloss := "WaaNonReturner is the fruit-position reading after resolve release. Lean proves it is exactly the non-return cut class, so the factor scheme remains a reading over the fetter lattice."
+    anchors := [``Grid.WaaNonReturner,
+      ``Grid.waaNonReturner_iff_nonReturn_cut]
+    seeAlso := ["WaaOnceReturner", "FactorReleased"] },
+  { term := "WaaResolveAttenuation"
+    kind := .leanConvention
+    gloss := "WaaResolveAttenuation gives once-return positive content: a strict resolve-class share-drop run whose final tendency has not reached the pole."
+    anchors := [``Grid.WaaResolveAttenuation,
+      ``Grid.waaOnceReturner_attenuation_witness,
+      ``Grid.attenuation_not_release]
+    seeAlso := ["WaaOnceReturner", "re-pitch"] },
+  { term := "WaaSerialFactorRegime"
+    kind := .leanConvention
+    gloss := "WaaSerialFactorRegime is the conditional voice for factor order. If the supplied regime reads seen share-drops as rites before view before resolve, it promotes path readings to fruit readings; the grid never derives the regime or any frequency claim."
+    anchors := [``Grid.WaaSerialFactorRegime,
+      ``Grid.waaSerialFactorRegime_conditional,
+      ``FactorsNegative.seen_run_underdetermines_factorOrder]
+    seeAlso := ["WaaResolveAttenuation", "subitism/gradualism"] },
   { term := "śraddhā"
     kind := .canonical
     gloss := "Śraddhā means faith or trust. In this system it is modeled as an antecedent for testimony and path response, never as a field fact the grid can discharge by itself."
@@ -749,7 +800,7 @@ def seeAlsoTargetsEarlierFrom (seen : List String) :
 def seeAlsoTargetsEarlier : Bool :=
   seeAlsoTargetsEarlierFrom [] glossary
 
-example : glossary.length = 128 := rfl
+example : glossary.length = 137 := rfl
 
 example : glossaryTerms.Nodup := by
   native_decide

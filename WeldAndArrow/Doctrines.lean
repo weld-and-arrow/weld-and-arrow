@@ -17,4 +17,6 @@ import WeldAndArrow.Doctrines.OtherPower
 import WeldAndArrow.Doctrines.OtherPowerNegative
 import WeldAndArrow.Doctrines.Fetters
 import WeldAndArrow.Doctrines.FettersNegative
+import WeldAndArrow.Doctrines.Factors
+import WeldAndArrow.Doctrines.FactorsNegative
 import WeldAndArrow.Doctrines.Gradeability

@@ -482,7 +482,7 @@ is the content instance under the non-stone aptness hypothesis.
 
 ---
 
-## 3. Doctrines (`Doctrines/FourTruths.lean`, `Doctrines/Sraddha*.lean`, `Doctrines/Faith*.lean`, `Doctrines/Ethics*.lean`, `Doctrines/Deliberation.lean`, `Doctrines/Gradeability.lean`, `Doctrines/Ledger.lean`, `Doctrines/Correlations*.lean`, `Doctrines/SuddenGradual*.lean`, `Doctrines/OtherPower*.lean`, `Doctrines/Fetters*.lean`)
+## 3. Doctrines (`Doctrines/FourTruths.lean`, `Doctrines/Sraddha*.lean`, `Doctrines/Faith*.lean`, `Doctrines/Ethics*.lean`, `Doctrines/Deliberation.lean`, `Doctrines/Gradeability.lean`, `Doctrines/Ledger.lean`, `Doctrines/Correlations*.lean`, `Doctrines/SuddenGradual*.lean`, `Doctrines/OtherPower*.lean`, `Doctrines/Fetters*.lean`, `Doctrines/Factors*.lean`)
 
 `waaMismatchGrade_eq_share` is definitional. `waaMismatchGrade_le_of_share_le` is the
 ordinal covariation theorem: any share comparison is the corresponding
@@ -710,6 +710,46 @@ regimes, and `FettersNegative.seen_run_underdetermines_fetterCut`,
 `FettersNegative.seen_run_underdetermines_fetterCutWithin`, and
 `FettersNegative.no_region_boundary_recovery` give the fresh-call and
 tag-boundary underdetermination witnesses.
+
+**Factors.** `PathFactor` names the factor-side regrouping of the canonical
+fetter table. `PathFactor.blockerClass` derives rites, view, and resolve
+blocker classes from `FetterReading`; speech and conduct are named but inert
+with `False` classes. The coherence theorems
+`ritesView_union_covers_streamEntry_fetters`,
+`resolve_covers_nonReturn_fetters`, and
+`lower_fetters_covered_by_rites_view_resolve` check that the active factor
+classes cover exactly the intended stream-entry and lower-fetter unions.
+
+`FactorHeld` is a seen-run existential over actual in-fiber welds with live
+self-pole index in the factor class. `FactorReleased` is the corresponding
+whole-class `FiberAtPoleOn` cut. `not_factorHeld_of_factorReleased` gives the
+refutation direction; `factorReleased_rites_iff_ritesGrasp_cut`,
+`factorReleased_view_iff`, and `factorReleased_resolve_iff` connect the factor
+release predicates back to the fetter cuts.
+
+The stage readings are `WaaStreamEnterer`, `WaaStreamWinner`,
+`WaaOnceReturner`, and `WaaNonReturner`. The fruit positions are proved
+equivalent to the old path cut classes by
+`waaStreamWinner_iff_streamEntry_cutClasses` and
+`waaNonReturner_iff_nonReturn_cut`, while
+`waaNonReturner_of_arhatFiber` consumes the existing arhat fiber anchor.
+`ShareDropRunOn`, `WaaResolveAttenuation`,
+`waaOnceReturner_attenuation_witness`, and `attenuation_not_release` give
+once-return positive content as a strict resolve-class drop that stops short
+of pole release.
+
+`RunsExhibitFactorOrder`, `WaaSerialFactorRegime`, and
+`waaSerialFactorRegime_conditional` state the "usually runs in order" claim
+only as a supplied-regime conditional. `waaSuddenArrival_consistent_with_factorScheme`
+records compatibility between one-step pole arrival and the factor fruit
+readings under the existing pole-fiber hypothesis.
+
+**FactorsNegative.** `no_hold_conceit_boundary_recovery` shows that the
+hold/conceit line is not recovered from shared response/grade/share data.
+`seen_run_underdetermines_factorOrder` gives one seen run whose factor order
+depends on the supplied reading. `lineage_underdetermined_by_seen_run`
+specializes the stage-boundary freedom witness to switching between a
+Theravada-shaped factor tag and a Bulls-shaped tag over the same grid and run.
 
 ---
 
@@ -1106,7 +1146,7 @@ canonical caveats remain prose; the Disclaimers carry expert-facing departures.
 `Meta/InvarianceNegative.lean`, `Meta/VerdictLedger.lean`,
 `Doctrines/SraddhaNegative.lean`,
 `Doctrines/FaithNegative.lean`, and `Doctrines/Deliberation.lean`, plus the
-new correlations and fetters negative modules, then pins selected
+new correlations, fetters, and factors negative modules, then pins selected
 `#print axioms` outputs with `#guard_msgs`.
 
 The audited declarations are:
@@ -1143,6 +1183,14 @@ The audited declarations are:
 - `Grid.identityView_excluded_at_arhatFiber`
 - `Grid.conceit_excluded_at_arhatFiber`
 - `Grid.waaIrreversibleRegime_conditional`
+- `Grid.lower_fetters_covered_by_rites_view_resolve`
+- `Grid.waaStreamWinner_iff_streamEntry_cutClasses`
+- `Grid.waaNonReturner_iff_nonReturn_cut`
+- `Grid.waaSerialFactorRegime_conditional`
+- `Grid.waaOnceReturner_attenuation_witness`
+- `FactorsNegative.no_hold_conceit_boundary_recovery`
+- `FactorsNegative.seen_run_underdetermines_factorOrder`
+- `FactorsNegative.lineage_underdetermined_by_seen_run`
 - `FettersNegative.seen_run_underdetermines_fetterCut`
 - `Grid.DirectedConvention.waaPathOught_conditional`
 - `Grid.DirectedConvention.waaFaithOught_conditional`
@@ -1167,7 +1215,9 @@ The pinned result is: no audited theorem depends on `sorry` or
 `Classical.choice`. All audited declarations are axiom-free except
 `DirectionNegative.no_direction_recovery_from_conditionsEither`, which depends
 on exactly `[propext, Quot.sound]`, and
-`FettersNegative.seen_run_underdetermines_fetterCut` and
+`FettersNegative.seen_run_underdetermines_fetterCut`,
+`Grid.waaOnceReturner_attenuation_witness`,
+`FactorsNegative.seen_run_underdetermines_factorOrder`, and
 `Grid.DirectedConvention.map_waaFaithPrinciple_reflect`, plus the three
 census theorems `Grid.ConsequentialistConvention.dropCountInFiber_le_dropCount`,
 `Grid.ConsequentialistConvention.dropCount_eq_sum_dropCountInFiber`, and

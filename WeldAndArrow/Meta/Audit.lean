@@ -7,6 +7,7 @@ import WeldAndArrow.Doctrines.Deliberation
 import WeldAndArrow.Doctrines.Ledger
 import WeldAndArrow.Doctrines.CorrelationsNegative
 import WeldAndArrow.Doctrines.FettersNegative
+import WeldAndArrow.Doctrines.FactorsNegative
 
 namespace WAA
 
@@ -225,6 +226,54 @@ info: 'WAA.Grid.waaIrreversibleRegime_conditional' does not depend on any axioms
 -/
 #guard_msgs in
 #print axioms Grid.waaIrreversibleRegime_conditional
+
+/--
+info: 'WAA.Grid.lower_fetters_covered_by_rites_view_resolve' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.lower_fetters_covered_by_rites_view_resolve
+
+/--
+info: 'WAA.Grid.waaStreamWinner_iff_streamEntry_cutClasses' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.waaStreamWinner_iff_streamEntry_cutClasses
+
+/--
+info: 'WAA.Grid.waaNonReturner_iff_nonReturn_cut' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.waaNonReturner_iff_nonReturn_cut
+
+/--
+info: 'WAA.Grid.waaSerialFactorRegime_conditional' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.waaSerialFactorRegime_conditional
+
+/--
+info: 'WAA.Grid.waaOnceReturner_attenuation_witness' depends on axioms: [propext]
+-/
+#guard_msgs in
+#print axioms Grid.waaOnceReturner_attenuation_witness
+
+/--
+info: 'WAA.FactorsNegative.no_hold_conceit_boundary_recovery' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms FactorsNegative.no_hold_conceit_boundary_recovery
+
+/--
+info: 'WAA.FactorsNegative.seen_run_underdetermines_factorOrder' depends on axioms: [propext]
+-/
+#guard_msgs in
+#print axioms FactorsNegative.seen_run_underdetermines_factorOrder
+
+/--
+info: 'WAA.FactorsNegative.lineage_underdetermined_by_seen_run' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms FactorsNegative.lineage_underdetermined_by_seen_run
 
 /--
 info: 'WAA.FettersNegative.seen_run_underdetermines_fetterCut' depends on axioms: [propext]
