@@ -1,6 +1,8 @@
+<!-- GENERATED from WeldAndArrow/Exposition/Glossary.lean by `lake exe exposition_gen` - do not edit -->
+
 # Glossary
 
-Generated from `WeldAndArrow/Meta/Glossary.lean` by `lake exe glossary_gen`. Gloss accuracy remains prose; Lean checks term uniqueness, backward `seeAlso` references, and anchor resolvability. Canonical Buddhist terms are glossed for newcomers; expert caveats live in the Disclaimers.
+Generated from `WeldAndArrow/Meta/Glossary.lean` and `WeldAndArrow/Exposition/Glossary.lean` by `lake exe exposition_gen`. Gloss accuracy remains prose; Lean checks term uniqueness, backward `seeAlso` references, and anchor resolvability. Canonical Buddhist terms are glossed for newcomers; expert caveats live in the Disclaimers.
 
 | Term | Kind | Definition | Checked anchors | See also |
 | --- | --- | --- | --- | --- |

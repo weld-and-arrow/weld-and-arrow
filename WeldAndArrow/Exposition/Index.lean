@@ -1,6 +1,8 @@
-<!-- GENERATED from WeldAndArrow/Exposition/Index.lean by `lake exe exposition_gen` - do not edit -->
+import WeldAndArrow.Exposition.Basic
 
+namespace WAA.Exposition
 
+def indexBody : String := r#"
 ## Contents
 
 0. **Contents** — this table of contents.
@@ -9,3 +11,14 @@
 3. **The Identification and Placements** — the karma identification, the offices-spine that earns the name, the sower/reaper split, the contemporary placements, the pole-typing corollary, the taxonomy's internal mis-feeds, and the disclaimers, enumerated.
 4. **Formalization** — a reading of the Lean formalization.
 5. **Glossary** — a generated glossary.
+"#
+
+def indexDoc : Doc :=
+  { id := "index"
+    title := "Contents"
+    output := "Exposition/index.md"
+    source := "WeldAndArrow/Exposition/Index.lean"
+    summary := "Contents page for the generated exposition."
+    blocks := [.raw indexBody] }
+
+end WAA.Exposition

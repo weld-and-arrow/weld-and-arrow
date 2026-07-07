@@ -8,3 +8,7 @@ name = "WeldAndArrow"
 [[lean_exe]]
 name = "glossary_gen"
 root = "GlossaryGen"
+
+[[lean_exe]]
+name = "exposition_gen"
+root = "ExpositionGen"

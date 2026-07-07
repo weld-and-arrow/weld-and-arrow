@@ -1,6 +1,8 @@
-<!-- GENERATED from WeldAndArrow/Exposition/Formalization/Reading.lean by `lake exe exposition_gen` - do not edit -->
+import WeldAndArrow.Exposition.Basic
 
-# A Plain-English Reading of the Lean Theorems
+namespace WAA.Exposition
+
+def formalizationBody : String := r#"# A Plain-English Reading of the Lean Theorems
 
 **Scope.** This document states, in plain English, what the Lean declarations in
 `Signature/*`, `Consequences/{Basic,Taxonomy,Ladder,ContentRows}.lean`, `Doctrines/*`,
@@ -1319,3 +1321,14 @@ not an existence claim about any real regime.
 One structural caution remains: `Terminus` is vacuously true of every `Stone`;
 use `LiveTerminus` or `ResponsiveTerminus` when non-vacuous response-function
 matters.
+"#
+
+def formalizationDoc : Doc :=
+  { id := "formalization"
+    title := "Formalization"
+    output := "Exposition/Formalization.md"
+    source := "WeldAndArrow/Exposition/Formalization/Reading.lean"
+    summary := "Plain-English reading of the Lean formalization."
+    blocks := [.raw formalizationBody] }
+
+end WAA.Exposition

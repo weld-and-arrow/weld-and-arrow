@@ -1,6 +1,8 @@
-<!-- GENERATED from WeldAndArrow/Exposition/Theory.lean by `lake exe exposition_gen` - do not edit -->
+import WeldAndArrow.Exposition.Basic
 
-# The Weld and the Arrow — I. Theory
+namespace WAA.Exposition
+
+def theoryBody : String := r#"# The Weld and the Arrow — I. Theory
 
 *An ontology-under-erasure act-grammar for Zen. First of three files: **Theory** (this file), **Theorems**, **Identification**. Cross-references to the companion files are marked (Theorems) and (Identification).*
 
@@ -184,3 +186,14 @@ And mark what the case never tests: neither utterance occurs at the pole. The ko
 ## Glossary
 
 See [Glossary.md](Glossary.md). The canonical source is `WeldAndArrow/Meta/Glossary.lean`, rendered through `WeldAndArrow/Exposition/Glossary.lean`; regenerate all prose with `lake exe exposition_gen` and check it with `lake exe exposition_gen --check`.
+"#
+
+def theoryDoc : Doc :=
+  { id := "theory"
+    title := "Theory"
+    output := "Exposition/Theory.md"
+    source := "WeldAndArrow/Exposition/Theory.lean"
+    summary := "The theory and worked fox example."
+    blocks := [.raw theoryBody] }
+
+end WAA.Exposition
