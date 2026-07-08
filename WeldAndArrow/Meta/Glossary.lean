@@ -551,9 +551,9 @@ def glossary : List GlossaryEntry := [
       ``Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.doerDeed_sunyata,
       ``DoerDeedNegative.no_priority_recovery]
     seeAlso := ["weld", "collapse/freeze", "intra-weld arrow row"] },
-  { term := "coming-to / going-from"
+  { term := "coming-from / going-to"
     kind := .coinage .theory
-    gloss := "Coming-to and going-from are display labels for the two orientation readings of a weld's faces. Transposition reverses the labels; they are not tier names."
+    gloss := "Coming-from and going-to are display labels for the two orientation readings of a weld's faces. Transposition reverses the labels; they are not tier names."
     anchors := [``InteriorDirectionNegative.transpose_swaps_readings,
       ``InteriorDirectionNegative.no_interior_direction_recovery]
     seeAlso := ["arrow", "weld", "intra-weld arrow row"] },
