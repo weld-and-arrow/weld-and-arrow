@@ -417,10 +417,16 @@ theorem shortfallClosedAt_of_shareDropLine_actual
   fun _hlive _hdel =>
     hasShareDropLanding_of_shareDropLine_actual G hline hact
 
-/-- Sraddha faith, stated as a hypothesis: the being is a responsive terminus and
-    every delivered reception of one of its deeds closes shortfall for a live
-    prior tendency. The universal closure conjunct is exactly the component no
-    field-recovery theorem can verify for free. -/
+/-- Standing full-enlightenment display, quantified over the run: the being is
+    a responsive terminus and every delivered reception of one of its deeds
+    closes shortfall for a live prior tendency.
+
+    This standing form is legal as display over the run and as the faith-object
+    used in antecedent position; it is not an act-time verdict, for sentient or
+    artifact cases. The operational shusho-itto face is
+    `WaaEnlightenedOccurrence`, while `FullEnlightenmentNegative` checks that
+    the universal conjunct is not recovered from actual-run data. Reading and
+    motivation: Identification/Commentary.lean, C.4. -/
 def WaaFullyEnlightened (b : G.Being) : Prop :=
   G.ResponsiveTerminus b ∧
     ∀ before deed reception,
@@ -442,7 +448,9 @@ theorem shortfallClosedAt_of_waaFullyEnlightened
 /-- If a responsive terminus has no delivered own deeds in the current regime,
     the universal shortfall-closure conjunct is satisfied vacuously. This is
     the sealed-regime face: teaching/non-teaching is not stored in the being,
-    but in the delivery relation around it. -/
+    but in the delivery relation around it. The vacuous standing display is
+    separated from enacted full enlightenment by
+    `not_enacted_of_undelivered`. -/
 theorem waaFullyEnlightened_of_responsiveTerminus_of_undelivered
     {b : G.Being} (hterm : G.ResponsiveTerminus b)
     (hundelivered : ∀ (deed reception : G.Weld),

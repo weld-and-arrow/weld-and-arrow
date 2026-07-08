@@ -14,6 +14,7 @@ import WeldAndArrow.Signature.Assumptions
 import WeldAndArrow.Meta.InvarianceNegative
 import WeldAndArrow.Identification.Ownership
 import WeldAndArrow.Doctrines.FourTruths
+import WeldAndArrow.Doctrines.FullEnlightenmentNegative
 
 namespace WAA
 
@@ -217,6 +218,18 @@ def assumptionLedger : List AssumptionEntry := [
       downProof ``DisplayReparam.atBot_iff,
       downWitness ``InvarianceNegative.oldEqTerminus_not_invariant
     ] },
+  { «section» := .declined
+    number := 6
+    title := "Standing full enlightenment is display and faith-object only"
+    statement := "The operational, assertable content of full enlightenment is per-occurrence: `WaaEnlightenedOccurrence` states an actual pole-deed landing as a share-drop against a live prior tendency. The standing universal `WaaFullyEnlightened` remains legal as run-display and faith-object, but no estimator from actual-run response/share data decides it. The sealed-regime route is vacuous and is fenced from the enacted form by `WaaEnlightenmentEnacted` and `not_enacted_of_undelivered`."
+    anchors := [
+      downProof ``Grid.DirectedConvention.WaaEnlightenedOccurrence,
+      downProof ``Grid.DirectedConvention.WaaEnlightenmentEnacted,
+      downProof ``Grid.DirectedConvention.not_enacted_of_undelivered,
+      downWitness ``FullEnlightenmentNegative.actual_run_data_underdetermines_fullEnlightenment,
+      downProof ``Grid.DirectedConvention.BeingConvention.GridConvention.waa_enlightened_occurrence_voice_assertable,
+      downProof ``Grid.DirectedConvention.BeingConvention.GridConvention.waa_standing_enlightenment_voice_displayable
+    ] },
   { «section» := .convenience
     number := 1
     title := "Hand-rolled order classes"
@@ -281,7 +294,7 @@ def assumptionNumberingContiguous (sec : AssumptionSection) : Bool :=
     (List.range entries.length).map (fun n => n + 1)
 
 example : (assumptionSectionEntries .asserted).length = 5 := rfl
-example : (assumptionSectionEntries .declined).length = 5 := rfl
+example : (assumptionSectionEntries .declined).length = 6 := rfl
 example : (assumptionSectionEntries .convenience).length = 4 := rfl
 
 example : assumptionNumberingContiguous .asserted = true := by

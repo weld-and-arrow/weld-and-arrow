@@ -523,6 +523,11 @@ deed has no share-drop landing for the receiver's live prior tendency.
 `waaFullyEnlightened_of_responsiveTerminus_of_undelivered` gives the sealed
 regime face: if no own deed is delivered, the shortfall-closure conjunct holds
 vacuously for any responsive terminus.
+`WaaPoleDeed` and `WaaEnlightenedOccurrence` name the per-occurrence
+shusho-itto face; `WaaEnlightenmentEnacted` adds a non-vacuous witness to the
+standing display. `not_enacted_of_undelivered` fences sealed-delivery vacuity,
+and `FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run` checks
+that actual-run response/share data do not decide the standing universal.
 
 **Faith.** `WaaPathClaim` packages the local claim that a prior configuration,
 deed, and reception satisfy `ShortfallClosedAt`; `waaPathClaimLanguage` makes
@@ -872,7 +877,7 @@ regime fact to be supplied by a model, not a structural axiom.
 The contemporary placement checks are `siderits_waaPlacement`,
 `ganeri_waaPlacement`, `zahavi_waaPlacement`, and `sartre_waaPlacement`.
 
-**Disclaimers.** `Disclaimer.number` now runs through 57. The recent entries are
+**Disclaimers.** `Disclaimer.number` now runs through 58. The recent entries are
 `beingConvention` (35), `pilotGeneratedRows` (36), `beingTrichotomy` (37),
 `hareHornRegister` (38), `modalRealismFreeze` (39), and
 `aptnessConditionality` (40), `sraddhaConditional` (41), and
@@ -890,7 +895,9 @@ episode-grained verdict history as Lean data, including the retype entries in
 `generatorRecord` (`Meta/VerdictLedger.lean`), and `compoundCellStacks` (57)
 records the five compound-position decompositions over existing `TableRow`s,
 with facets, roles, voices, legal elements, and core-cell counts in
-`Consequences/Compounds.lean`.
+`Consequences/Compounds.lean`. `fullEnlightenmentRetype` (58) records the
+per-occurrence full-enlightenment face, the standing display/faith-object
+demotion, and the enacted/vacuity fence.
 `waaKarmaIdentification_number` pins `waaKarmaIdentification = 9`, and
 `modalRealismFreeze_number` pins `modalRealismFreeze = 39`.
 `aptnessConditionality_number` pins `aptnessConditionality = 40`;
@@ -903,7 +910,8 @@ correlation and disclaimer pins are `tenBullsTyped_number`, `fiveRanksRetype_num
 `stageSchemeCoarsening_number`, `fetterCutTyping_number`,
 `twoAxisFetterLattice_number`, `enlightenmentLadder_number`,
 `ethicsBundledConditionalCode_number`, `codeHonestyClauses_number`,
-`verdictRecordData_number`, and `compoundCellStacks_number`.
+`verdictRecordData_number`, `compoundCellStacks_number`, and
+`fullEnlightenmentRetype_number`.
 
 ---
 

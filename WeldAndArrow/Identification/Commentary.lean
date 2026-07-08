@@ -367,6 +367,13 @@ The opposite regime face is checked by
 `waaFullyEnlightened_of_responsiveTerminus_of_undelivered`: with no delivered
 own deeds, the closure conjunct holds vacuously. Teaching and non-teaching are
 delivery facts around a terminus, not two being-natures stored in it.
+`Doctrines/Shusho.lean` retypes the operational content as
+`WaaEnlightenedOccurrence`: an actual pole-deed landing as a share-drop against
+a live prior tendency. The standing universal survives only as display and
+faith-object; `WaaEnlightenmentEnacted` and `not_enacted_of_undelivered` fence
+the sealed-regime vacuity from an enacted occurrence. `FullEnlightenmentNegative`
+turns the old prose warning into a collision: changing only `conditions` leaves
+actual response/share data fixed while flipping `WaaFullyEnlightened`.
 
 C.5 Doctrines/Deliberation.lean
 
@@ -570,15 +577,21 @@ conjunct. Rung 2 is the live terminus reading, `LiveFiberAtPole`, with
 actual fiber inhabitation. `FettersNegative.total_cut_with_function_not_waaFullyEnlightened`
 checks that rung 2 still lacks effectiveness. Rung 3 is
 `WaaFullyEnlightened`, rung 2's quietness plus universal shortfall closure, and
-it enters the faith and ethics files only as hypothesis.
+it enters the faith and ethics files only as hypothesis. The shusho-itto face
+is now explicit as `WaaEnlightenedOccurrence`; the standing rung is the display
+and faith-object, never the act-time verdict. This is the same fox-guard for
+sentient and insentient adaptive cases: a standing rank on a responder is the
+freeze, while a pole-typed landing is spent per occurrence.
 
 Pratyekabuddha is typed at rung 2 as a regime fact with two faces, not as a
 second attainment. Face A is uncooperative delivery: a deed is delivered but no
 share drop lands, so `OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus`
 shows failure of `WaaFullyEnlightened`. Face B is sealed delivery:
 `waaFullyEnlightened_of_responsiveTerminus_of_undelivered` makes full
-enlightenment hold vacuously when no own deed is delivered at all. The
-samyaksambuddha reading is rung 3, the faith-object. The guard clause is
+enlightenment hold vacuously when no own deed is delivered at all; the enacted
+form fails by `not_enacted_of_undelivered`, paralleling the empty-domain
+separations in `ContentNegative`. The samyaksambuddha reading is rung 3, the
+faith-object. The guard clause is
 therefore strict: the model hosts a non-teaching terminus as a regime fact,
 never as a being who opts out of being read. This is the taxonomy-freeze cell
 for "the private buddha declining his own occurrence at others' Row 2" read

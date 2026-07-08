@@ -470,6 +470,18 @@ info: 'WAA.TransferNegative.adaptive_track_record_underdetermines_new_effect' do
 #print axioms TransferNegative.adaptive_track_record_underdetermines_new_effect
 
 /--
+info: 'WAA.Grid.DirectedConvention.not_enacted_of_undelivered' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms Grid.DirectedConvention.not_enacted_of_undelivered
+
+/--
+info: 'WAA.FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run' does not depend on any axioms
+-/
+#guard_msgs in
+#print axioms FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run
+
+/--
 info: 'WAA.DeliveryArrogationNegative.command_utterance_not_fits' does not depend on any axioms
 -/
 #guard_msgs in

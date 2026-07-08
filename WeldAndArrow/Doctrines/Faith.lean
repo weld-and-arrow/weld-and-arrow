@@ -43,7 +43,12 @@ def waaPathClaimLanguage : ClaimLanguage G where
 
 /-- A lawless faith attitude supports testimony only when paired with this
     principle: faith in a fully enlightened being makes that being's recorded
-    utterances true at their offered tier. -/
+    utterances true at their offered tier.
+
+    The faith-object is deliberately the standing display
+    `WaaFullyEnlightened`, not the enacted occurrence form; see
+    `FullEnlightenmentNegative` for the checked obstruction to recovering the
+    standing universal from field facts alone. -/
 def WaaFaithPrinciple (L : ClaimLanguage G) (Faith : Prop → Prop) : Prop :=
   ∀ b : G.Being,
     Faith (WaaFullyEnlightened G b) →

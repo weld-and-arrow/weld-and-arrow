@@ -74,6 +74,7 @@ inductive Disclaimer
   | codeHonestyClauses
   | verdictRecordData
   | compoundCellStacks
+  | fullEnlightenmentRetype
 
 namespace Disclaimer
 
@@ -137,6 +138,7 @@ def number : Disclaimer → Nat
   | .codeHonestyClauses => 55
   | .verdictRecordData => 56
   | .compoundCellStacks => 57
+  | .fullEnlightenmentRetype => 58
 
 theorem waaKarmaIdentification_number :
     number Disclaimer.waaKarmaIdentification = 9 := rfl
@@ -200,6 +202,9 @@ theorem verdictRecordData_number :
 
 theorem compoundCellStacks_number :
     number Disclaimer.compoundCellStacks = 57 := rfl
+
+theorem fullEnlightenmentRetype_number :
+    number Disclaimer.fullEnlightenmentRetype = 58 := rfl
 
 end Disclaimer
 

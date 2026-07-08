@@ -121,6 +121,7 @@ The following are conventional and my own -- original moves, each flagged agains
 55. **The code's three honesty clauses** -- empty at the pole, unsatisfiable over false testimony, relative to the faith-object.
 56. **Verdict record as data** -- `generatorRecord` stores the verdict history at episode grain: four retypes as four entries, `restraintKind` as the six-kind coarsening, theorem anchors pinned by name beside prose anchors, and `misFeed_entries_carry_decomposition` checking the structural falsifier while the rate trend remains prose.
 57. **Compound positions as cell-stacks** -- skepticism, solipsism, the exit-premise, existentialism, and the ledger-picture are Lean data over existing `TableRow`s, with facets, roles, voice checks, legal-element checks, and core-cell counts in `Consequences/Compounds.lean`; value-creation and the ledger-picture's causal skeleton are recorded as legal rather than erroneous.
+58. **Full enlightenment retyped** -- the assertable content is per-occurrence (`WaaEnlightenedOccurrence`), while `WaaFullyEnlightened` remains standing display and faith-object only; `WaaEnlightenmentEnacted` fences sealed-delivery vacuity, and `FullEnlightenmentNegative` checks that actual-run response/share data do not decide the standing universal.
 
 ---
 

@@ -113,7 +113,8 @@ def glossary : List GlossaryEntry := [
     seeAlso := ["act-grammar"] },
   { term := "shushō-ittō"
     kind := .canonical
-    gloss := "Shushō-ittō means practice and realization as non-dual. In this system it is read as one occurrence with two faces, not two events that later get joined."
+    gloss := "Shushō-ittō means practice and realization as non-dual. In this system it is read as one occurrence with two faces, not two events that later get joined, and grid-side it is the per-occurrence face of full enlightenment."
+    anchors := [``Grid.DirectedConvention.WaaEnlightenedOccurrence]
     seeAlso := ["shō", "shu"] },
   { term := "shugenjō"
     kind := .coinage .theory
@@ -442,6 +443,18 @@ def glossary : List GlossaryEntry := [
     anchors := [``Grid.DirectedConvention.ShortfallClosedAt,
       ``OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus]
     seeAlso := ["effectiveness", "terminus"] },
+  { term := "standing enlightenment"
+    kind := .coinage .theorems
+    gloss := "Standing enlightenment is the run-quantified full-enlightenment display and faith-object. It is never an act-time verdict, and actual-run response/share data do not decide it."
+    anchors := [``Grid.DirectedConvention.WaaFullyEnlightened,
+      ``FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run]
+    seeAlso := ["buddha-side shortfall", "assert/display"] },
+  { term := "enacted enlightenment"
+    kind := .coinage .theorems
+    gloss := "Enacted enlightenment is the non-vacuous standing display plus at least one per-occurrence enlightened landing. It fences sealed-regime vacuity from earned occurrence."
+    anchors := [``Grid.DirectedConvention.WaaEnlightenmentEnacted,
+      ``Grid.DirectedConvention.not_enacted_of_undelivered]
+    seeAlso := ["standing enlightenment", "shushō-ittō"] },
   { term := "backsliding theorem"
     kind := .coinage .theorems
     gloss := "The backsliding theorem says a share-drop event cannot be held as a stored attainment. Later live welds are possible because nothing self-indexed is carried between acts."
@@ -822,7 +835,7 @@ def seeAlsoTargetsEarlierFrom (seen : List String) :
 def seeAlsoTargetsEarlier : Bool :=
   seeAlsoTargetsEarlierFrom [] glossary
 
-example : glossary.length = 140 := rfl
+example : glossary.length = 142 := rfl
 
 example : glossaryTerms.Nodup := by
   native_decide
