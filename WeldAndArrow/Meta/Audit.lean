@@ -650,16 +650,16 @@ info: 'WAA.Grid.DirectedConvention.BeingConvention.GridConvention.doerDeedLadder
 #print axioms Grid.DirectedConvention.BeingConvention.GridConvention.doerDeedLadder_no_level_final
 
 /--
-info: 'WAA.Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.intraWeldArrow_sunyata' does not depend on any axioms
+info: 'WAA.Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.intraWeldArrow_sunyata' does not depend on any axioms
 -/
 #guard_msgs in
-#print axioms Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.intraWeldArrow_sunyata
+#print axioms Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.intraWeldArrow_sunyata
 
 /--
-info: 'WAA.Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.doerDeed_sunyata' does not depend on any axioms
+info: 'WAA.Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.doerDeed_sunyata' does not depend on any axioms
 -/
 #guard_msgs in
-#print axioms Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.doerDeed_sunyata
+#print axioms Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.doerDeed_sunyata
 
 /--
 info: 'WAA.Grid.map_responseVariesWithCall_iff' does not depend on any axioms

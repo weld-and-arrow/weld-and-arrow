@@ -20,8 +20,8 @@ and the file is content to let it fuse at the floor.
 Namespace placement follows the project's discipline — names are placed by
 what their reading presupposes, not by what their definition consumes. The
 śūnyatā vocabulary presupposes the innermost grid-lens reading, so it lives at
-`Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani`. The modal
-appendix presupposes nothing of the grid and lives at `WAA.Nishitani`.
+`Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics`. The modal
+appendix presupposes nothing of the grid and lives at `WAA.Metaphysics`.
 
 ## What the rebase changes (relative to v2's syntactic Position ladder)
 
@@ -100,7 +100,7 @@ namespace Grid
 namespace DirectedConvention
 namespace BeingConvention
 namespace GridConvention
-namespace Nishitani
+namespace Metaphysics
 
 open LadderSide
 
@@ -286,7 +286,7 @@ theorem wondrous_being (G : Grid Contrib) (h : ∃ b : G.Being, ¬ G.Stone b) :
     Sunyata (contentBeingsRow G) :=
   fun ⟨n, hf⟩ => contentBeingsLadder_no_level_final_of_being (G := G) h n hf
 
-end Nishitani
+end Metaphysics
 end GridConvention
 end BeingConvention
 end DirectedConvention
@@ -296,14 +296,14 @@ end Grid
 
 Part II of v2 survives the rebase intact because it never depended on the
 Position ladder; it is retained here as the frame-level companion to the
-ladder-level relocation above. Placed at `WAA.Nishitani` rather than under
+ladder-level relocation above. Placed at `WAA.Metaphysics` rather than under
 the grid lens because, per the naming discipline, it presupposes nothing of
 the grid: worlds and concreta only. The correspondence:
 `MetaphysicalNihilism`'s frame-relativity (`Frame → Prop`) is the external
 face of what `nihilist_thesis_is_something` shows internally — the thesis
 cannot be had without the field it was meant to escape. -/
 
-namespace Nishitani
+namespace Metaphysics
 
 /-- A modal frame: worlds, and the concreta each world contains. -/
 structure Frame where
@@ -331,7 +331,7 @@ theorem no_worlds_no_thesis (M : Frame) (h : ¬ Nonempty M.World) :
     ¬ MetaphysicalNihilism M :=
   fun hn => h (nihilism_is_an_existence_proof M hn)
 
-end Nishitani
+end Metaphysics
 
 /-! Closing caveat, one rung higher than before: `Sunyata` above is a name,
 `sunyata_of_errorFree` a stated theorem, and by `ultimate_internalized` the

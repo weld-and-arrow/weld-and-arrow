@@ -31,8 +31,8 @@ def ladderRungGrid : Grid Nat where
   conditions _ _ := True
 
 theorem ladderRungGrid_beings_sunyata :
-    Nishitani.Sunyata (beingsRow ladderRungGrid) :=
-  Nishitani.beings_sunyata ladderRungGrid
+    Metaphysics.Sunyata (beingsRow ladderRungGrid) :=
+  Metaphysics.beings_sunyata ladderRungGrid
 
 theorem ladderRungGrid_no_level_final :
     ∀ n, ¬ (beingsLadder ladderRungGrid n).Freeze :=

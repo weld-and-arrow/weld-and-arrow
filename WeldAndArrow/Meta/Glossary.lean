@@ -331,7 +331,7 @@ def glossary : List GlossaryEntry := [
   { term := "upāya/provisional reading"
     kind := .canonical
     gloss := "Upāya names an apt conventional call at the tier a being occupies. In this system a provisional reading keeps that conventional function while the floor re-empties its absolutization."
-    anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.provisional_preserved,
+    anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.provisional_preserved,
       ``Grid.DirectedConvention.waaPathOught_conditional]
     seeAlso := ["tier", "separate/fuse rule", "assert/display"] },
   { term := "dukkha"
@@ -539,7 +539,7 @@ def glossary : List GlossaryEntry := [
   { term := "Sunyata"
     kind := .canonical
     gloss := "Sunyata means emptiness. In this system it is the no-final-freeze property of a distinction's re-emptying ladder."
-    anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.Sunyata]
+    anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.Sunyata]
     seeAlso := ["collapse/freeze"] },
   { term := "direction-underdetermination witness"
     kind := .coinage .theorems
@@ -560,14 +560,14 @@ def glossary : List GlossaryEntry := [
     kind := .coinage .theorems
     gloss := "The intra-weld arrow row checks the call-to-response direction inside a weld as a convention layer. Its content form denies response-variation, and its witness says the unordered residue does not recover an interior arrow."
     anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.intraWeldArrowRow,
-      ``Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.intraWeldArrow_sunyata,
+      ``Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.intraWeldArrow_sunyata,
       ``InteriorDirectionNegative.no_interior_direction_recovery]
     seeAlso := ["arrow", "weld", "weld-boundary witness"] },
   { term := "doer/deed row"
     kind := .coinage .theorems
     gloss := "The doer/deed row is the schema-only MMK 8 cell: a prior-doer reading is diagnosed without adding priority as a primitive field of the grid."
     anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.doerDeedRow,
-      ``Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.doerDeed_sunyata,
+      ``Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.doerDeed_sunyata,
       ``DoerDeedNegative.no_priority_recovery]
     seeAlso := ["weld", "collapse/freeze", "intra-weld arrow row"] },
   { term := "coming-from / going-to"
@@ -585,7 +585,7 @@ def glossary : List GlossaryEntry := [
     kind := .coinage .theorems
     gloss := "The weld row names the weld-grain distinction as a convention layer, and weld śūnyatā says its re-emptying ladder has no final frozen level."
     anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.weldRow,
-      ``Grid.DirectedConvention.BeingConvention.GridConvention.Nishitani.weld_sunyata]
+      ``Grid.DirectedConvention.BeingConvention.GridConvention.Metaphysics.weld_sunyata]
     seeAlso := ["collapse/freeze", "Sunyata"] },
   { term := "declined case"
     kind := .coinage .theorems

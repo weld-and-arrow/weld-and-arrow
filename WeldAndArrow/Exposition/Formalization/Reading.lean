@@ -1271,7 +1271,7 @@ The audited declarations are:
   `intraWeldArrowRow_*`, `doerDeedRow_*`,
   `contentIntraWeldArrowRow_obeys_of_variation`,
   `intraWeldArrowLadder_*`, `doerDeedLadder_*`,
-  `Nishitani.intraWeldArrow_sunyata`, `Nishitani.doerDeed_sunyata`,
+  `Metaphysics.intraWeldArrow_sunyata`, `Metaphysics.doerDeed_sunyata`,
   the new `map_*` row/ladder theorems, and the two `ladderRungGrid_*`
   reflexivity witness theorems
 - `Grid.ConsequentialistConvention.dropCountInFiber_le_dropCount`,
