@@ -1,5 +1,5 @@
 name = "WeldAndArrow"
-version = "0.1.1-dev"
+version = "0.2.0-dev"
 defaultTargets = ["WeldAndArrow"]
 
 [leanOptions]
