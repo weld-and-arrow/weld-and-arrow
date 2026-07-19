@@ -1,21 +1,14 @@
 /-
 ================================================================================
   WeldAndArrow.Doctrines.FaithNegative
-  Negative witnesses for the abstracted faith principle
+  The two-obscurations separator and non-vacuity witness
 ================================================================================
 
-Two facts keep `WaaFaithPrinciple` honest as a faith-shaped antecedent:
-
-  1. `waaFaithPrinciple_id_fails`: even taking `WaaFullyEnlightened G b` as a
-     premise does not yield the principle. A fully enlightened buddha can utter
-     a path claim about another being's deed, and nothing in the enlightenment
-     proposition makes that claim true.
-
-  2. `waaFaithPrinciple_trivial_fails`: free faith (`Faith := fun _ => True`)
-     does not supply truth-transmission either.
-
-Together with `SraddhaNegative`, the abstraction adds no assertion the old
-bundling avoided.
+The countermodel is the undefiled-nescience witness: effective functioning and
+universal shortfall closure do not remove cognitive obscuration. Under total
+occurrence fidelity the buddha has `WaaEffectiveTerminus` but lacks
+`WaaNoDelusion`, and therefore lacks the two-obscurations bundle
+`WaaFullyEnlightened`.
 -/
 
 import WeldAndArrow.Doctrines.Faith
@@ -38,7 +31,7 @@ inductive Call
 inductive Response
   | response
 
-/-- A grid in which the buddha is fully enlightened for free: its own deeds are
+/-- A grid in which the buddha is an effective terminus for free: its own deeds are
     never delivered, so shortfall closure for its own deeds is vacuous. The
     disciple's deed is delivered to a receiver whose live share does not drop. -/
 def grid : Grid Nat where
@@ -89,8 +82,8 @@ theorem buddha_responsiveTerminus :
 
 /-- The buddha's own deeds are never delivered in this grid, so the shortfall
     closure conjunct holds vacuously. -/
-theorem buddha_waaFullyEnlightened :
-    WaaFullyEnlightened grid Being.buddha := by
+theorem buddha_waaEffectiveTerminus :
+    WaaEffectiveTerminus grid Being.buddha := by
   refine ⟨buddha_responsiveTerminus, ?_⟩
   intro before deed reception hdeed _hlive hdel
   obtain ⟨hdisciple, _hreceiver⟩ := hdel
@@ -112,7 +105,7 @@ theorem not_hasShareDropLanding :
 def falseClaim : RecordedUtterance grid (waaPathClaimLanguage grid) where
   weld      := buddhaWeld
   actual    := buddhaWeld_actual
-  offeredAt := Tier.floor
+  offeredAt := Tier.actTime buddhaWeld
   content   := ⟨liveBefore, discipleDeed, reception⟩
 
 theorem falseClaim_not_fitsOfferedTier :
@@ -124,22 +117,76 @@ theorem falseClaim_not_fitsOfferedTier :
     ShortfallClosedAt] at hfit
   exact not_hasShareDropLanding (hfit liveBefore_not_atBot delivered)
 
-/-- Taking-as-premise faith does not validate the unrestricted principle:
-    the enlightenment proposition itself is in hand, but the uttered path claim
-    about another being's deed is still false. -/
-theorem waaFaithPrinciple_id_fails :
-    ¬ WaaFaithPrinciple grid (waaPathClaimLanguage grid) (fun P => P) := by
-  intro hFP
-  exact falseClaim_not_fitsOfferedTier
-    (hFP Being.buddha buddha_waaFullyEnlightened falseClaim rfl)
+/-- Every attributed occurrence is treated as faithful in the separating
+    model, so the character conjunct cannot evade the counterexample by a
+    sealed channel. -/
+def totalFidelity :
+    RecordedUtterance grid (waaPathClaimLanguage grid) → Prop :=
+  fun _ => True
 
-/-- Nor does free faith: an operator holding everywhere, without the
-    truth-transmission principle, lands nothing. -/
-theorem waaFaithPrinciple_trivial_fails :
-    ¬ WaaFaithPrinciple grid (waaPathClaimLanguage grid) (fun _ => True) := by
-  intro hFP
+theorem falseClaim_misfitsOfferedTier :
+    falseClaim.MisfitsOfferedTier :=
+  ⟨buddhaWeld, rfl, falseClaim_not_fitsOfferedTier⟩
+
+/-- Effective termination does not remove undefiled nescience: under total
+    fidelity the attributed false claim refutes no-delusion. -/
+theorem buddha_not_waaNoDelusion :
+    ¬ WaaNoDelusion grid totalFidelity Being.buddha := by
+  intro hno
   exact falseClaim_not_fitsOfferedTier
-    (hFP Being.buddha trivial falseClaim rfl)
+    (hno falseClaim rfl trivial buddhaWeld rfl)
+
+/-- The two-obscurations separator. Removal of the afflictive obscuration,
+    represented by `WaaEffectiveTerminus`, does not by itself remove the
+    cognitive obscuration represented by `WaaNoDelusion`. -/
+theorem effectiveTerminus_not_waaFullyEnlightened :
+    WaaEffectiveTerminus grid Being.buddha ∧
+      ¬ WaaFullyEnlightened grid totalFidelity Being.buddha := by
+  refine ⟨buddha_waaEffectiveTerminus, ?_⟩
+  intro hfull
+  exact buddha_not_waaNoDelusion hfull.noDelusion
+
+/-- Doctrinal name for the same undefiled-nescience witness. -/
+theorem aklishta_ajnana_witness :
+    WaaEffectiveTerminus grid Being.buddha ∧
+      ¬ WaaNoDelusion grid totalFidelity Being.buddha :=
+  ⟨buddha_waaEffectiveTerminus, buddha_not_waaNoDelusion⟩
+
+/-- A faithful, fitting, act-time own-deed claim for the non-vacuity witness. -/
+def faithfulClaim : RecordedUtterance grid (waaPathClaimLanguage grid) where
+  weld := buddhaWeld
+  actual := buddhaWeld_actual
+  offeredAt := Tier.actTime buddhaWeld
+  content := ⟨liveBefore, buddhaWeld, reception⟩
+
+theorem faithfulClaim_fitsOfferedTier :
+    faithfulClaim.FitsOfferedTier :=
+  fitsOfferedTier_of_waaEffectiveTerminus_ownDeed grid
+    buddha_waaEffectiveTerminus faithfulClaim rfl buddhaWeld rfl
+
+/-- Concrete fidelity that records exactly fitting occurrences. -/
+def fittingFidelity :
+    RecordedUtterance grid (waaPathClaimLanguage grid) → Prop :=
+  fun u => u.FitsOfferedTier
+
+theorem buddha_waaNoDelusion_fittingFidelity :
+    WaaNoDelusion grid fittingFidelity Being.buddha := by
+  intro u _hagent hfit _w _hoff
+  exact hfit
+
+/-- The full bundle is non-vacuously inhabited: one faithful, fitting,
+    act-time utterance accompanies the two conjuncts. -/
+theorem waaFullyEnlightened_faithful_actTime_inhabited :
+    WaaFullyEnlightened grid fittingFidelity Being.buddha ∧
+      ∃ u : RecordedUtterance grid (waaPathClaimLanguage grid),
+        fittingFidelity u ∧
+          (∃ w : grid.Weld, u.offeredAt = Tier.actTime w) ∧
+            u.FitsOfferedTier := by
+  refine ⟨⟨buddha_waaEffectiveTerminus,
+    buddha_waaNoDelusion_fittingFidelity⟩, faithfulClaim, ?_, ?_, ?_⟩
+  · exact faithfulClaim_fitsOfferedTier
+  · exact ⟨buddhaWeld, rfl⟩
+  · exact faithfulClaim_fitsOfferedTier
 
 end FaithNegative
 

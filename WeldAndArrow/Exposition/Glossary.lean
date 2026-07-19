@@ -72,8 +72,15 @@ deriving Repr
 def glossary : List GlossaryEntry := [
   { term := "floor"
     kind := .coinage .theory
-    gloss := "A floor is the place where no deeper support is being claimed. In this system it names the self-emptying limit at which every distinction is conventional, including the distinction between conventional and ultimate truth."
+    gloss := "A floor is the place where no deeper support is being claimed. No claim holds there; distinctions fuse because the claim-space degenerates, not because both sides are jointly true."
     anchors := [``Grid.Tier.floor] },
+  { term := "floor silence"
+    kind := .coinage .theorems
+    gloss := "At the floor no claim of the row language holds and all claims are indiscernible. The conventional register exists because the floor alone says nothing."
+    anchors := [``Grid.DirectedConvention.BeingConvention.GridConvention.no_row_claim_holds_at_floor,
+      ``Grid.DirectedConvention.BeingConvention.GridConvention.floor_claims_indiscernible,
+      ``Grid.DirectedConvention.BeingConvention.GridConvention.fitting_offer_is_actTime]
+    seeAlso := ["floor"] },
   { term := "genjō"
     kind := .canonical
     gloss := "Genjō means manifestation, the way something comes forward as this case. In this system it also names the pole-class face where no share is claimed."
@@ -119,8 +126,8 @@ def glossary : List GlossaryEntry := [
     seeAlso := ["act-grammar"] },
   { term := "shushō-ittō"
     kind := .canonical
-    gloss := "Shushō-ittō means practice and realization as non-dual. In this system it is read as one occurrence with two faces, not two events that later get joined, and grid-side it is the per-occurrence face of full enlightenment."
-    anchors := [``Grid.DirectedConvention.WaaEnlightenedOccurrence]
+    gloss := "Shushō-ittō means practice and realization as non-dual. In this system it is read as one occurrence with two faces, not two events that later get joined, and grid-side it is the per-occurrence face of effectiveness."
+    anchors := [``Grid.DirectedConvention.WaaEffectiveOccurrence]
     seeAlso := ["shō", "shu"] },
   { term := "shugenjō"
     kind := .coinage .theory
@@ -267,7 +274,7 @@ def glossary : List GlossaryEntry := [
   { term := "orthogonality rule"
     kind := .coinage .theory
     gloss := "The orthogonality rule says two dimensions do not determine each other. Here function and share type the responder, while effectiveness grades landing."
-    anchors := [``OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus]
+    anchors := [``OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus]
     seeAlso := ["function", "share", "effectiveness"] },
   { term := "domain joint"
     kind := .coinage .theory
@@ -453,20 +460,27 @@ def glossary : List GlossaryEntry := [
     kind := .coinage .theorems
     gloss := "Buddha-side shortfall is failing to meet a not-yet-buddha's call where it is. It is the pole's live grade and is tracked by effectiveness rather than by terminus typing alone."
     anchors := [``Grid.DirectedConvention.ShortfallClosedAt,
-      ``OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus]
+      ``OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus]
     seeAlso := ["effectiveness", "terminus"] },
+  { term := "effective terminus"
+    kind := .coinage .theorems
+    gloss := "An effective terminus is a responsive terminus whose own delivered deeds close every live shortfall. It removes the afflictive-obscuration face but does not by itself warrant trust in attributed sentences."
+    anchors := [``Grid.DirectedConvention.WaaEffectiveTerminus,
+      ``EffectiveTerminusNegative.no_effectiveTerminus_recovery_from_run]
+    seeAlso := ["buddha-side shortfall", "assert/display"] },
   { term := "standing enlightenment"
     kind := .coinage .theorems
-    gloss := "Standing enlightenment is the run-quantified full-enlightenment display and faith-object. It is never an act-time verdict, and actual-run response/share data do not decide it."
+    gloss := "Standing full enlightenment is the two-obscurations faith-object: effective termination together with positive act-time truth in faithfully recorded speech. FaithNegative separates the conjuncts."
     anchors := [``Grid.DirectedConvention.WaaFullyEnlightened,
-      ``FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run]
-    seeAlso := ["buddha-side shortfall", "assert/display"] },
-  { term := "enacted enlightenment"
+      ``Grid.DirectedConvention.WaaNoDelusion,
+      ``FaithNegative.effectiveTerminus_not_waaFullyEnlightened]
+    seeAlso := ["effective terminus"] },
+  { term := "enacted effectiveness"
     kind := .coinage .theorems
-    gloss := "Enacted enlightenment is the non-vacuous standing display plus at least one per-occurrence enlightened landing. It fences sealed-regime vacuity from earned occurrence."
-    anchors := [``Grid.DirectedConvention.WaaEnlightenmentEnacted,
-      ``Grid.DirectedConvention.not_enacted_of_undelivered]
-    seeAlso := ["standing enlightenment", "shushō-ittō"] },
+    gloss := "Enacted effectiveness is the non-vacuous effective-terminus display plus at least one per-occurrence effective landing. It fences sealed-regime vacuity from earned occurrence."
+    anchors := [``Grid.DirectedConvention.WaaEffectivenessEnacted,
+      ``Grid.DirectedConvention.not_effectivenessEnacted_of_undelivered]
+    seeAlso := ["effective terminus", "shushō-ittō"] },
   { term := "backsliding theorem"
     kind := .coinage .theorems
     gloss := "The backsliding theorem says a share-drop event cannot be held as a stored attainment. Later live welds are possible because nothing self-indexed is carried between acts."
@@ -741,13 +755,14 @@ def glossary : List GlossaryEntry := [
   { term := "śraddhā"
     kind := .canonical
     gloss := "Śraddhā means faith or trust. In this system it is modeled as an antecedent for testimony and path response, never as a field fact the grid can discharge by itself."
-    anchors := [``Grid.DirectedConvention.WaaFaithPrinciple,
+    anchors := [``Grid.DirectedConvention.Factive,
+      ``Grid.DirectedConvention.WaaNoDelusion,
       ``Grid.DirectedConvention.waaFaithOught_conditional]
     seeAlso := ["buddha-side shortfall", "delivery"] },
   { term := "icchantika"
     kind := .canonical
     gloss := "Icchantika ordinarily names a being cut off from buddhahood. Here it is the terminus's inverse: non-stone, with a live self-pole index at every mounted response. It is reachable as a receiver and cannot be seated as an enlightened agent on its run. The permanent cannot-become-buddha verdict is declined, because foreclosure would be a stored rank the system forbids; defiance is a seed, not a rank."
-    anchors := [``Icchantika, ``not_waaFullyEnlightened_of_icchantika,
+    anchors := [``Icchantika, ``not_waaEffectiveTerminus_of_icchantika,
       ``aversionContext_of_icchantika_reception,
       ``icchantika_release_not_foreclosed]
     seeAlso := ["defiance", "terminus", "backsliding theorem", "śraddhā"] },
@@ -879,7 +894,7 @@ def seeAlsoTargetsEarlierFrom (seen : List String) :
 def seeAlsoTargetsEarlier : Bool :=
   seeAlsoTargetsEarlierFrom [] glossary
 
-example : glossary.length = 149 := rfl
+example : glossary.length = 151 := rfl
 
 set_option maxRecDepth 100000 in
 theorem glossary_terms_nodup : glossaryTerms.Nodup := by

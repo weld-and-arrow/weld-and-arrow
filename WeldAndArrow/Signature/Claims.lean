@@ -89,6 +89,15 @@ def FitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
     (u : RecordedUtterance G L) : Prop :=
   L.TrueAt u.offeredAt u.content
 
+/-- A recorded utterance misfits its offered tier exactly when it makes an
+    act-time offer whose content is not satisfied there. Floor offers do not
+    count as errors: at the floor the claim-language has run out rather than
+    issued a false conventional assertion. -/
+def MisfitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
+    (u : RecordedUtterance G L) : Prop :=
+  ∃ w : G.Weld,
+    u.offeredAt = Tier.actTime w ∧ ¬ L.TrueAt u.offeredAt u.content
+
 end RecordedUtterance
 
 /-- A distinction: two claim-objects a diagnosis might hold apart. -/

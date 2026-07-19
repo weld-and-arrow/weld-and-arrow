@@ -25,7 +25,7 @@ import WeldAndArrow.Meta.AxiomAudit
 import WeldAndArrow.Meta.InvarianceNegative
 import WeldAndArrow.Identification.Ownership
 import WeldAndArrow.Doctrines.FourTruths
-import WeldAndArrow.Doctrines.FullEnlightenmentNegative
+import WeldAndArrow.Doctrines.EffectiveTerminusNegative
 
 namespace WAA
 
@@ -236,15 +236,15 @@ def assumptionLedger : List AssumptionEntry := [
     ] },
   { «section» := .declined
     number := 6
-    title := "Standing full enlightenment is display and faith-object only"
-    statement := "The operational, assertable content of full enlightenment is per-occurrence: `WaaEnlightenedOccurrence` states an actual pole-deed landing as a share-drop against a live prior tendency. The standing universal `WaaFullyEnlightened` remains legal as run-display and faith-object, but no estimator from actual-run response/share data decides it. The sealed-regime route is vacuous and is fenced from the enacted form by `WaaEnlightenmentEnacted` and `not_enacted_of_undelivered`."
+    title := "Standing effectiveness is display; full enlightenment is the two-obscurations faith-object"
+    statement := "The operational, assertable effectiveness content is per-occurrence: `WaaEffectiveOccurrence` states an actual pole-deed landing as a share-drop against a live prior tendency. The descriptive universal `WaaEffectiveTerminus` remains legal as run-display and direct-path hypothesis, but no estimator from actual-run response/share data decides it. The sealed-regime route is vacuous and is fenced from the enacted form by `WaaEffectivenessEnacted` and `not_effectivenessEnacted_of_undelivered`. Testimonial `WaaFullyEnlightened` additionally requires `WaaNoDelusion`."
     anchors := [
-      downProof ``Grid.DirectedConvention.WaaEnlightenedOccurrence,
-      downProof ``Grid.DirectedConvention.WaaEnlightenmentEnacted,
-      downProof ``Grid.DirectedConvention.not_enacted_of_undelivered,
-      downWitness ``FullEnlightenmentNegative.actual_run_data_underdetermines_fullEnlightenment,
-      downProof ``Grid.DirectedConvention.BeingConvention.GridConvention.waa_enlightened_occurrence_voice_assertable,
-      downProof ``Grid.DirectedConvention.BeingConvention.GridConvention.waa_standing_enlightenment_voice_displayable
+      downProof ``Grid.DirectedConvention.WaaEffectiveOccurrence,
+      downProof ``Grid.DirectedConvention.WaaEffectivenessEnacted,
+      downProof ``Grid.DirectedConvention.not_effectivenessEnacted_of_undelivered,
+      downWitness ``EffectiveTerminusNegative.actual_run_data_underdetermines_effectiveTerminus,
+      downProof ``Grid.DirectedConvention.BeingConvention.GridConvention.waa_effective_occurrence_voice_assertable,
+      downProof ``Grid.DirectedConvention.BeingConvention.GridConvention.waa_standing_effectiveness_voice_displayable
     ] },
   { «section» := .declined
     number := 7
@@ -377,5 +377,8 @@ unsafe def evalAssumptionAxiomAudit : Term.TermElabM (List Lean.Name) := do
    boundary rather than a Signature assumption or a positive theorem. -/
 #check InstructiveAbsence.rebirthCosmology_standing
 #check InstructiveAbsence.rebirthCosmology_anchor
+-- Floor truth is deliberately absent; only silence and indiscernibility remain.
+#check InstructiveAbsence.floorTruthPredicate_standing
+#check InstructiveAbsence.floorTruthPredicate_anchor
 
 end WAA

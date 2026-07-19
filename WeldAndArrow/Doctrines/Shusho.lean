@@ -1,7 +1,7 @@
 /-
 ================================================================================
   WeldAndArrow.Doctrines.Shusho
-  Per-occurrence full-enlightenment face and standing-display fence
+  Per-occurrence effectiveness face and standing-display fence
 ================================================================================
 
 Reading and motivation: Identification/Commentary.lean, C.4.
@@ -25,20 +25,20 @@ variable (G : Grid Contrib)
 def WaaPoleDeed (w : G.Weld) : Prop :=
   G.Actual w ∧ AtBot (G.share w)
 
-/-- Shusho-itto, grid-side: full enlightenment as a fact about one delivered
+/-- Shushō-ittō, grid-side: effective closure as a fact about one delivered
     occurrence -- a pole-typed actual deed landing with a share-drop against a
     live prior tendency. This, not the standing predicate, is what act-time
     verdicts may assert. Reading and motivation: Identification/Commentary.lean,
     C.4. -/
-def WaaEnlightenedOccurrence
+def WaaEffectiveOccurrence
     (before : Config Contrib) (deed reception : G.Weld) : Prop :=
   WaaPoleDeed G deed ∧
     ¬ AtBot before.tendency ∧
       LandsWithShareDrop G before deed reception
 
-theorem waaEnlightenedOccurrence_hasShareDropLanding
+theorem waaEffectiveOccurrence_hasShareDropLanding
     {before : Config Contrib} {deed reception : G.Weld}
-    (h : WaaEnlightenedOccurrence G before deed reception) :
+    (h : WaaEffectiveOccurrence G before deed reception) :
     HasShareDropLanding G before deed :=
   ⟨reception, h.right.right⟩
 
@@ -52,16 +52,16 @@ theorem waaPoleDeed_of_terminus_response
     landing witness may be a different actual reception from the supplied
     delivery, because `ShortfallClosedAt` asserts existence of a share-drop
     landing for that deed. -/
-theorem waaEnlightenedOccurrence_of_waaFullyEnlightened
+theorem waaEffectiveOccurrence_of_waaEffectiveTerminus
     {b : G.Being} {before : Config Contrib} {deed reception : G.Weld}
-    (h : WaaFullyEnlightened G b)
+    (h : WaaEffectiveTerminus G b)
     (hdeed : deed.agent = b)
     (hactual : G.Actual deed)
     (hdel : DeliveredTo G deed reception)
     (hlive : ¬ AtBot before.tendency) :
     ∃ reception',
-      WaaEnlightenedOccurrence G before deed reception' := by
-  rcases shortfallClosedAt_of_waaFullyEnlightened G h hdeed hlive hdel with
+      WaaEffectiveOccurrence G before deed reception' := by
+  rcases shortfallClosedAt_of_waaEffectiveTerminus G h hdeed hlive hdel with
     ⟨reception', hland⟩
   refine ⟨reception', ?_⟩
   refine ⟨?_, hlive, hland⟩
@@ -73,35 +73,35 @@ theorem waaEnlightenedOccurrence_of_waaFullyEnlightened
     the speaker's deed is known to be actual. -/
 theorem waa_path_landing_factors
     {g : G.Being} {before : Config Contrib} {deed reception : G.Weld}
-    (hfaith : WaaFullyEnlightened G g)
+    (hfaith : WaaEffectiveTerminus G g)
     (hdeed : deed.agent = g)
     (hactual : G.Actual deed)
     (hdel : DeliveredTo G deed reception)
     (hctx : WaaAversionContext G before reception) :
     ∃ reception',
-      WaaEnlightenedOccurrence G before deed reception' :=
-  waaEnlightenedOccurrence_of_waaFullyEnlightened
+      WaaEffectiveOccurrence G before deed reception' :=
+  waaEffectiveOccurrence_of_waaEffectiveTerminus
     G hfaith hdeed hactual hdel hctx.liveBefore
 
-/-- Earned, non-vacuous full-enlightenment display: the standing pattern plus
-    at least one actual enlightened occurrence witnessing it. The sealed-regime
+/-- Earned, non-vacuous effectiveness display: the standing pattern plus at
+    least one actual effective occurrence witnessing it. The sealed-regime
     terminus satisfies the standing predicate vacuously and fails this enacted
     form. -/
-def WaaEnlightenmentEnacted (b : G.Being) : Prop :=
-  WaaFullyEnlightened G b ∧
+def WaaEffectivenessEnacted (b : G.Being) : Prop :=
+  WaaEffectiveTerminus G b ∧
     ∃ before deed reception,
-      deed.agent = b ∧ WaaEnlightenedOccurrence G before deed reception
+      deed.agent = b ∧ WaaEffectiveOccurrence G before deed reception
 
-theorem waaFullyEnlightened_of_enacted
-    {b : G.Being} (h : WaaEnlightenmentEnacted G b) :
-    WaaFullyEnlightened G b :=
+theorem waaEffectiveTerminus_of_effectivenessEnacted
+    {b : G.Being} (h : WaaEffectivenessEnacted G b) :
+    WaaEffectiveTerminus G b :=
   h.left
 
-theorem not_enacted_of_undelivered
+theorem not_effectivenessEnacted_of_undelivered
     {b : G.Being}
     (hundelivered : ∀ (deed reception : G.Weld),
       deed.agent = b → ¬ DeliveredTo G deed reception) :
-    ¬ WaaEnlightenmentEnacted G b := by
+    ¬ WaaEffectivenessEnacted G b := by
   rintro ⟨_hstanding, before, deed, reception, hdeed, hocc⟩
   exact hundelivered deed reception hdeed
     (deliveredTo_of_landsWithShareDrop G hocc.right.right)
@@ -109,21 +109,21 @@ theorem not_enacted_of_undelivered
 namespace BeingConvention
 namespace GridConvention
 
-/-- Per-occurrence enlightened landing is a grammatical verdict item. -/
-def WaaEnlightenedOccurrenceVoice : ErrorGrade :=
+/-- Per-occurrence effective landing is a grammatical verdict item. -/
+def WaaEffectiveOccurrenceVoice : ErrorGrade :=
   ErrorGrade.verdict
 
 /-- The standing universal is displayable as shortfall-voiced, not assertable
     as an act-time verdict. -/
-def WaaStandingEnlightenmentVoice : ErrorGrade :=
+def WaaStandingEffectivenessVoice : ErrorGrade :=
   ErrorGrade.shortfall
 
-theorem waa_enlightened_occurrence_voice_assertable :
-    ErrorGrade.voice WaaEnlightenedOccurrenceVoice = VerdictVoice.assertable :=
+theorem waa_effective_occurrence_voice_assertable :
+    ErrorGrade.voice WaaEffectiveOccurrenceVoice = VerdictVoice.assertable :=
   rfl
 
-theorem waa_standing_enlightenment_voice_displayable :
-    ErrorGrade.voice WaaStandingEnlightenmentVoice = VerdictVoice.displayable :=
+theorem waa_standing_effectiveness_voice_displayable :
+    ErrorGrade.voice WaaStandingEffectivenessVoice = VerdictVoice.displayable :=
   rfl
 
 end GridConvention

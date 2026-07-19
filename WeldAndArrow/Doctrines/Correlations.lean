@@ -238,7 +238,9 @@ inductive RankClaim
 
 def rankLanguage : ClaimLanguage G where
   Claim := RankClaim
-  Holds := fun _ _ => True
+  Holds
+    | .floor, _ => False
+    | .actTime _, _ => True
 
 abbrev RecordedRankUtterance : Type :=
   RecordedUtterance G (G.rankLanguage)

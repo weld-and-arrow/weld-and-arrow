@@ -62,7 +62,7 @@ The namespace tree now records ontological ordering. Floor/genjō and the bare
 signature sit outside the convention layers. `Grid.DirectedConvention` reads
 the arrow; `Grid.DirectedConvention.BeingConvention` reads fine tags as
 macro-scale beings; `Grid.DirectedConvention.BeingConvention.GridConvention`
-contains the pole-affirming row schema, the content-layer companion language,
+contains the floor-apophatic row schema, the content-layer companion language,
 the ladder API, and the generated table-order data across the `Consequences`
 files. Names are placed by what their reading presupposes, not by what their
 definition consumes.
@@ -190,9 +190,10 @@ before.tendency` and not `before.tendency ≼ share received`.
 - `LandsAt`, `ObjectAxisStanding`, `LandsWithShareDrop`, and
   `HasShareDropLanding`.
 - `EnvironsLine` and `ShareDropLine`.
-- `ShortfallClosedAt`, `WaaFullyEnlightened`, `WaaAversionContext`, and
+- `ShortfallClosedAt`, `WaaEffectiveTerminus`, `WaaAversionContext`, and
   `WaaPathOught`.
-- `WaaPathClaim`, `WaaFaithPrinciple`, and `WaaFaithOught`.
+- `WaaPathClaim`, `Factive`, `WaaNoDelusion`, `WaaFullyEnlightened`, and
+  `WaaFaithOught`.
 - `WaaReportFace`, `WaaOwnershipFace`, `WaaVacuousOwnershipFace`, and
   `WaaDiachronicWhose`.
 
@@ -383,9 +384,9 @@ share-drop line whose reception is actual assembles the existential
 as display.
 
 `ShortfallClosedAt` states local, delivered-pair shortfall closure for a live
-prior tendency. `WaaFullyEnlightened` adds this universal closure conjunct to
-`ResponsiveTerminus`; `responsiveTerminus_of_waaFullyEnlightened` and
-`shortfallClosedAt_of_waaFullyEnlightened` project the two parts.
+prior tendency. `WaaEffectiveTerminus` adds this universal closure conjunct to
+`ResponsiveTerminus`; `responsiveTerminus_of_waaEffectiveTerminus` and
+`shortfallClosedAt_of_waaEffectiveTerminus` project the two parts.
 
 **Delivery and share-drop landing.** The reach/aiming biconditionals are
 definitional (`Iff.rfl`). The remaining delivery theorems are projections from
@@ -430,14 +431,17 @@ shortfall-voiced.
 `Grid.DirectedConvention.BeingConvention.GridConvention`, `RowTag` names the
 schema-generated table rows, including the five `ConventionLayer` rows via
 `.layer`. `RowClaim` has `inForce r` and `denied r`, and `rowLanguage G` gives
-them pole-affirming semantics: at `floor` every row claim holds; at `actTime w`
-the conventional side holds, while the denial side holds exactly when
-`AtBot (G.share w)`.
+them floor-apophatic semantics: at `floor` no row claim holds, and every pair
+is indiscernible because both sides are silent. At `actTime w` the conventional
+side holds, while the denial side holds exactly when `AtBot (G.share w)`.
+`no_row_claim_holds_at_floor`, `floor_claims_indiscernible`, and
+`fitting_offer_is_actTime` are the silence, degeneracy, and MMK 24.10 pins.
 
 `rowOf G r` instantiates `Distinction G` from this language.
 `rowOf_separated_at_live`, `rowOf_collapse_self_refuting`, `rowOf_not_freeze`,
 `denied_holds_only_where_no_live_share`, `rowOf_errorFree`, and
-`pole_validates_all_claims` are hypothesis-free. `rowOf_obeys` and
+`pole_validates_all_claims` are hypothesis-free; the last remains strictly an
+act-time theorem. `rowOf_obeys` and
 `rowOf_obeys_iff_errorFree` carry only the local decidability/stability needed
 to turn non-live act-time into `AtBot`. `denied_misfits_live_offer` is the
 recorded-utterance check; `fox_utterance_misfits_live_offer` specializes it to
@@ -520,7 +524,7 @@ occurrence is already known actual. `not_waaMismatchLive_of_stone` uses
 
 `WaaAversionContext` packages a live prior tendency and an actual
 live-mismatch reception. `waa_path_landing` proves the checked conditional:
-`WaaFullyEnlightened`, a deed by that being, delivery to the reception, and
+`WaaEffectiveTerminus`, a deed by that being, delivery to the reception, and
 the aversion context imply `HasShareDropLanding`. `WaaPathOught` is only this
 implication type, and `waaPathOught_conditional` proves it.
 
@@ -530,34 +534,38 @@ live-aversion antecedent fails there. `Doctrines/SraddhaNegative.lean` supplies
 concrete countermodels for dropping faith or dropping aversion.
 
 `OrthogonalityNegative` reuses the `SraddhaNegative` zero-effectiveness grid:
-a responsive terminus can fail `WaaFullyEnlightened` because the delivered
+a responsive terminus can fail `WaaEffectiveTerminus` because the delivered
 deed has no share-drop landing for the receiver's live prior tendency.
-`waaFullyEnlightened_stronger_than_terminus` proves the strictness.
-`waaFullyEnlightened_of_responsiveTerminus_of_undelivered` gives the sealed
+`waaEffectiveTerminus_stronger_than_terminus` proves the strictness.
+`waaEffectiveTerminus_of_responsiveTerminus_of_undelivered` gives the sealed
 regime face: if no own deed is delivered, the shortfall-closure conjunct holds
 vacuously for any responsive terminus.
-`WaaPoleDeed` and `WaaEnlightenedOccurrence` name the per-occurrence
-shusho-itto face; `WaaEnlightenmentEnacted` adds a non-vacuous witness to the
-standing display. `not_enacted_of_undelivered` fences sealed-delivery vacuity,
-and `FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run` checks
+`WaaPoleDeed` and `WaaEffectiveOccurrence` name the per-occurrence
+shusho-itto face; `WaaEffectivenessEnacted` adds a non-vacuous witness to the
+standing display. `not_effectivenessEnacted_of_undelivered` fences sealed-delivery vacuity,
+and `EffectiveTerminusNegative.no_effectiveTerminus_recovery_from_run` checks
 that actual-run response/share data do not decide the standing universal.
 
 **Faith.** `WaaPathClaim` packages the local claim that a prior configuration,
-deed, and reception satisfy `ShortfallClosedAt`; `waaPathClaimLanguage` makes
-that claim a `ClaimLanguage`. `WaaFaithPrinciple` is the testimonial
-antecedent: faith in a fully enlightened being makes that being's recorded
-utterances fit their offered tier. `waa_says_true_of_faith` is the direct
-projection of the principle, while
-`fitsOfferedTier_of_waaFullyEnlightened_ownDeed` records the old own-deed
-fragment where full enlightenment itself supplies the claim truth.
-`waa_path_landing_of_faithPrinciple` and `waaFaithOught_conditional` rederive
-the landing through recorded testimony. `FaithNegative` shows that neither
-faith as the enlightenment premise itself nor free faith validates the
-principle.
+deed, and reception satisfy `ShortfallClosedAt`; `waaPathClaimLanguage` is
+silent at the floor and gives that condition at act-time. `Factive` types the
+identity leap, while per-utterance `Fidelity` types an uncorrupted occurrence.
+`WaaNoDelusion` excludes conventional misfits from faithful attributed speech,
+and `WaaFullyEnlightened` bundles it with `WaaEffectiveTerminus` as the
+two-obscurations faith-object. `waa_no_misfit_of_stance` supplies the negative
+verdict; `waa_says_true_at_actTime_of_stance` and
+`waa_says_true_of_faith` obtain fit only with an explicit act-time offer.
+`fitsOfferedTier_of_waaEffectiveTerminus_ownDeed` remains the direct,
+non-testimonial route and likewise requires conventional offering.
+`waa_path_landing_of_stance` and `waaFaithOught_conditional` rederive the
+landing through testimony. `FaithNegative` supplies both the
+`aklishta_ajnana_witness` separating effectiveness from no-delusion and the
+non-vacuous faithful act-time inhabitant of the full bundle.
 
-**Ethics.** `WaaEthicsStance` bundles the faith principle with faith in one
-faith-object; `WaaEthicalCode` generalizes the fourth-truth ought across that
-object's recorded testimony while remaining an implication type.
+**Ethics.** `WaaEthicsStance` bundles factivity with faith in the
+two-obscurations object; fidelity and act-time offering remain per utterance.
+`WaaEthicalCode` generalizes the fourth-truth ought across that object's
+recorded testimony while remaining an implication type.
 `waaEthicalCode_conditional` is the hypothesis-free conditional. The voice
 pair is split by `waa_ethics_conditional_voice_assertable` and
 `waa_ethics_detached_voice_displayable`: the conditional is verdict-voiced, the
@@ -648,10 +656,12 @@ share 1 rather than at the pole. The checked model facts are
 `fox_reachBack_full_at_release`, `fox_nothing_kept`, and
 `fox_never_tests_pole`. `foxSeriesCoarsening` merges the fine lives into the
 display tag "the fox" while `fox_consecutive_lives_distinct` keeps the fine
-series individuated. The Dogen gloss is typed by
-`daishugyo_diagnosis_fits`, `jinshinInga_instruction_fits`,
-`jinshinInga_floor_voicing_would_misfit`, and `dogen_doubling_both_fit`; these
-check only the grid-internal speech-act gloss, not the historical contra.
+series individuated. The Dōgen gloss is typed by
+`daishugyo_floor_face_error_free`, `daishugyo_conventional_face_fits`,
+`jinshinInga_instruction_fits`, `jinshinInga_floor_voicing_would_misfit`, and
+`dogen_doubling`. The floor face is error-free by silence rather than
+positively true; these checks cover only the grid-internal speech-act gloss,
+not the historical contra.
 `Doctrines/FoxCase.lean` adds `fox_dukkha_per_life`, because that theorem
 consumes the Four Truths mismatch vocabulary.
 
@@ -719,12 +729,13 @@ total-rectangle cut, not the buddha reading by itself. The layered reading has
 three checked rungs: rung 1 is share-only and stone-inclusive
 (`FettersNegative.total_cut_carries_no_function`); rung 2 is the live terminus
 reading, with `sentientTag_iff_actualFiberInhabited` bridging function to
-actual fiber inhabitation; rung 3 is `WaaFullyEnlightened`, and
-`FettersNegative.total_cut_with_function_not_waaFullyEnlightened` checks that
+actual fiber inhabitation; rung 3 is `WaaEffectiveTerminus`, and
+`FettersNegative.total_cut_with_function_not_waaEffectiveTerminus` checks that
 rung 2 still lacks effectiveness. The regime-relational face is two-sided:
-zero-effect delivery can make full enlightenment fail, while
-`waaFullyEnlightened_of_responsiveTerminus_of_undelivered` makes it hold
-vacuously under sealed delivery. The checked anchors are
+zero-effect delivery can make effective termination fail, while
+`waaEffectiveTerminus_of_responsiveTerminus_of_undelivered` makes it hold
+vacuously under sealed delivery. Testimonial full enlightenment is the further
+`WaaNoDelusion` bundle, separated by `FaithNegative`. The checked anchors are
 `classQuiet_no_clench_in_class`, `identityView_excluded_at_arhatFiber`,
 `conceit_excluded_at_arhatFiber`, `all_fetters_cut_at_arhatFiber`,
 `arhatFiber_of_termini`,
@@ -897,7 +908,7 @@ The contemporary placement checks are `siderits_waaPlacement`,
 `hareHornRegister` (38), `modalRealismFreeze` (39), and
 `aptnessConditionality` (40), `sraddhaConditional` (41), and
 `faithBothConjuncts` (42). The table-generation entries append after those
-existing pins: `generatedTableStructure` (43), `poleAffirmingSemantics` (44),
+existing pins: `generatedTableStructure` (43), `floorApophaticSemantics` (44),
 `proseRows` (45), and `errorFreeReading` (46). `misFeedFence` (47) records the
 avyākata fence-and-gate pair. The correlation entries are `tenBullsTyped` (48),
 `fiveRanksRetype` (49), `stageSchemeCoarsening` (50), and
@@ -910,15 +921,16 @@ episode-grained verdict history as Lean data, including the retype entries in
 `generatorRecord` (`Meta/VerdictLedger.lean`), and `compoundCellStacks` (57)
 records the five compound-position decompositions over existing `TableRow`s,
 with facets, roles, voices, legal elements, and core-cell counts in
-`Consequences/Compounds.lean`. `fullEnlightenmentRetype` (58) records the
-per-occurrence full-enlightenment face, the standing display/faith-object
-demotion, and the enacted/vacuity fence.
+`Consequences/Compounds.lean`. `effectiveTerminusRetype` (58) records the
+per-occurrence effectiveness face, the descriptive standing-display demotion,
+and the enacted/vacuity fence; the testimonial faith-object is now the separate
+two-obscurations bundle.
 `waaKarmaIdentification_number` pins `waaKarmaIdentification = 9`, and
 `modalRealismFreeze_number` pins `modalRealismFreeze = 39`.
 `aptnessConditionality_number` pins `aptnessConditionality = 40`;
 `sraddhaConditional_number` and `faithBothConjuncts_number` pin the two new
 Sraddha entries, while `generatedTableStructure_number`,
-`poleAffirmingSemantics_number`, `proseRows_number`,
+`floorApophaticSemantics_number`, `proseRows_number`,
 `errorFreeReading_number`, and
 `misFeedFence_number` pin the table and mis-feed entries; the newer
 correlation and disclaimer pins are `tenBullsTyped_number`, `fiveRanksRetype_number`,
@@ -926,7 +938,7 @@ correlation and disclaimer pins are `tenBullsTyped_number`, `fiveRanksRetype_num
 `twoAxisFetterLattice_number`, `enlightenmentLadder_number`,
 `ethicsBundledConditionalCode_number`, `codeHonestyClauses_number`,
 `verdictRecordData_number`, `compoundCellStacks_number`, and
-`fullEnlightenmentRetype_number`.
+`effectiveTerminusRetype_number`.
 
 ---
 
@@ -1010,13 +1022,13 @@ Grade-facing transport facts:
 - `Grid.DirectedConvention.map_shareDropLine_iff`
 - `Grid.DirectedConvention.map_shortfallClosedAt_iff`
 - `Grid.DirectedConvention.map_waaAversionContext_iff`
-- `Grid.DirectedConvention.map_waaFullyEnlightened_reflect` and
-  `map_waaFullyEnlightened_of_surjective`; the latter's coverage hypothesis is
-  witnessed by `CoverageNegative.waaFullyEnlightened_needs_coverage`
+- `Grid.DirectedConvention.map_waaEffectiveTerminus_reflect` and
+  `map_waaEffectiveTerminus_of_surjective`; the latter's coverage hypothesis is
+  witnessed by `CoverageNegative.waaEffectiveTerminus_needs_coverage`
 - `Grid.DirectedConvention.WaaPathClaim.map`,
-  `map_waaPathClaim_holds_iff`, `map_waaFullyEnlightened_iff`,
-  `map_faith_object_eq`, and `map_waaFaithPrinciple_reflect`; the
-  coverage-carrying entries share that same witness
+  `map_waaPathClaim_holds_iff`, `map_waaEffectiveTerminus_iff`,
+  and `map_effectiveTerminus_eq`; the coverage-carrying entries share that
+  same witness
 - `BeingCoarsening.displayMap` and its `map_*_iff` lemmas for
   `InFiber`, `SameFiber`, `FiberInhabited`, `ActualFiberInhabited`,
   `SentientTag`, `FiberAtPole`, `ActualFiberInhabitedOn`,
@@ -1145,9 +1157,9 @@ variation aptness hypothesis is load-bearing.
 `directionVoid_needs_coverage` shows that carrier-wide direction-voidness does
 not push forward when the target has strict comparisons outside the image.
 `phantomGrid` gives the parallel faith-closure witness:
-`waaFullyEnlightened_needs_coverage` shows that the mapped carrier introduces
-live tendencies the source never quantified over, so full enlightenment does
-not preserve without coverage.
+`waaEffectiveTerminus_needs_coverage` shows that the mapped carrier introduces
+live tendencies the source never quantified over, so effective termination
+does not preserve without coverage.
 
 **`MisFeedNegative` in `Identification/Residues.lean`.** `IndexSeekingForm` is the type of candidate
 answer-functions for the index-seeking question-shape: one designation per
@@ -1253,7 +1265,7 @@ The audited declarations are:
 - `ConfigLeakWitness.no_agent_recovery_from_config_of_share_collision`
 - `DirectionNegative.no_direction_recovery_from_conditionsEither`
 - `CoverageNegative.directionVoid_needs_coverage`
-- `CoverageNegative.waaFullyEnlightened_needs_coverage`
+- `CoverageNegative.waaEffectiveTerminus_needs_coverage`
 - `Grid.stateToolFits_iff_atBot`
 - `Grid.map_actual_iff`
 - `Grid.map_isShareDrop_iff`
@@ -1293,13 +1305,13 @@ The audited declarations are:
 - `FettersNegative.seen_run_underdetermines_fetterCut`
 - `Grid.DirectedConvention.waaPathOught_conditional`
 - `Grid.DirectedConvention.waaFaithOught_conditional`
-- `Grid.DirectedConvention.map_waaFaithPrinciple_reflect`
-- `FaithNegative.waaFaithPrinciple_id_fails`
+- `Grid.DirectedConvention.waa_says_true_at_actTime_of_stance`
+- `FaithNegative.effectiveTerminus_not_waaFullyEnlightened`
 - `Grid.DirectedConvention.no_waa_path_at_pole`
 - `Grid.DirectedConvention.map_waaAversionContext_iff`
 - `MisFeedNegative.fence_and_gate`
 - `misFeed_entries_carry_decomposition`
-- `OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus`
+- `OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus`
 - `Grid.stone_of_no_call`, `Grid.respondsToEveryCall_of_no_call`, and
   `Grid.allStone_of_no_being`
 - `ContentNegative.emptyCallGrid_false_stone_and_respondsToEveryCall`,
@@ -1330,8 +1342,8 @@ on exactly `[propext, Quot.sound]`, and
 `FettersNegative.seen_run_underdetermines_fetterCut`,
 `Grid.waaOnceReturner_attenuation_witness`,
 `FactorsNegative.seen_run_underdetermines_factorOrder`, and
-`Grid.DirectedConvention.map_waaFaithPrinciple_reflect`, plus the three
-census theorems `Grid.ConsequentialistConvention.dropCountInFiber_le_dropCount`,
+the three census theorems
+`Grid.ConsequentialistConvention.dropCountInFiber_le_dropCount`,
 `Grid.ConsequentialistConvention.dropCount_eq_sum_dropCountInFiber`, and
 `Grid.ConsequentialistConvention.map_dropCountInFiberSum`, and the two ledger
 case theorems `LedgerCase.decree_engineers_calls_not_receptions` and

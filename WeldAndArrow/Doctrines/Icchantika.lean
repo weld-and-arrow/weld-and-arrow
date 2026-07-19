@@ -46,12 +46,12 @@ theorem icchantika_not_terminus
   exact h.right c r hresp (G.atBot_of_terminus_response hterm hresp)
 
 /-- The honest negative fact: an icchantika cannot be seated as a fully
-    enlightened agent on this run, because `WaaFullyEnlightened` includes
+    enlightened agent on this run, because `WaaEffectiveTerminus` includes
     terminus typing. This is not a verdict that the being cannot become buddha.
     Reading and motivation: `Identification/Commentary.lean`, C.13. -/
-theorem not_waaFullyEnlightened_of_icchantika
+theorem not_waaEffectiveTerminus_of_icchantika
     {G : Grid Contrib} {b : G.Being} (h : Icchantika G b) :
-    ¬ WaaFullyEnlightened G b := by
+    ¬ WaaEffectiveTerminus G b := by
   intro hfull
   exact icchantika_not_terminus (G := G) h hfull.left.right
 
@@ -80,7 +80,7 @@ theorem aversionContext_of_icchantika_reception
 theorem icchantika_reachable
     {G : Grid Contrib} {g b : G.Being} {before : Config Contrib}
     {deed reception : G.Weld}
-    (hfaith : WaaFullyEnlightened G g)
+    (hfaith : WaaEffectiveTerminus G g)
     (hdeed : deed.agent = g)
     (hdel : DeliveredTo G deed reception)
     (hreceiver : reception.agent = b) (hic : Icchantika G b)

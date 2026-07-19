@@ -20,7 +20,7 @@ the concept looks like from this grid, not what the concept is in a detached
 doctrinal voice. The marker covers ownership, appropriation, whose-ness,
 reach-back, sowing-side aiming, four-truths mismatch vocabulary, and sraddha
 conditional vocabulary such as `WaaMismatchGrade`, `WaaMismatchLive`,
-`WaaAversionContext`, `WaaFullyEnlightened`, and the tariki/jiriki line
+`WaaAversionContext`, `WaaEffectiveTerminus`, and the tariki/jiriki line
 readings. Doctrine names are carried by module names and commentary headings;
 checked reading identifiers use the single `Waa` marker.
 
@@ -132,11 +132,19 @@ strict comparison, while `AllStone` names the grid-wide absence of response
 function.
 
 `RowTag`, `RowClaim`, `rowLanguage`, and `rowOf` now generate the table's
-schema rows with pole-affirming semantics. `beforeAfterRow`, `beingsRow`,
-`gridLensRow`, and `weldRow` are compatibility names for `.layer` tags in that
-schema. Their collapse and freeze checks remain hypothesis-free; their
-obedience theorems carry only the local `AtBot` stability needed for non-live
-genjo fusion. The full row list is Lean data as `tableOrder`.
+schema rows with floor-apophatic semantics. At `floor` no row claim holds;
+`no_row_claim_holds_at_floor` is the silence pin, and
+`floor_claims_indiscernible` makes fusion degeneracy of the claim-space rather
+than joint truth. Conventional force begins only at act-time:
+`fitting_offer_is_actTime` is the MMK 24.10 pin. At a pole-class act-time the
+denial side still earns diagnostic truth by `pole_validates_all_claims`; that
+不昧 face is unchanged. `beforeAfterRow`, `beingsRow`, `gridLensRow`, and
+`weldRow` are compatibility names for `.layer` tags in the schema. Their
+collapse and freeze checks remain hypothesis-free; their obedience theorems
+carry only the local `AtBot` stability needed for non-live genjō fusion. The
+full row list is Lean data as `tableOrder`. No positive `Truth` or `Thus`
+predicate of the floor is introduced; `InstructiveAbsence.floorTruthPredicate`
+registers that refusal.
 
 `intraWeldArrow` is a `ConventionLayer`, not a bare row tag, because it names
 the convention by which the two faces of a weld are ordered. Its content denial
@@ -190,8 +198,9 @@ condition and gives row-specific content to the denial side. Its obedience
 theorems are aptness-conditional by design: where the denial is simply true,
 the convention row should not be held. This track deliberately keeps
 `LayerClaim`: global denials such as all-stone, direction-void, no-live-tier,
-or no-actual-weld cannot be made pole-affirming by truth at a particular genjo
-weld. `RecordedUtterance` supplies the actuality needed for the content
+or no-actual-weld cannot be made conventionally apt by truth at a particular
+genjō weld. Its floor clause is silent like every other `ClaimLanguage` in the
+development. `RecordedUtterance` supplies the actuality needed for the content
 utterance checks, while `denied_misfits_live_offer` and
 `fox_utterance_misfits_live_offer` perform the same live-tier check for the
 schema language.
@@ -331,7 +340,7 @@ stone and call-entire response coincide, while `emptyBeingGrid_no_liveTier` and
 on which the content row can fail to fuse.
 
 `CoverageNegative` certifies the coverage hypotheses on
-`directionVoid_of_surjective` and `map_waaFullyEnlightened_of_surjective`:
+`directionVoid_of_surjective` and `map_waaEffectiveTerminus_of_surjective`:
 strictness outside the image of a display reparameterization can make
 direction-voidness and faith-closure fail to preserve, parallel in duty to the
 aptness countermodels above.
@@ -347,47 +356,86 @@ pole-class by the existing terminus theorem.
 
 `WaaAversionContext` treats sraddha reception per call: it packages a live
 prior tendency and an actual live-mismatch reception, not a stored faith
-possession. `WaaFullyEnlightened` deliberately has two conjuncts: terminus
+possession. `WaaEffectiveTerminus` deliberately has two conjuncts: terminus
 typing and universal shortfall closure for delivered deeds. The physician
 simile belongs exactly there: the grid can prove `waaPathOught_conditional`,
 but the antecedents are faith-shaped and are never discharged by field facts.
-The faith-object therefore cannot be replaced by anything the fetter lattice
-names: the total-rectangle cut lacks function by
+This direct, non-testimonial route needs effectiveness only. The full
+faith-object cannot be replaced by anything the fetter lattice names: the
+total-rectangle cut lacks function by
 `FettersNegative.total_cut_carries_no_function`, and even the live fiber reading
 lacks effectiveness by
-`FettersNegative.total_cut_with_function_not_waaFullyEnlightened`.
+`FettersNegative.total_cut_with_function_not_waaEffectiveTerminus`.
 
-`WaaFaithPrinciple` abstracts the sraddha antecedent to testimony: faith in
-enlightenment transmits truth to recorded utterances, with
-`waaPathClaimLanguage` instantiating the `ClaimLanguage` interface for the
-physician's sentence. `FaithNegative` shows the principle exceeds its own
-faith-object, so the "never discharged by field facts" clause survives the
-abstraction.
+The old floor-proximity grounding of testimony is withdrawn: floor silence
+transmits nothing selective. `WaaNoDelusion` instead states the character claim
+positively and only at act-time: every faithfully recorded, attributed
+conventional utterance is true. Its `waaNoDelusion_not_misfits` corollary gives
+the privative error verdict constructively. `WaaFullyEnlightened` is the
+two-obscurations bundle: its
+`WaaEffectiveTerminus` conjunct removes the afflictive obscuration, while its
+`WaaNoDelusion` conjunct removes the cognitive obscuration relevant to
+innocent factual error. Deliberate false speech belongs to defilement and is
+excluded with the first obscuration; innocent misfitting content is the
+undefiled nescience (akliṣṭa-ajñāna) not removed until the second. Because
+`MisfitsOfferedTier` records content-falsity without typing deceptive intent,
+the conjunct boundary is load-bearing. `FaithNegative.aklishta_ajnana_witness`
+exhibits the exact joint: effective termination with a misfitting faithful
+utterance under total fidelity.
 
-`WaaEthicsStance` bundles the two undischarged antecedents -- principle and
-faith -- as the agent's contribution; `WaaEthicalCode` is the fourth-truth
-ought generalized over the faith-object's recorded testimony, still an
-implication type only. The deontic work is done by the receiver's own
-`WaaAversionContext`, not by testimony's truth: the physician's sentence is
-practical only where shortfall is live. `EthicsNegative` keeps the code honest
-three ways: empty at the pole, unsatisfiable over false testimony, and relative
-to the faith-object.
+The positive no-delusion grounding matches the existing MN 58-shaped
+machinery: truth is act-time `TrueAt`, benefit is shortfall closure for a live
+aversion, and timeliness is fitting the offered tier. Constructively, "never
+wrong" and "right" do not coincide: deriving truth from mere absence of a
+misfit would require the unearned step `¬¬ TrueAt → TrueAt`. An ethics of
+testimony should preserve that gap. Faith in the physician hands over a
+witnessable positive prescription, not a lifetime absence of refutation
+laundered through excluded middle. The same discipline that keeps the floor
+apophatic therefore keeps testimony positive in the conventional register.
+Identity and transmission remain open:
+`Factive` says the faith attitude is factive, while per-utterance `Fidelity`
+says this record is an uncorrupted occurrence of the attributed speech.
+Neither is ever derived from grid or field facts. This is the Kalāma restraint:
+śraddhā remains a held hypothesis, consistent with
+`EffectiveTerminusNegative`, rather than a certification manufactured by the
+formalism. A floor-offered record is vacuously outside `MisfitsOfferedTier` but
+transmits no content, because the testimonial route explicitly requires an
+act-time offer.
+
+`WaaEthicsStance` bundles factivity and faith in the two-obscurations object;
+occurrence fidelity and act-time offering remain per utterance.
+`WaaEthicalCode` is the fourth-truth ought generalized over such testimony,
+still an implication type only. The is-ought work is receiver-side: testimony
+supplies the is, while the receiver's live `WaaAversionContext` supplies the
+want. This is a hypothetical-imperative dissolution, not a refutation, of
+Hume's point. `EthicsNegative` keeps the code empty at the pole,
+unsatisfiable over faithful false testimony, and relative to its faith-object.
+
+Future work is deliberately registered but not implemented here: speech
+production may later be typed as deed through the three doors of body, speech,
+and mind. That extension could derive the impossibility of deliberate
+falsehood from bottom share, leaving only undefiled nescience as the explicit
+cognitive-obscuration conjunct. `RecordedUtterance` currently stores
+attribution rather than production, so that primitive remains absent in this
+pass.
 
 `Doctrines/SraddhaNegative.lean` keeps that conditional honest.
 `SraddhaNegative` shows that dropping faith or dropping the live-aversion
 antecedent loses the landing, and `OrthogonalityNegative` shows that a
-responsive terminus need not be `WaaFullyEnlightened`.
+responsive terminus need not be `WaaEffectiveTerminus`.
 The opposite regime face is checked by
-`waaFullyEnlightened_of_responsiveTerminus_of_undelivered`: with no delivered
+`waaEffectiveTerminus_of_responsiveTerminus_of_undelivered`: with no delivered
 own deeds, the closure conjunct holds vacuously. Teaching and non-teaching are
 delivery facts around a terminus, not two being-natures stored in it.
 `Doctrines/Shusho.lean` retypes the operational content as
-`WaaEnlightenedOccurrence`: an actual pole-deed landing as a share-drop against
+`WaaEffectiveOccurrence`: an actual pole-deed landing as a share-drop against
 a live prior tendency. The standing universal survives only as display and
-faith-object; `WaaEnlightenmentEnacted` and `not_enacted_of_undelivered` fence
-the sealed-regime vacuity from an enacted occurrence. `FullEnlightenmentNegative`
-turns the old prose warning into a collision: changing only `conditions` leaves
-actual response/share data fixed while flipping `WaaFullyEnlightened`.
+direct-path hypothesis; `WaaEffectivenessEnacted` and
+`not_effectivenessEnacted_of_undelivered` fence the sealed-regime vacuity from
+an enacted occurrence. The separate faith-object is the two-obscurations
+`WaaFullyEnlightened` bundle. `EffectiveTerminusNegative` turns the old prose
+warning into a collision: changing only `conditions` leaves actual
+response/share data fixed while flipping `WaaEffectiveTerminus`.
 
 C.5 Doctrines/Deliberation.lean
 
@@ -509,11 +557,13 @@ is intentionally true by construction: no grade in the model is zero, so the
 absence of pole-arrival is a displayed boundary of the koan, not a hidden
 answer to the terminus question.
 
-The Dogen doubling checks are grid-internal only. `oldMan_utterance_misfits`
-delegates the old answer to the fox row's live-tier misfit;
-`daishugyo_diagnosis_fits`, `jinshinInga_instruction_fits`,
-`jinshinInga_floor_voicing_would_misfit`, and `dogen_doubling_both_fit` type
-the two speech-act faces and the counterfactual floor-voicing. They do not
+The Dōgen doubling checks are grid-internal only. `oldMan_utterance_misfits`
+delegates the old answer to the fox row's live-tier error predicate;
+`daishugyo_floor_face_error_free`, `daishugyo_conventional_face_fits`,
+`jinshinInga_instruction_fits`, `jinshinInga_floor_voicing_would_misfit`, and
+`dogen_doubling` preserve all four verdicts. The daishugyō floor face is
+error-free by silence, not positively true; 不昧 convicts the old man and the
+counterfactual floor-voicing at live act-time. These theorems do not
 prove the historical claim that this paper follows Daishugyo against the late
 Dogen; that disagreement stays prose. The dukkha-facing name
 `fox_dukkha_per_life` lives one layer down in `Doctrines/FoxCase.lean` because
@@ -588,23 +638,26 @@ Rung 1 is the total-rectangle cut, the share axis alone; the all-stone witness
 `FettersNegative.total_cut_carries_no_function` shows that it has no function
 conjunct. Rung 2 is the live terminus reading, `LiveFiberAtPole`, with
 `sentientTag_iff_actualFiberInhabited` as the bridge from response-function to
-actual fiber inhabitation. `FettersNegative.total_cut_with_function_not_waaFullyEnlightened`
+actual fiber inhabitation. `FettersNegative.total_cut_with_function_not_waaEffectiveTerminus`
 checks that rung 2 still lacks effectiveness. Rung 3 is
-`WaaFullyEnlightened`, rung 2's quietness plus universal shortfall closure, and
-it enters the faith and ethics files only as hypothesis. The shusho-itto face
-is now explicit as `WaaEnlightenedOccurrence`; the standing rung is the display
-and faith-object, never the act-time verdict. This is the same fox-guard for
+`WaaEffectiveTerminus`, rung 2's quietness plus universal shortfall closure, and
+it enters the direct śraddhā route as hypothesis. The shushō-ittō face is now
+explicit as `WaaEffectiveOccurrence`; the standing rung is a descriptive
+display, never the act-time verdict. The two-obscurations
+`WaaFullyEnlightened` bundle is the testimonial faith-object above this
+effectiveness ladder. This is the same fox-guard for
 sentient and insentient adaptive cases: a standing rank on a responder is the
 freeze, while a pole-typed landing is spent per occurrence.
 
 Pratyekabuddha is typed at rung 2 as a regime fact with two faces, not as a
 second attainment. Face A is uncooperative delivery: a deed is delivered but no
-share drop lands, so `OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus`
-shows failure of `WaaFullyEnlightened`. Face B is sealed delivery:
-`waaFullyEnlightened_of_responsiveTerminus_of_undelivered` makes full
-enlightenment hold vacuously when no own deed is delivered at all; the enacted
-form fails by `not_enacted_of_undelivered`, paralleling the empty-domain
-separations in `ContentNegative`. The samyaksambuddha reading is rung 3, the
+share drop lands, so `OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus`
+shows failure of `WaaEffectiveTerminus`. Face B is sealed delivery:
+`waaEffectiveTerminus_of_responsiveTerminus_of_undelivered` makes full
+effectiveness hold vacuously when no own deed is delivered at all; the enacted
+form fails by `not_effectivenessEnacted_of_undelivered`, paralleling the
+empty-domain separations in `ContentNegative`. The samyaksambuddha testimonial
+reading additionally requires `WaaNoDelusion`; effectiveness alone is not the
 faith-object. The guard clause is
 therefore strict: the model hosts a non-teaching terminus as a regime fact,
 never as a being who opts out of being read. This is the taxonomy-freeze cell
@@ -782,9 +835,9 @@ C.13 Doctrines/Icchantika.lean
 negative kind. The formal reading is deliberately literal and run-shaped:
 function is mounted somewhere, and every mounted response is live at the
 self-pole index. That makes the being non-stone and anti-terminus on its run,
-so `not_waaFullyEnlightened_of_icchantika` gives the honest agent-role bar:
+so `not_waaEffectiveTerminus_of_icchantika` gives the honest agent-role bar:
 this run cannot seat the icchantika as the enlightened agent, because
-`WaaFullyEnlightened` includes terminus typing.
+`WaaEffectiveTerminus` includes terminus typing.
 
 The receiver-side result points the other way.
 `aversionContext_of_icchantika_reception` says an actual icchantika reception

@@ -126,18 +126,18 @@ theorem sraddha_liveFiberAtPole :
 
 /-- Rung 2 to rung 3 is strict. Dressing the zero-effect sraddha countermodel
     with the identity fiber gives total calls and total tags plus function
-    (`LiveFiberAtPole`), while `WaaFullyEnlightened` still fails: quiet-and-
+    (`LiveFiberAtPole`), while `WaaEffectiveTerminus` still fails: quiet-and-
     functioning is not regime effectiveness. This is the tag-axis sibling of
-    `OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus`. -/
-theorem total_cut_with_function_not_waaFullyEnlightened :
+    `OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus`. -/
+theorem total_cut_with_function_not_waaEffectiveTerminus :
     sraddhaEffectCoarsening.FiberAtPoleOnWithin
       SraddhaNegative.Being.sraddha (fun _ => True) (fun _ => True) ∧
       sraddhaEffectCoarsening.SentientTag SraddhaNegative.Being.sraddha ∧
         sraddhaEffectCoarsening.LiveFiberAtPole SraddhaNegative.Being.sraddha ∧
-          ¬ WaaFullyEnlightened SraddhaNegative.zeroEffectGrid
+          ¬ WaaEffectiveTerminus SraddhaNegative.zeroEffectGrid
             SraddhaNegative.Being.sraddha :=
   ⟨sraddha_fiber_total_cut, sraddha_fiber_sentient,
-    sraddha_liveFiberAtPole, SraddhaNegative.not_waaFullyEnlightened⟩
+    sraddha_liveFiberAtPole, SraddhaNegative.not_waaEffectiveTerminus⟩
 
 inductive Being
   | practitioner

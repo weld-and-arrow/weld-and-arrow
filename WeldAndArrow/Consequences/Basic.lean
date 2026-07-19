@@ -417,29 +417,29 @@ theorem shortfallClosedAt_of_shareDropLine_actual
   fun _hlive _hdel =>
     hasShareDropLanding_of_shareDropLine_actual G hline hact
 
-/-- Standing full-enlightenment display, quantified over the run: the being is
+/-- Effective-terminus display, quantified over the run: the being is
     a responsive terminus and every delivered reception of one of its deeds
     closes shortfall for a live prior tendency.
 
-    This standing form is legal as display over the run and as the faith-object
-    used in antecedent position; it is not an act-time verdict, for sentient or
-    artifact cases. The operational shusho-itto face is
-    `WaaEnlightenedOccurrence`, while `FullEnlightenmentNegative` checks that
-    the universal conjunct is not recovered from actual-run data. Reading and
-    motivation: Identification/Commentary.lean, C.4. -/
-def WaaFullyEnlightened (b : G.Being) : Prop :=
+    This descriptive standing form is legal as display over the run; it is not
+    an act-time verdict or, by itself, the testimonial faith-object. The
+    operational shushō-ittō face is `WaaEffectiveOccurrence`, while
+    `EffectiveTerminusNegative` checks that the universal conjunct is not
+    recovered from actual-run data. Reading and motivation:
+    Identification/Commentary.lean, C.4. -/
+def WaaEffectiveTerminus (b : G.Being) : Prop :=
   G.ResponsiveTerminus b ∧
     ∀ before deed reception,
       deed.agent = b →
         ShortfallClosedAt G before deed reception
 
-theorem responsiveTerminus_of_waaFullyEnlightened
-    {b : G.Being} (h : WaaFullyEnlightened G b) :
+theorem responsiveTerminus_of_waaEffectiveTerminus
+    {b : G.Being} (h : WaaEffectiveTerminus G b) :
     G.ResponsiveTerminus b :=
   h.left
 
-theorem shortfallClosedAt_of_waaFullyEnlightened
-    {b : G.Being} (h : WaaFullyEnlightened G b)
+theorem shortfallClosedAt_of_waaEffectiveTerminus
+    {b : G.Being} (h : WaaEffectiveTerminus G b)
     {before : Config Contrib} {deed reception : G.Weld}
     (hdeed : deed.agent = b) :
     ShortfallClosedAt G before deed reception :=
@@ -449,13 +449,13 @@ theorem shortfallClosedAt_of_waaFullyEnlightened
     the universal shortfall-closure conjunct is satisfied vacuously. This is
     the sealed-regime face: teaching/non-teaching is not stored in the being,
     but in the delivery relation around it. The vacuous standing display is
-    separated from enacted full enlightenment by
-    `not_enacted_of_undelivered`. -/
-theorem waaFullyEnlightened_of_responsiveTerminus_of_undelivered
+    separated from enacted effectiveness by
+    `not_effectivenessEnacted_of_undelivered`. -/
+theorem waaEffectiveTerminus_of_responsiveTerminus_of_undelivered
     {b : G.Being} (hterm : G.ResponsiveTerminus b)
     (hundelivered : ∀ (deed reception : G.Weld),
       deed.agent = b → ¬ DeliveredTo G deed reception) :
-    WaaFullyEnlightened G b := by
+    WaaEffectiveTerminus G b := by
   refine ⟨hterm, ?_⟩
   intro _before deed reception hdeed _hlive hdel
   exact False.elim ((hundelivered deed reception hdeed) hdel)
@@ -655,8 +655,9 @@ def ErrorFree (d : Distinction G) : Prop :=
   (∀ t, ¬ d.Collapse t) ∧ ¬ d.Freeze
 
 /-- Obedience supplies both refutations. The converse is not true for an
-    arbitrary distinction; the pole-affirming row language below is the special
-    case where the missing genjo-fusion clause is built into the semantics. -/
+    arbitrary distinction; the floor-apophatic row language below is the
+    special case where the missing genjō-fusion clause is built into the
+    semantics by indiscernibility. -/
 theorem errorFree_of_obeys
     {d : Distinction G} (h : d.ObeysSeparateFuse) :
     ErrorFree G d :=

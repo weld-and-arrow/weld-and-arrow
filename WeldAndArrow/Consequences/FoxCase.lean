@@ -216,8 +216,14 @@ def oldManUtterance :
 
 /-- "Not-fall", voiced to a live audience, repeats the fox's tier-error. -/
 theorem oldMan_utterance_misfits :
+    oldManUtterance.MisfitsOfferedTier :=
+  denied_misfits_live_offer_as_error foxGrid .foxWeld oldManUtterance rfl
+    sentenceWeld_hasSelfPoleIndex
+
+/-- Compatibility form of the old-man verdict. -/
+theorem oldMan_utterance_not_fits :
     ¬ oldManUtterance.FitsOfferedTier :=
-  fox_utterance_misfits_live_offer foxGrid oldManUtterance rfl
+  denied_misfits_live_offer foxGrid .foxWeld oldManUtterance rfl
     sentenceWeld_hasSelfPoleIndex
 
 def daishugyoFloorUtterance :
@@ -234,12 +240,16 @@ def daishugyoConventionalUtterance :
   offeredAt := Tier.actTime releaseWeld
   content   := .inForce .foxWeld
 
-/-- "Daishugyo diagnoses": the two fox faces fit when each is held at its
-    proper tier. -/
-theorem daishugyo_diagnosis_fits :
-    daishugyoFloorUtterance.FitsOfferedTier ∧
-      daishugyoConventionalUtterance.FitsOfferedTier :=
-  ⟨True.intro, True.intro⟩
+/-- The daishugyō floor face is beyond conviction by silence, not true at the
+    floor. -/
+theorem daishugyo_floor_face_error_free :
+    ¬ daishugyoFloorUtterance.MisfitsOfferedTier :=
+  not_misfits_of_floor_offer foxGrid daishugyoFloorUtterance rfl
+
+/-- The daishugyō conventional face positively fits its live act-time tier. -/
+theorem daishugyo_conventional_face_fits :
+    daishugyoConventionalUtterance.FitsOfferedTier :=
+  True.intro
 
 def jinshinIngaInstruction :
     Grid.RecordedUtterance foxGrid (rowLanguage foxGrid) where
@@ -269,18 +279,20 @@ theorem releaseWeld_hasSelfPoleIndex :
 
 /-- "Voicing the floor would repeat the fox's error to a live audience." -/
 theorem jinshinInga_floor_voicing_would_misfit :
-    ¬ jinshinIngaFloorVoicing.FitsOfferedTier :=
-  denied_misfits_live_offer foxGrid .foxWeld jinshinIngaFloorVoicing rfl
+    jinshinIngaFloorVoicing.MisfitsOfferedTier :=
+  denied_misfits_live_offer_as_error foxGrid .foxWeld jinshinIngaFloorVoicing rfl
     releaseWeld_hasSelfPoleIndex
 
-/-- The Dogen doubling gloss, grid-internally only: Daishugyo and Jinshin inga
-    both fit at their act-times, while the floor-voicing counterfactual misfits. -/
-theorem dogen_doubling_both_fit :
-    (daishugyoFloorUtterance.FitsOfferedTier ∧
-        daishugyoConventionalUtterance.FitsOfferedTier) ∧
-      jinshinIngaInstruction.FitsOfferedTier ∧
-        ¬ jinshinIngaFloorVoicing.FitsOfferedTier :=
-  ⟨daishugyo_diagnosis_fits, jinshinInga_instruction_fits,
+/-- Dōgen's doubling holds both faces without making the floor face an
+    assertion: the old man errs, daishugyō does not, and the difference is
+    carried by the error predicate rather than by floor truth. -/
+theorem dogen_doubling :
+    (¬ daishugyoFloorUtterance.MisfitsOfferedTier) ∧
+      daishugyoConventionalUtterance.FitsOfferedTier ∧
+        jinshinIngaInstruction.FitsOfferedTier ∧
+          jinshinIngaFloorVoicing.MisfitsOfferedTier :=
+  ⟨daishugyo_floor_face_error_free, daishugyo_conventional_face_fits,
+    jinshinInga_instruction_fits,
     jinshinInga_floor_voicing_would_misfit⟩
 
 end FoxCase

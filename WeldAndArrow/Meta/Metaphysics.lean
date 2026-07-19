@@ -64,7 +64,7 @@ v2's Part III (the syntactic `Position` ladder) is **superseded**:
 | `SelfNature`, `AbsoluteNothingEntity`   | `Distinction.Freeze` ("survives the floor") |
 | `no_reified_absolute_nothing`           | `Grid.not_freeze_of_obeysSeparateFuse`     |
 | `Position` ladder, `no_final_ultimate`  | `ladder`, `no_final_level_of_errorFree`    |
-| rung-4 ineffability                     | floor trivialization (`words_idle_at_floor`) |
+| rung-4 ineffability                     | floor silence (`words_idle_at_floor`)        |
 | `provisionally_designated_middle`       | `ObeysSeparateFuse` + `ladder_obeys`       |
 | (unguarded flank in v1/v2)              | `Collapse`, `ladder_collapse_self_refuting` |
 
@@ -200,14 +200,14 @@ theorem provisional_preserved (d : Distinction G) (n : Nat) (w : G.Weld) :
       (ladder d n).Separated (Tier.actTime w) :=
   Iff.rfl
 
-/-- 言忘慮絶 — at the floor, every claim of a re-emptied level holds
-    trivially: all words are idle at the ground, so no separation survives
-    there and every obedient distinction fuses. The fourth "ultimate" is
-    neither a gap in the language nor a meta-theorem in exile: it is the tier
-    at which language, still present, does no work. -/
+/-- 言忘慮絶 — at the floor, no claim of a re-emptied level holds. All words
+    are idle at the ground, so no separation survives there and every obedient
+    distinction fuses by silence. The fourth "ultimate" is the tier at which
+    language, still present as syntax, asserts nothing. -/
 theorem words_idle_at_floor (d : Distinction G) (c : LadderSide) :
-    (reEmptied d).language.Holds Tier.floor c := by
-  cases c <;> exact True.intro
+    ¬ (reEmptied d).language.Holds Tier.floor c := by
+  intro h
+  exact h
 
 /-! ## The metaphysical nihilist, relocated
 
@@ -222,10 +222,9 @@ the diagnosis sharpens into three theorems:
 2. The thesis is *evaluable and false* wherever anything is alive
    (`nihilist_refuted_at_every_rung` below): given an error-free seed, no
    rung freezes, so `finalBelow` fails at every live tier.
-3. At the floor the thesis "holds" — but only as everything does
-   (`words_idle_at_floor`): trivially, idly, doing no separating work. The
-   nihilist may retreat to the ground, but at the ground their thesis says
-   nothing that silence does not.
+3. At the floor the thesis does not hold (`words_idle_at_floor`): the nihilist
+   may retreat to the ground, but at the ground their thesis says nothing
+   because no ladder claim is asserted there.
 
 And the nihilist is not a *position* on the ladder but a recurring *side*:
 at every rung n+1 they reappear as that rung's `finalBelow` — the voice

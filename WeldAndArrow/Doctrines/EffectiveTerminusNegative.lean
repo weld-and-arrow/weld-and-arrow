@@ -1,12 +1,12 @@
 /-
 ================================================================================
-  WeldAndArrow.Doctrines.FullEnlightenmentNegative
-  Actual-run underdetermination of standing full enlightenment
+  WeldAndArrow.Doctrines.EffectiveTerminusNegative
+  Actual-run underdetermination of effective termination
 ================================================================================
 
 The standing predicate is intentionally stronger than any actual-run transcript
 that omits the delivery register. Replacing only `conditions` can leave every
-mounted response and share unchanged while flipping `WaaFullyEnlightened`.
+mounted response and share unchanged while flipping `WaaEffectiveTerminus`.
 
 Reading and motivation: Identification/Commentary.lean, C.4.
 -/
@@ -16,7 +16,7 @@ import WeldAndArrow.Doctrines.SraddhaNegative
 
 namespace WAA
 
-namespace FullEnlightenmentNegative
+namespace EffectiveTerminusNegative
 
 open Grid
 open Grid.DirectedConvention
@@ -64,9 +64,9 @@ theorem sealed_undelivered :
   intro deed reception _hdeed hdel
   exact hdel
 
-theorem sealed_waaFullyEnlightened :
-    WaaFullyEnlightened sealedGrid b :=
-  waaFullyEnlightened_of_responsiveTerminus_of_undelivered
+theorem sealed_waaEffectiveTerminus :
+    WaaEffectiveTerminus sealedGrid b :=
+  waaEffectiveTerminus_of_responsiveTerminus_of_undelivered
     sealedGrid sealed_responsiveTerminus sealed_undelivered
 
 theorem opened_delivered :
@@ -90,8 +90,8 @@ theorem opened_not_hasShareDropLanding :
       hreceiver] using hdrop
   exact strict_irrefl (1 : Nat) hstrict
 
-theorem opened_not_waaFullyEnlightened :
-    ¬ WaaFullyEnlightened openedGrid b := by
+theorem opened_not_waaEffectiveTerminus :
+    ¬ WaaEffectiveTerminus openedGrid b := by
   intro hstanding
   exact opened_not_hasShareDropLanding
     (hstanding.right liveBefore deed reception rfl
@@ -127,16 +127,16 @@ theorem respondsTo_agrees (being : sealedGrid.Being) (cue : sealedGrid.Call) :
     sealedGrid.respondsTo being cue = openedGrid.respondsTo being cue :=
   rfl
 
-theorem fullEnlightenment_collision :
+theorem effectiveTerminus_collision :
     sealedRunData = openedRunData ∧
-      WaaFullyEnlightened sealedGrid b ∧
-        ¬ WaaFullyEnlightened openedGrid b :=
-  ⟨runData_agrees, sealed_waaFullyEnlightened,
-    opened_not_waaFullyEnlightened⟩
+      WaaEffectiveTerminus sealedGrid b ∧
+        ¬ WaaEffectiveTerminus openedGrid b :=
+  ⟨runData_agrees, sealed_waaEffectiveTerminus,
+    opened_not_waaEffectiveTerminus⟩
 
 /-- No Boolean estimator from this actual-run transcript can recover the
-    standing full-enlightenment predicate across the collision. -/
-theorem no_fullEnlightenment_recovery_from_run :
+    effective-terminus predicate across the collision. -/
+theorem no_effectiveTerminus_recovery_from_run :
     ¬ ∃ estimate : RunData -> Bool,
         estimate sealedRunData = true ∧
           estimate openedRunData = false := by
@@ -150,16 +150,16 @@ theorem no_fullEnlightenment_recovery_from_run :
       _ = false := hopened
   cases htruefalse
 
-theorem actual_run_data_underdetermines_fullEnlightenment :
-    WaaFullyEnlightened sealedGrid b ∧
-      ¬ WaaFullyEnlightened openedGrid b ∧
+theorem actual_run_data_underdetermines_effectiveTerminus :
+    WaaEffectiveTerminus sealedGrid b ∧
+      ¬ WaaEffectiveTerminus openedGrid b ∧
         sealedRunData = openedRunData ∧
           ¬ ∃ estimate : RunData -> Bool,
             estimate sealedRunData = true ∧
               estimate openedRunData = false :=
-  ⟨sealed_waaFullyEnlightened, opened_not_waaFullyEnlightened,
-    runData_agrees, no_fullEnlightenment_recovery_from_run⟩
+  ⟨sealed_waaEffectiveTerminus, opened_not_waaEffectiveTerminus,
+    runData_agrees, no_effectiveTerminus_recovery_from_run⟩
 
-end FullEnlightenmentNegative
+end EffectiveTerminusNegative
 
 end WAA

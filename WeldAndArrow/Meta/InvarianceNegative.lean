@@ -386,21 +386,19 @@ theorem emptyBeingGrid_no_liveTier (t : Grid.Tier emptyBeingGrid) :
   | actTime w =>
       cases w.agent
 
-theorem emptyBeingGrid_contentBeings_denial (t : Grid.Tier emptyBeingGrid) :
-    (contentLayerLanguage emptyBeingGrid).TrueAt t (.layerDenied .beings) := by
-  cases t with
-  | floor =>
-      exact True.intro
-  | actTime _ =>
-      dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
-      exact emptyBeingGrid_allStone
+theorem emptyBeingGrid_contentBeings_denial
+    (w : emptyBeingGrid.Weld) :
+    (contentLayerLanguage emptyBeingGrid).TrueAt (.actTime w)
+      (.layerDenied .beings) := by
+  dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
+  exact emptyBeingGrid_allStone
 
 theorem contentBeingsRow_fused_emptyBeing (t : Grid.Tier emptyBeingGrid) :
     (contentBeingsRow emptyBeingGrid).Fused t := by
   intro _hnot
   cases t with
   | floor =>
-      constructor <;> intro _ <;> exact True.intro
+      exact Iff.rfl
   | actTime w =>
       cases w.agent
 
@@ -570,9 +568,8 @@ end BeingNegative
    The same strict pair `(0, 1)` does double duty here: it refutes
    carrier-wide direction-voidness after mapping, and it supplies the live
    tendency that the source carrier never quantified over. The
-   `WaaFullyEnlightened` witness also gates the coverage-carrying corollaries
-   `map_waaFullyEnlightened_iff`, `map_faith_object_eq`, and
-   `map_waaFaithPrinciple_reflect`.
+   `WaaEffectiveTerminus` witness also gates the coverage-carrying corollaries
+   `map_waaEffectiveTerminus_iff` and `map_effectiveTerminus_eq`.
 ============================================================================== -/
 
 namespace CoverageNegative
@@ -618,15 +615,15 @@ def phantomDeed : phantomGrid.Weld := ⟨(), (), true⟩
 
 def phantomReception : phantomGrid.Weld := ⟨(), (), false⟩
 
-theorem phantom_waaFullyEnlightened :
-    WaaFullyEnlightened phantomGrid () := by
+theorem phantom_waaEffectiveTerminus :
+    WaaEffectiveTerminus phantomGrid () := by
   refine ⟨?_, ?_⟩
   · exact ⟨fun _ => ⟨true, rfl⟩, fun _ _ _ => True.intro⟩
   · intro before _deed _reception _hdeed hlive _hdel
     exact False.elim (hlive True.intro)
 
-theorem not_waaFullyEnlightened_map :
-    ¬ WaaFullyEnlightened (phantomGrid.map embedIntoNat) () := by
+theorem not_waaEffectiveTerminus_map :
+    ¬ WaaEffectiveTerminus (phantomGrid.map embedIntoNat) () := by
   intro h
   let liveBefore : Config Nat := ⟨1⟩
   have hlive : ¬ AtBot liveBefore.tendency := by
@@ -654,10 +651,10 @@ theorem not_waaFullyEnlightened_map :
       · cases hactual
       · cases hdelivered
 
-theorem waaFullyEnlightened_needs_coverage :
-    WaaFullyEnlightened phantomGrid () ∧
-      ¬ WaaFullyEnlightened (phantomGrid.map embedIntoNat) () :=
-  ⟨phantom_waaFullyEnlightened, not_waaFullyEnlightened_map⟩
+theorem waaEffectiveTerminus_needs_coverage :
+    WaaEffectiveTerminus phantomGrid () ∧
+      ¬ WaaEffectiveTerminus (phantomGrid.map embedIntoNat) () :=
+  ⟨phantom_waaEffectiveTerminus, not_waaEffectiveTerminus_map⟩
 
 end CoverageNegative
 

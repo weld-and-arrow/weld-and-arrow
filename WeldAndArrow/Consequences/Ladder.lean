@@ -28,14 +28,15 @@ inductive LadderSide
   | liveBelow
   | finalBelow
 
-/-- Re-empty a distinction: the new row separates the lower row's live
-    separation from the claim that the lower row survives the floor. -/
+/-- Re-empty a distinction: the new row is silent at the floor and separates,
+    at act-time, the lower row's live separation from the claim that the lower
+    row has frozen. -/
 def reEmptied {G : Grid Contrib} (d : Distinction G) : Distinction G where
   language :=
     { Claim := LadderSide
       Holds := fun t c =>
         match t, c with
-        | .floor, _ => True
+        | .floor, _ => False
         | .actTime w, .liveBelow => d.Separated (.actTime w)
         | .actTime _, .finalBelow => d.Freeze }
   sideA := .liveBelow
@@ -61,7 +62,7 @@ theorem reEmptied_obeysSeparateFuse
   · intro t hNotLive
     cases t with
     | floor =>
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [reEmptied, ClaimLanguage.TrueAt]
         constructor
@@ -96,7 +97,7 @@ theorem reEmptied_obeys_of_errorFree
     cases t with
     | floor =>
         dsimp [reEmptied, ClaimLanguage.TrueAt]
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [reEmptied, ClaimLanguage.TrueAt]
         constructor

@@ -5,8 +5,10 @@
 ================================================================================
 
 Faith is modeled as an arbitrary attitude operator on propositions. The grid
-never derives it and the principle below is held only as an antecedent: faith in
-a fully enlightened being transmits truth to that being's recorded utterances.
+derives neither its factivity nor occurrence fidelity. Testimony proceeds only
+when the held faith-object is factive, the particular record is faithful, and
+the offer is conventional. A floor-offered record is error-free only vacuously:
+it transmits no content through this route because the act-time premise fails.
 
 Reading and motivation: Identification/Commentary.lean, C.4.
 -/
@@ -23,7 +25,7 @@ variable {Contrib : Type} [PreorderBot Contrib]
 variable (G : Grid Contrib)
 
 /- ==============================================================================
-   Faith as testimonial truth-transmission
+   Faith as fidelity-guarded testimony
 ============================================================================== -/
 
 /-- A path claim records the local physician sentence: for this prior
@@ -33,91 +35,202 @@ structure WaaPathClaim where
   deed     : G.Weld
   reception : G.Weld
 
-/-- The object language for path claims. Its truth condition is exactly local
-    shortfall closure; the tier is ignored because the claim is not a
-    separate/fuse distinction. -/
+/-- The object language for path claims. At the floor it is silent; at act-time
+    its truth condition is exactly local shortfall closure. -/
 def waaPathClaimLanguage : ClaimLanguage G where
   Claim := WaaPathClaim G
-  Holds := fun _ claim =>
-    ShortfallClosedAt G claim.before claim.deed claim.reception
+  Holds
+    | .floor, _ => False
+    | .actTime _, claim =>
+        ShortfallClosedAt G claim.before claim.deed claim.reception
 
-/-- A lawless faith attitude supports testimony only when paired with this
-    principle: faith in a fully enlightened being makes that being's recorded
-    utterances true at their offered tier.
+/-- Factivity is the undischarged identity component of faith: what the
+    attitude holds must in fact obtain. The grid never proves this principle
+    from field facts. -/
+def Factive (Faith : Prop → Prop) : Prop :=
+  ∀ P : Prop, Faith P → P
 
-    The faith-object is deliberately the standing display
-    `WaaFullyEnlightened`, not the enacted occurrence form; see
-    `FullEnlightenmentNegative` for the checked obstruction to recovering the
-    standing universal from field facts alone. -/
-def WaaFaithPrinciple (L : ClaimLanguage G) (Faith : Prop → Prop) : Prop :=
-  ∀ b : G.Being,
-    Faith (WaaFullyEnlightened G b) →
-      ∀ u : RecordedUtterance G L,
-        u.weld.agent = b →
-          u.FitsOfferedTier
+/-- Positive act-time truth in faithfully recorded speech. The quantifier is
+    deliberately restricted to conventional offers: floor offers transmit no
+    content, while `Fidelity` remains a separate per-utterance hypothesis with
+    the same open status as delivery. -/
+def WaaNoDelusion
+    (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
+    (b : G.Being) : Prop :=
+  ∀ u : RecordedUtterance G (waaPathClaimLanguage G),
+    u.weld.agent = b → Fidelity u →
+      ∀ w : G.Weld, u.offeredAt = Tier.actTime w →
+        (waaPathClaimLanguage G).TrueAt u.offeredAt u.content
 
-/-- Direct use of the faith principle: what a trusted fully enlightened speaker
-    says is true, in the existing offered-tier sense. -/
-theorem waa_says_true_of_faith
-    {L : ClaimLanguage G} {Faith : Prop → Prop}
-    (hprinciple : WaaFaithPrinciple G L Faith)
-    {b : G.Being} (hfaith : Faith (WaaFullyEnlightened G b))
-    (u : RecordedUtterance G L) (hutter : u.weld.agent = b) :
-    u.FitsOfferedTier :=
-  hprinciple b hfaith u hutter
-
-/-- On own-deed path claims, the old direct route already supplies truth:
-    `WaaFullyEnlightened` closes shortfall for the being's own delivered deeds,
-    no matter who records the claim. -/
-theorem fitsOfferedTier_of_waaFullyEnlightened_ownDeed
-    {b : G.Being} (h : WaaFullyEnlightened G b)
+/-- Positive act-time no-delusion constructively entails the privative error
+    verdict. No double-negation elimination is needed: the supplied truth
+    directly contradicts the misfit witness's falsity component. -/
+theorem waaNoDelusion_not_misfits
+    {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
+    {b : G.Being} (h : WaaNoDelusion G Fidelity b)
     (u : RecordedUtterance G (waaPathClaimLanguage G))
-    (hdeed : u.content.deed.agent = b) :
+    (hutter : u.weld.agent = b) (hfid : Fidelity u) :
+    ¬ u.MisfitsOfferedTier := by
+  rintro ⟨w, hoff, hnot⟩
+  exact hnot (h u hutter hfid w hoff)
+
+/-- Full enlightenment removes both obscurations. `effective` is the
+    afflictive-obscuration face (`WaaEffectiveTerminus`); `noDelusion` is the
+    cognitive-obscuration face governing faithful speech. `FaithNegative`
+    separates the two conjuncts. -/
+structure WaaFullyEnlightened
+    (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
+    (b : G.Being) : Prop where
+  effective : WaaEffectiveTerminus G b
+  noDelusion : WaaNoDelusion G Fidelity b
+
+/-- Factive faith in the full bundle exposes its no-delusion conjunct. -/
+theorem waaNoDelusion_of_factive_faith
+    {Faith : Prop → Prop}
+    {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
+    {b : G.Being}
+    (hfact : Factive Faith)
+    (hfaith : Faith (WaaFullyEnlightened G Fidelity b)) :
+    WaaNoDelusion G Fidelity b :=
+  (hfact _ hfaith).noDelusion
+
+/-- The open vacuity face: without any faithful attributed utterance,
+    no-delusion holds without producing testimonial content. -/
+theorem waaNoDelusion_of_no_faithful_utterance
+    (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
+    (b : G.Being)
+    (hnone : ∀ u : RecordedUtterance G (waaPathClaimLanguage G),
+      u.weld.agent = b → ¬ Fidelity u) :
+    WaaNoDelusion G Fidelity b := by
+  intro u hagent hfaithful
+  exact False.elim (hnone u hagent hfaithful)
+
+/-- The bundle's sealed-channel face: an effective terminus with no faithful
+    attributed utterances satisfies full enlightenment vacuously on the speech
+    conjunct. The concrete witness in `FaithNegative` fences this face from
+    non-vacuous faithful testimony. -/
+theorem waaFullyEnlightened_of_effectiveTerminus_of_no_faithful_utterance
+    (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
+    {b : G.Being} (heffective : WaaEffectiveTerminus G b)
+    (hnone : ∀ u : RecordedUtterance G (waaPathClaimLanguage G),
+      u.weld.agent = b → ¬ Fidelity u) :
+    WaaFullyEnlightened G Fidelity b :=
+  ⟨heffective, waaNoDelusion_of_no_faithful_utterance G Fidelity b hnone⟩
+
+/-- Buddha's-silence face for path testimony: a floor-offered record is outside
+    the conventional error family, but carries no positive testimonial fit. -/
+theorem waaPath_not_misfits_of_floor_offer
+    (u : RecordedUtterance G (waaPathClaimLanguage G))
+    (hoff : u.offeredAt = Tier.floor) :
+    ¬ u.MisfitsOfferedTier := by
+  rintro ⟨w, hact, _hfalse⟩
+  rw [hoff] at hact
+  cases hact
+
+/-- Factive faith plus occurrence fidelity yields the character predicate's
+    negative verdict for this record. -/
+theorem waa_no_misfit_of_stance
+    {Faith : Prop → Prop}
+    {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
+    {b : G.Being}
+    (hfact : Factive Faith)
+    (hfaith : Faith (WaaFullyEnlightened G Fidelity b))
+    (u : RecordedUtterance G (waaPathClaimLanguage G))
+    (hutter : u.weld.agent = b) (hfid : Fidelity u) :
+    ¬ u.MisfitsOfferedTier :=
+  waaNoDelusion_not_misfits G
+    (waaNoDelusion_of_factive_faith G hfact hfaith) u hutter hfid
+
+/-- The positive character predicate yields truth directly at a conventional
+    offer. Floor offers are outside its quantifier rather than made true. -/
+theorem waa_says_true_at_actTime_of_stance
+    {Faith : Prop → Prop}
+    {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
+    {b : G.Being}
+    (hfact : Factive Faith)
+    (hfaith : Faith (WaaFullyEnlightened G Fidelity b))
+    (u : RecordedUtterance G (waaPathClaimLanguage G))
+    (hutter : u.weld.agent = b) (hfid : Fidelity u)
+    (w : G.Weld) (hoff : u.offeredAt = Tier.actTime w) :
+    u.FitsOfferedTier :=
+  waaNoDelusion_of_factive_faith G hfact hfaith u hutter hfid w hoff
+
+/-- The fidelity-guarded testimonial route to offered-tier fit. -/
+theorem waa_says_true_of_faith
+    {Faith : Prop → Prop}
+    {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
+    {b : G.Being}
+    (hfact : Factive Faith)
+    (hfaith : Faith (WaaFullyEnlightened G Fidelity b))
+    (u : RecordedUtterance G (waaPathClaimLanguage G))
+    (hutter : u.weld.agent = b) (hfid : Fidelity u)
+    (w : G.Weld) (hoff : u.offeredAt = Tier.actTime w) :
+    u.FitsOfferedTier :=
+  waa_says_true_at_actTime_of_stance
+    G hfact hfaith u hutter hfid w hoff
+
+/-- On own-deed path claims, the direct route already supplies truth:
+    `WaaEffectiveTerminus` closes shortfall for the being's own delivered deeds,
+    no matter who records the claim. -/
+theorem fitsOfferedTier_of_waaEffectiveTerminus_ownDeed
+    {b : G.Being} (h : WaaEffectiveTerminus G b)
+    (u : RecordedUtterance G (waaPathClaimLanguage G))
+    (hdeed : u.content.deed.agent = b)
+    (w : G.Weld) (hoff : u.offeredAt = Tier.actTime w) :
     u.FitsOfferedTier := by
   change (waaPathClaimLanguage G).TrueAt u.offeredAt u.content
+  rw [hoff]
   dsimp [waaPathClaimLanguage, ClaimLanguage.TrueAt]
   exact h.right u.content.before u.content.deed u.content.reception hdeed
 
-/-- The testimonial route to the sraddha landing. Unlike the direct route in
-    `Sraddha`, the deed need not be the speaker's own deed; the principle covers
-    what the faith-object says. -/
-theorem waa_path_landing_of_faithPrinciple
-    {Faith : Prop → Prop} {b : G.Being}
-    (hprinciple : WaaFaithPrinciple G (waaPathClaimLanguage G) Faith)
-    (hfaith : Faith (WaaFullyEnlightened G b))
+/-- The testimonial route to the śraddhā landing. Unlike the direct route in
+    `Sraddha`, the deed need not be the speaker's own deed; factive faith,
+    faithful occurrence, and conventional offering jointly license the claim. -/
+theorem waa_path_landing_of_stance
+    {Faith : Prop → Prop}
+    {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
+    {b : G.Being}
+    (hfact : Factive Faith)
+    (hfaith : Faith (WaaFullyEnlightened G Fidelity b))
     (u : RecordedUtterance G (waaPathClaimLanguage G))
-    (hutter : u.weld.agent = b)
+    (hutter : u.weld.agent = b) (hfid : Fidelity u)
+    (w : G.Weld) (hoff : u.offeredAt = Tier.actTime w)
     (hdel : DeliveredTo G u.content.deed u.content.reception)
     (hctx : WaaAversionContext G u.content.before u.content.reception) :
     HasShareDropLanding G u.content.before u.content.deed := by
   have hfit : u.FitsOfferedTier :=
-    hprinciple b hfaith u hutter
+    waa_says_true_of_faith G hfact hfaith u hutter hfid w hoff
   have hclosed :
       ShortfallClosedAt G u.content.before u.content.deed u.content.reception := by
     change (waaPathClaimLanguage G).TrueAt u.offeredAt u.content at hfit
+    rw [hoff] at hfit
     simpa [waaPathClaimLanguage, ClaimLanguage.TrueAt] using hfit
   exact hclosed hctx.liveBefore hdel
 
 /-- The faith-mediated fourth-truth ought as an implication type only. -/
 def WaaFaithOught
+    (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
     (Faith : Prop → Prop) (b : G.Being)
-    (u : RecordedUtterance G (waaPathClaimLanguage G)) : Prop :=
-  WaaFaithPrinciple G (waaPathClaimLanguage G) Faith →
-    Faith (WaaFullyEnlightened G b) →
-      u.weld.agent = b →
-        DeliveredTo G u.content.deed u.content.reception →
-          WaaAversionContext G u.content.before u.content.reception →
-            HasShareDropLanding G u.content.before u.content.deed
+    (u : RecordedUtterance G (waaPathClaimLanguage G)) (w : G.Weld) : Prop :=
+  Factive Faith →
+    Faith (WaaFullyEnlightened G Fidelity b) →
+      Fidelity u →
+        u.offeredAt = Tier.actTime w →
+          u.weld.agent = b →
+            DeliveredTo G u.content.deed u.content.reception →
+              WaaAversionContext G u.content.before u.content.reception →
+                HasShareDropLanding G u.content.before u.content.deed
 
 /-- The grid proves only the conditional: principle, faith, testimony, delivery,
     and live aversion imply the landing. -/
 theorem waaFaithOught_conditional
+    (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
     (Faith : Prop → Prop) (b : G.Being)
-    (u : RecordedUtterance G (waaPathClaimLanguage G)) :
-    WaaFaithOught G Faith b u := by
-  intro hprinciple hfaith hutter hdel hctx
-  exact waa_path_landing_of_faithPrinciple
-    G hprinciple hfaith u hutter hdel hctx
+    (u : RecordedUtterance G (waaPathClaimLanguage G)) (w : G.Weld) :
+    WaaFaithOught G Fidelity Faith b u w := by
+  intro hfact hfaith hfid hoff hutter hdel hctx
+  exact waa_path_landing_of_stance
+    G hfact hfaith u hutter hfid w hoff hdel hctx
 
 end DirectedConvention
 

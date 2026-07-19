@@ -130,7 +130,7 @@ theorem not_hasShareDropLanding_liveBefore :
 def falseClaim : RecordedUtterance grid (waaPathClaimLanguage grid) where
   weld := buddhaWeld
   actual := buddhaWeld_actual
-  offeredAt := Tier.floor
+  offeredAt := Tier.actTime buddhaWeld
   content := ⟨liveBefore, discipleDeed, reception⟩
 
 /-- The buddha's false claim does not fit its offered tier. -/
@@ -152,8 +152,9 @@ theorem falseClaim_not_fitsOfferedTier :
     aversion antecedent and no share-drop landing. Faith does not manufacture a
     practical claim where no live shortfall exists. -/
 theorem no_ethics_bearing_at_pole
-    (Faith : Prop -> Prop) (b : Being)
-    (_hstance : WaaEthicsStance grid Faith b) :
+    (Fidelity : RecordedUtterance grid (waaPathClaimLanguage grid) → Prop)
+    (Faith : Prop → Prop) (b : Being)
+    (_hstance : WaaEthicsStance grid Fidelity Faith b) :
     ¬ WaaAversionContext grid poleBefore reception ∧
       ¬ HasShareDropLanding grid poleBefore discipleDeed :=
   ⟨no_waa_aversion_context_at_pole grid poleBefore_atBot reception,
@@ -163,11 +164,12 @@ theorem no_ethics_bearing_at_pole
     false testimony: the stance would force the false recorded claim to fit its
     offered tier. -/
 theorem no_stance_over_false_testimony
-    (Faith : Prop -> Prop) :
-    ¬ WaaEthicsStance grid Faith Being.buddha := by
+    (Fidelity : RecordedUtterance grid (waaPathClaimLanguage grid) → Prop)
+    (Faith : Prop → Prop) (hfid : Fidelity falseClaim) :
+    ¬ WaaEthicsStance grid Fidelity Faith Being.buddha := by
   intro hstance
   exact falseClaim_not_fitsOfferedTier
-    (waa_stance_says_true grid hstance falseClaim rfl)
+    (waa_stance_says_true grid hstance falseClaim rfl hfid buddhaWeld rfl)
 
 /-- The disciple's own recorded claim, used to witness faith-object relativity. -/
 def discipleClaim : RecordedUtterance grid (waaPathClaimLanguage grid) where
@@ -180,8 +182,9 @@ def discipleClaim : RecordedUtterance grid (waaPathClaimLanguage grid) where
     the speaker-equality antecedent is false, so the `b` parameter keeps the
     code relative to its faith-object. -/
 theorem ethicalCode_relative_to_faith_object
-    (Faith : Prop -> Prop)
-    (_hcode : WaaEthicalCode grid Faith Being.buddha) :
+    (Fidelity : RecordedUtterance grid (waaPathClaimLanguage grid) → Prop)
+    (Faith : Prop → Prop)
+    (_hcode : WaaEthicalCode grid Fidelity Faith Being.buddha) :
     ¬ discipleClaim.weld.agent = Being.buddha := by
   intro h
   exact Being.noConfusion h

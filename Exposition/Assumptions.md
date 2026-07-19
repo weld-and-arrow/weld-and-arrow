@@ -80,13 +80,13 @@ The Signature layer itself uses only order and pole vocabulary around `share`. T
 
 **Downstream elaboration:** `WAA.DisplayReparam` (proof), `WAA.DisplayReparam.atBot_iff` (proof), `WAA.InvarianceNegative.oldEqTerminus_not_invariant` (witness)
 
-### B.6 Standing full enlightenment is display and faith-object only
+### B.6 Standing effectiveness is display; full enlightenment is the two-obscurations faith-object
 
-The operational, assertable content of full enlightenment is per-occurrence: `WaaEnlightenedOccurrence` states an actual pole-deed landing as a share-drop against a live prior tendency. The standing universal `WaaFullyEnlightened` remains legal as run-display and faith-object, but no estimator from actual-run response/share data decides it. The sealed-regime route is vacuous and is fenced from the enacted form by `WaaEnlightenmentEnacted` and `not_enacted_of_undelivered`.
+The operational, assertable effectiveness content is per-occurrence: `WaaEffectiveOccurrence` states an actual pole-deed landing as a share-drop against a live prior tendency. The descriptive universal `WaaEffectiveTerminus` remains legal as run-display and direct-path hypothesis, but no estimator from actual-run response/share data decides it. The sealed-regime route is vacuous and is fenced from the enacted form by `WaaEffectivenessEnacted` and `not_effectivenessEnacted_of_undelivered`. Testimonial `WaaFullyEnlightened` additionally requires `WaaNoDelusion`.
 
 **Checked anchors (Signature):** None.
 
-**Downstream elaboration:** `WAA.Grid.DirectedConvention.WaaEnlightenedOccurrence` (proof), `WAA.Grid.DirectedConvention.WaaEnlightenmentEnacted` (proof), `WAA.Grid.DirectedConvention.not_enacted_of_undelivered` (proof), `WAA.FullEnlightenmentNegative.actual_run_data_underdetermines_fullEnlightenment` (witness), `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.waa_enlightened_occurrence_voice_assertable` (proof), `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.waa_standing_enlightenment_voice_displayable` (proof)
+**Downstream elaboration:** `WAA.Grid.DirectedConvention.WaaEffectiveOccurrence` (proof), `WAA.Grid.DirectedConvention.WaaEffectivenessEnacted` (proof), `WAA.Grid.DirectedConvention.not_effectivenessEnacted_of_undelivered` (proof), `WAA.EffectiveTerminusNegative.actual_run_data_underdetermines_effectiveTerminus` (witness), `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.waa_effective_occurrence_voice_assertable` (proof), `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.waa_standing_effectiveness_voice_displayable` (proof)
 
 ### B.7 No blanket noninterference for the contribution carrier
 
@@ -144,7 +144,7 @@ The clock and register-clock models anchor possibility checks and taxonomy examp
 | `WAA.Grid.transpose_transpose` | None |
 | `WAA.DirectionNegative.no_direction_recovery_from_conditionsEither` | `propext`, `Quot.sound` |
 | `WAA.CoverageNegative.directionVoid_needs_coverage` | None |
-| `WAA.CoverageNegative.waaFullyEnlightened_needs_coverage` | None |
+| `WAA.CoverageNegative.waaEffectiveTerminus_needs_coverage` | None |
 | `WAA.Grid.stateToolFits_iff_atBot` | None |
 | `WAA.Grid.map_actual_iff` | None |
 | `WAA.Grid.map_isShareDrop_iff` | None |
@@ -185,8 +185,8 @@ The clock and register-clock models anchor possibility checks and taxonomy examp
 | `WAA.FettersNegative.seen_run_underdetermines_fetterCut` | `propext` |
 | `WAA.Grid.DirectedConvention.waaPathOught_conditional` | None |
 | `WAA.Grid.DirectedConvention.waaFaithOught_conditional` | None |
-| `WAA.Grid.DirectedConvention.map_waaFaithPrinciple_reflect` | `propext` |
-| `WAA.FaithNegative.waaFaithPrinciple_id_fails` | None |
+| `WAA.Grid.DirectedConvention.waa_says_true_at_actTime_of_stance` | None |
+| `WAA.FaithNegative.effectiveTerminus_not_waaFullyEnlightened` | None |
 | `WAA.Grid.DirectedConvention.no_waa_path_at_pole` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.rowOf_obeys` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.pole_validates_all_claims` | None |
@@ -196,7 +196,7 @@ The clock and register-clock models anchor possibility checks and taxonomy examp
 | `WAA.rung_not_pole_witness` | None |
 | `WAA.standing_does_not_determine_dated` | None |
 | `WAA.Grid.DirectedConvention.map_waaAversionContext_iff` | None |
-| `WAA.OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus` | None |
+| `WAA.OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus` | None |
 | `WAA.MisFeedNegative.fence_and_gate` | None |
 | `WAA.misFeed_entries_carry_decomposition` | None |
 | `WAA.Grid.grade_independent_of_conditions` | None |
@@ -214,8 +214,8 @@ The clock and register-clock models anchor possibility checks and taxonomy examp
 | `WAA.ObjectiveNegative.split_dropCount_sum_eq_mergedDropCount` | None |
 | `WAA.ObjectiveNegative.no_grid_data_objective_for_my_drops` | None |
 | `WAA.TransferNegative.adaptive_track_record_underdetermines_new_effect` | None |
-| `WAA.Grid.DirectedConvention.not_enacted_of_undelivered` | None |
-| `WAA.FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run` | None |
+| `WAA.Grid.DirectedConvention.not_effectivenessEnacted_of_undelivered` | None |
+| `WAA.EffectiveTerminusNegative.no_effectiveTerminus_recovery_from_run` | None |
 | `WAA.DeliveryArrogationNegative.command_utterance_not_fits` | None |
 | `WAA.Grid.DirectedConvention.landing_call_in_modality` | None |
 | `WAA.LedgerCase.decree_engineers_calls_not_receptions` | `propext` |

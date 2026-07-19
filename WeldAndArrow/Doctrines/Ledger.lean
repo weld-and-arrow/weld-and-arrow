@@ -99,7 +99,10 @@ structure ReceptionCommand where
     satisfiable only where the field-side delivery reaches an actual reception. -/
 def receptionCommandLanguage : ClaimLanguage G where
   Claim := ReceptionCommand G
-  Holds := fun _ claim => DirectedConvention.LandsAt G claim.deed claim.reception
+  Holds
+    | .floor, _ => False
+    | .actTime _, claim =>
+        DirectedConvention.LandsAt G claim.deed claim.reception
 
 /-- A recorded reception-command utterance fits its offered tier only when the
     commanded reception actually lands. -/
@@ -109,8 +112,14 @@ theorem receptionCommand_unfit_of_no_landing
     ¬ u.FitsOfferedTier := by
   intro hfit
   change (receptionCommandLanguage G).TrueAt u.offeredAt u.content at hfit
-  dsimp [receptionCommandLanguage, ClaimLanguage.TrueAt] at hfit
-  exact hnot hfit
+  cases hoff : u.offeredAt with
+  | floor =>
+      rw [hoff] at hfit
+      exact hfit.elim
+  | actTime _ =>
+      rw [hoff] at hfit
+      dsimp [receptionCommandLanguage, ClaimLanguage.TrueAt] at hfit
+      exact hnot hfit
 
 namespace DirectedConvention
 namespace BeingConvention

@@ -28,7 +28,7 @@ namespace GridConvention
 def contentLayerLanguage (G : Grid Contrib) : ClaimLanguage G where
   Claim := LayerClaim
   Holds
-    | .floor, _ => True
+    | .floor, _ => False
     | .actTime w, .conventionLive _ => G.HasSelfPoleIndex w
     | .actTime _, .layerDenied .directedTime => DirectionVoid Contrib
     | .actTime _, .layerDenied .intraWeldArrow =>
@@ -73,7 +73,7 @@ theorem contentLayerRow_obeys_of_direction
   · intro t hNotLive
     cases t with
     | floor =>
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [contentLayerRow, contentLayerLanguage, ClaimLanguage.TrueAt]
         constructor
@@ -98,7 +98,7 @@ theorem contentLayerRow_obeys_of_being
   · intro t hNotLive
     cases t with
     | floor =>
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [contentLayerRow, contentLayerLanguage, ClaimLanguage.TrueAt]
         constructor
@@ -123,7 +123,7 @@ theorem contentLayerRow_obeys_of_variation
   · intro t hNotLive
     cases t with
     | floor =>
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [contentLayerRow, contentLayerLanguage, ClaimLanguage.TrueAt]
         constructor
@@ -148,7 +148,7 @@ theorem contentLayerRow_obeys_of_liveTier
   · intro t hNotLive
     cases t with
     | floor =>
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [contentLayerRow, contentLayerLanguage, ClaimLanguage.TrueAt]
         constructor
@@ -172,7 +172,7 @@ theorem contentLayerRow_obeys_of_actual
   · intro t hNotLive
     cases t with
     | floor =>
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime _ =>
         dsimp [contentLayerRow, contentLayerLanguage, ClaimLanguage.TrueAt]
         constructor

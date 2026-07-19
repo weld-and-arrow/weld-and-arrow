@@ -60,7 +60,7 @@ inductive Disclaimer
   | sraddhaConditional
   | faithBothConjuncts
   | generatedTableStructure
-  | poleAffirmingSemantics
+  | floorApophaticSemantics
   | proseRows
   | errorFreeReading
   | misFeedFence
@@ -74,7 +74,7 @@ inductive Disclaimer
   | codeHonestyClauses
   | verdictRecordData
   | compoundCellStacks
-  | fullEnlightenmentRetype
+  | effectiveTerminusRetype
 
 namespace Disclaimer
 
@@ -124,7 +124,7 @@ def number : Disclaimer → Nat
   | .sraddhaConditional => 41
   | .faithBothConjuncts => 42
   | .generatedTableStructure => 43
-  | .poleAffirmingSemantics => 44
+  | .floorApophaticSemantics => 44
   | .proseRows => 45
   | .errorFreeReading => 46
   | .misFeedFence => 47
@@ -138,7 +138,7 @@ def number : Disclaimer → Nat
   | .codeHonestyClauses => 55
   | .verdictRecordData => 56
   | .compoundCellStacks => 57
-  | .fullEnlightenmentRetype => 58
+  | .effectiveTerminusRetype => 58
 
 theorem waaKarmaIdentification_number :
     number Disclaimer.waaKarmaIdentification = 9 := rfl
@@ -161,8 +161,8 @@ theorem faithBothConjuncts_number :
 theorem generatedTableStructure_number :
     number Disclaimer.generatedTableStructure = 43 := rfl
 
-theorem poleAffirmingSemantics_number :
-    number Disclaimer.poleAffirmingSemantics = 44 := rfl
+theorem floorApophaticSemantics_number :
+    number Disclaimer.floorApophaticSemantics = 44 := rfl
 
 theorem proseRows_number :
     number Disclaimer.proseRows = 45 := rfl
@@ -203,8 +203,8 @@ theorem verdictRecordData_number :
 theorem compoundCellStacks_number :
     number Disclaimer.compoundCellStacks = 57 := rfl
 
-theorem fullEnlightenmentRetype_number :
-    number Disclaimer.fullEnlightenmentRetype = 58 := rfl
+theorem effectiveTerminusRetype_number :
+    number Disclaimer.effectiveTerminusRetype = 58 := rfl
 
 end Disclaimer
 

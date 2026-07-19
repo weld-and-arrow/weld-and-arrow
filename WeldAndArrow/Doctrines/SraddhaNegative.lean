@@ -99,8 +99,8 @@ theorem not_hasShareDropLanding_liveBefore :
     simpa [zeroEffectGrid, Grid.share, liveBefore, hreceiver] using hdrop
   exact strict_irrefl (1 : Nat) hstrict
 
-theorem not_waaFullyEnlightened :
-    ¬ WaaFullyEnlightened zeroEffectGrid Being.sraddha := by
+theorem not_waaEffectiveTerminus :
+    ¬ WaaEffectiveTerminus zeroEffectGrid Being.sraddha := by
   intro hfaith
   exact not_hasShareDropLanding_liveBefore
     (hfaith.right liveBefore deed reception rfl liveBefore_not_atBot delivered)
@@ -151,24 +151,24 @@ theorem responsiveTerminus_with_no_shareDropLanding :
   ⟨SraddhaNegative.sraddha_responsiveTerminus,
     SraddhaNegative.not_hasShareDropLanding_liveBefore⟩
 
-theorem terminus_not_waaFullyEnlightened :
+theorem terminus_not_waaEffectiveTerminus :
     zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha ∧
-      ¬ WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha :=
+      ¬ WaaEffectiveTerminus zeroEffectGrid SraddhaNegative.Being.sraddha :=
   ⟨SraddhaNegative.sraddha_responsiveTerminus.right,
-    SraddhaNegative.not_waaFullyEnlightened⟩
+    SraddhaNegative.not_waaEffectiveTerminus⟩
 
-/-- `WaaFullyEnlightened` is strictly stronger than terminus typing: it
+/-- `WaaEffectiveTerminus` is strictly stronger than terminus typing: it
     implies terminus, and this concrete responsive terminus still fails the
     shortfall-closure conjunct. -/
-theorem waaFullyEnlightened_stronger_than_terminus :
-    (WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha →
+theorem waaEffectiveTerminus_stronger_than_terminus :
+    (WaaEffectiveTerminus zeroEffectGrid SraddhaNegative.Being.sraddha →
         zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha) ∧
       zeroEffectGrid.Terminus SraddhaNegative.Being.sraddha ∧
-      ¬ WaaFullyEnlightened zeroEffectGrid SraddhaNegative.Being.sraddha := by
+      ¬ WaaEffectiveTerminus zeroEffectGrid SraddhaNegative.Being.sraddha := by
   constructor
   · intro h
-    exact (responsiveTerminus_of_waaFullyEnlightened zeroEffectGrid h).right
-  · exact terminus_not_waaFullyEnlightened
+    exact (responsiveTerminus_of_waaEffectiveTerminus zeroEffectGrid h).right
+  · exact terminus_not_waaEffectiveTerminus
 
 end OrthogonalityNegative
 

@@ -46,7 +46,7 @@ theorem hasSelfPoleIndex_of_waaAversionContext
     context, the share-drop landing follows. -/
 theorem waa_path_landing
     {g : G.Being} {before : Config Contrib} {deed reception : G.Weld}
-    (hfaith : WaaFullyEnlightened G g)
+    (hfaith : WaaEffectiveTerminus G g)
     (hdeed : deed.agent = g)
     (hdel : DeliveredTo G deed reception)
     (hctx : WaaAversionContext G before reception) :
@@ -58,7 +58,7 @@ theorem waa_path_landing
 def WaaPathOught
     (g : G.Being) (before : Config Contrib) (deed reception : G.Weld) :
     Prop :=
-  WaaFullyEnlightened G g →
+  WaaEffectiveTerminus G g →
     deed.agent = g →
       DeliveredTo G deed reception →
         WaaAversionContext G before reception →

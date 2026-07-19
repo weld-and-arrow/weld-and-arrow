@@ -395,8 +395,8 @@ theorem arhatPathQuietWithin_iff_fiberAtPoleWithin
     "buddha" belongs only to the layered reading above this neutral cut:
     `FettersNegative.total_cut_carries_no_function` shows that the top point
     alone carries no function conjunct, while
-    `FettersNegative.total_cut_with_function_not_waaFullyEnlightened` and
-    `waaFullyEnlightened_of_responsiveTerminus_of_undelivered` keep
+    `FettersNegative.total_cut_with_function_not_waaEffectiveTerminus` and
+    `waaEffectiveTerminus_of_responsiveTerminus_of_undelivered` keep
     effectiveness regime-relational. Arhat reading remains `PathQuietWithin`
     at a supplied `SomaReading.speechThoughtTag`; vasana is residual clench in
     the complement region after the call-axis closes. -/

@@ -10,7 +10,7 @@ import WeldAndArrow.Doctrines.Ledger
 import WeldAndArrow.Doctrines.CorrelationsNegative
 import WeldAndArrow.Doctrines.FettersNegative
 import WeldAndArrow.Doctrines.FactorsNegative
-import WeldAndArrow.Doctrines.FullEnlightenmentNegative
+import WeldAndArrow.Doctrines.EffectiveTerminusNegative
 import WeldAndArrow.Doctrines.Shusho
 
 namespace WAA
@@ -36,7 +36,7 @@ def axiomAuditLedger : List AxiomAuditEntry := [
   { name := ``DirectionNegative.no_direction_recovery_from_conditionsEither,
     allowed := [``propext, ``Quot.sound] },
   { name := ``CoverageNegative.directionVoid_needs_coverage },
-  { name := ``CoverageNegative.waaFullyEnlightened_needs_coverage },
+  { name := ``CoverageNegative.waaEffectiveTerminus_needs_coverage },
   { name := ``Grid.stateToolFits_iff_atBot },
   { name := ``Grid.map_actual_iff },
   { name := ``Grid.map_isShareDrop_iff },
@@ -77,8 +77,8 @@ def axiomAuditLedger : List AxiomAuditEntry := [
   { name := ``FettersNegative.seen_run_underdetermines_fetterCut, allowed := [``propext] },
   { name := ``Grid.DirectedConvention.waaPathOught_conditional },
   { name := ``Grid.DirectedConvention.waaFaithOught_conditional },
-  { name := ``Grid.DirectedConvention.map_waaFaithPrinciple_reflect, allowed := [``propext] },
-  { name := ``FaithNegative.waaFaithPrinciple_id_fails },
+  { name := ``Grid.DirectedConvention.waa_says_true_at_actTime_of_stance },
+  { name := ``FaithNegative.effectiveTerminus_not_waaFullyEnlightened },
   { name := ``Grid.DirectedConvention.no_waa_path_at_pole },
   { name := ``Grid.DirectedConvention.BeingConvention.GridConvention.rowOf_obeys },
   { name := ``Grid.DirectedConvention.BeingConvention.GridConvention.pole_validates_all_claims },
@@ -88,7 +88,7 @@ def axiomAuditLedger : List AxiomAuditEntry := [
   { name := ``rung_not_pole_witness },
   { name := ``standing_does_not_determine_dated },
   { name := ``Grid.DirectedConvention.map_waaAversionContext_iff },
-  { name := ``OrthogonalityNegative.waaFullyEnlightened_stronger_than_terminus },
+  { name := ``OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus },
   { name := ``MisFeedNegative.fence_and_gate },
   { name := ``misFeed_entries_carry_decomposition },
   { name := ``Grid.grade_independent_of_conditions },
@@ -109,8 +109,8 @@ def axiomAuditLedger : List AxiomAuditEntry := [
   { name := ``ObjectiveNegative.split_dropCount_sum_eq_mergedDropCount },
   { name := ``ObjectiveNegative.no_grid_data_objective_for_my_drops },
   { name := ``TransferNegative.adaptive_track_record_underdetermines_new_effect },
-  { name := ``Grid.DirectedConvention.not_enacted_of_undelivered },
-  { name := ``FullEnlightenmentNegative.no_fullEnlightenment_recovery_from_run },
+  { name := ``Grid.DirectedConvention.not_effectivenessEnacted_of_undelivered },
+  { name := ``EffectiveTerminusNegative.no_effectiveTerminus_recovery_from_run },
   { name := ``DeliveryArrogationNegative.command_utterance_not_fits },
   { name := ``Grid.DirectedConvention.landing_call_in_modality },
   { name := ``LedgerCase.decree_engineers_calls_not_receptions, allowed := [``propext] },

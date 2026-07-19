@@ -278,7 +278,10 @@ structure DeliveryCommand (G : Grid Contrib) where
     satisfiable only where the field-side delivery relation holds. -/
 def deliveryCommandLanguage (G : Grid Contrib) : ClaimLanguage G where
   Claim := DeliveryCommand G
-  Holds := fun _ claim => DirectedConvention.DeliveredTo G claim.deed claim.reception
+  Holds
+    | .floor, _ => False
+    | .actTime _, claim =>
+        DirectedConvention.DeliveredTo G claim.deed claim.reception
 
 /-- A recorded delivery-command utterance fits its offered tier only when the
     commanded delivery is in fact delivered. -/
@@ -288,8 +291,14 @@ theorem deliveryCommand_unfit_of_not_delivered
     ¬ u.FitsOfferedTier := by
   intro hfit
   change (deliveryCommandLanguage G).TrueAt u.offeredAt u.content at hfit
-  dsimp [deliveryCommandLanguage, ClaimLanguage.TrueAt] at hfit
-  exact hnot hfit
+  cases hoff : u.offeredAt with
+  | floor =>
+      rw [hoff] at hfit
+      exact hfit.elim
+  | actTime _ =>
+      rw [hoff] at hfit
+      dsimp [deliveryCommandLanguage, ClaimLanguage.TrueAt] at hfit
+      exact hnot hfit
 
 end ConsequentialistConvention
 

@@ -88,6 +88,11 @@ inductive InstructiveAbsence where
       The diagnostic work is to mark this boundary rather than manufacture a
       theorem across it. -/
   | rebirthCosmology
+  /-- No positive Truth or Thus predicate is defined at the floor. The floor is
+      present only through silence, indiscernibility, and the negative
+      pole/floor family. The diagnostic work is the registered refusal to turn
+      degeneracy into a truth-maker. -/
+  | floorTruthPredicate
 
 namespace InstructiveAbsence
 
@@ -110,6 +115,7 @@ def number : InstructiveAbsence → Nat
   | .noMeasure => 9
   | .icchantikaDeclined => 10
   | .rebirthCosmology => 11
+  | .floorTruthPredicate => 12
 
 /-- Current world-facing status of each paper entry. Constructors remain the
     section 3 ledger; this function records retirement. -/
@@ -117,6 +123,7 @@ def status : InstructiveAbsence → AbsenceStatus
   | .thirdArrival => .retiredAsCheck
   | .icchantikaDeclined => .standing
   | .rebirthCosmology => .standing
+  | .floorTruthPredicate => .standing
   | _ => .standing
 
 theorem emptyCells_number :
@@ -152,6 +159,9 @@ theorem icchantikaDeclined_number :
 theorem rebirthCosmology_number :
     number InstructiveAbsence.rebirthCosmology = 11 := rfl
 
+theorem floorTruthPredicate_number :
+    number InstructiveAbsence.floorTruthPredicate = 12 := rfl
+
 theorem emptyCells_standing :
     status InstructiveAbsence.emptyCells = AbsenceStatus.standing := rfl
 
@@ -184,6 +194,9 @@ theorem icchantikaDeclined_standing :
 
 theorem rebirthCosmology_standing :
     status InstructiveAbsence.rebirthCosmology = AbsenceStatus.standing := rfl
+
+theorem floorTruthPredicate_standing :
+    status InstructiveAbsence.floorTruthPredicate = AbsenceStatus.standing := rfl
 
 /- ------------------------------------------------------------------------------
    Anchors
@@ -234,7 +247,7 @@ theorem foxNeverTestsPole_recordedUtterance_not_atPoleClass
 
 /-- The old man's recorded answer remains the fox-row live-tier misfit anchor. -/
 theorem foxNeverTestsPole_oldMan_misfit_anchor :
-    ¬ FoxCase.oldManUtterance.FitsOfferedTier :=
+    FoxCase.oldManUtterance.MisfitsOfferedTier :=
   FoxCase.oldMan_utterance_misfits
 
 /-- The delivered third arrival is the concrete function/share split: the
@@ -283,10 +296,10 @@ theorem prudentialPrivilege_underivable_anchor :
 theorem icchantikaDeclined_agent_anchor
     {Contrib : Type} [PreorderBot Contrib] {G : Grid Contrib} {b : G.Being}
     (h : Icchantika G b) :
-    ¬ G.Stone b ∧ ¬ G.Terminus b ∧ ¬ WaaFullyEnlightened G b :=
+    ¬ G.Stone b ∧ ¬ G.Terminus b ∧ ¬ WaaEffectiveTerminus G b :=
   ⟨icchantika_not_stone (G := G) h,
     icchantika_not_terminus (G := G) h,
-    not_waaFullyEnlightened_of_icchantika (G := G) h⟩
+    not_waaEffectiveTerminus_of_icchantika (G := G) h⟩
 
 /-- The receiver-side half of the icchantika decline: actual icchantika
     receptions discharge the live-aversion antecedent. -/
@@ -319,6 +332,16 @@ theorem icchantikaDeclined_nonforeclosure_anchor :
 theorem rebirthCosmology_anchor :
     status InstructiveAbsence.rebirthCosmology = AbsenceStatus.standing :=
   rebirthCosmology_standing
+
+/-- The floor-truth refusal is anchored by the two apophatic pins: no row
+    claim holds there, while every pair of row claims is indiscernible there. -/
+theorem floorTruthPredicate_anchor
+    {Contrib : Type} [PreorderBot Contrib] (G : Grid Contrib) :
+    (∀ p : RowClaim, ¬ (rowLanguage G).Holds Tier.floor p) ∧
+      ∀ p q : RowClaim,
+        ((rowLanguage G).Holds Tier.floor p ↔
+          (rowLanguage G).Holds Tier.floor q) :=
+  ⟨no_row_claim_holds_at_floor G, floor_claims_indiscernible G⟩
 
 end InstructiveAbsence
 

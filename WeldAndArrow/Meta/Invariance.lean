@@ -1088,9 +1088,9 @@ theorem map_shortfallClosedAt_iff
       h horigLive ((map_deliveredTo_iff G f deed reception).mp hdel)
     exact (map_hasShareDropLanding_iff G f before deed).mpr hlanding
 
-theorem map_waaFullyEnlightened_reflect
-    {b : G.Being} (h : WaaFullyEnlightened (G.map f) b) :
-    WaaFullyEnlightened G b := by
+theorem map_waaEffectiveTerminus_reflect
+    {b : G.Being} (h : WaaEffectiveTerminus (G.map f) b) :
+    WaaEffectiveTerminus G b := by
   constructor
   · exact (G.map_responsiveTerminus_iff f b).mp h.left
   · intro before deed reception hdeed
@@ -1099,12 +1099,12 @@ theorem map_waaFullyEnlightened_reflect
 
 /-- Preservation of the universally quantified faith closure needs the target
     display carrier to be covered by the reparameterization.
-    `CoverageNegative.waaFullyEnlightened_needs_coverage` shows the hypothesis
+    `CoverageNegative.waaEffectiveTerminus_needs_coverage` shows the hypothesis
     is needed. -/
-theorem map_waaFullyEnlightened_of_surjective
+theorem map_waaEffectiveTerminus_of_surjective
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
-    {b : G.Being} (h : WaaFullyEnlightened G b) :
-    WaaFullyEnlightened (G.map f) b := by
+    {b : G.Being} (h : WaaEffectiveTerminus G b) :
+    WaaEffectiveTerminus (G.map f) b := by
   constructor
   · exact (G.map_responsiveTerminus_iff f b).mpr h.left
   · intro before' deed reception hdeed
@@ -1134,61 +1134,37 @@ def WaaPathClaim.map (c : WaaPathClaim G) : WaaPathClaim (G.map f) :=
     deed := c.deed
     reception := c.reception }
 
-/-- Truth of a path claim is display-invariant. The language ignores the tier,
-    so the tiers on the two sides are unconstrained. -/
+/-- Truth of a path claim is display-invariant when its diagnostic tier is
+    transported with the display. -/
 theorem map_waaPathClaim_holds_iff
-    (t' : Tier (G.map f)) (t : Tier G) (c : WaaPathClaim G) :
-    (waaPathClaimLanguage (G.map f)).Holds t' (WaaPathClaim.map G f c) ↔
+    (t : Tier G) (c : WaaPathClaim G) :
+    (waaPathClaimLanguage (G.map f)).Holds (Tier.map f t)
+        (WaaPathClaim.map G f c) ↔
       (waaPathClaimLanguage G).Holds t c := by
-  simpa [waaPathClaimLanguage, WaaPathClaim.map] using
-    (map_shortfallClosedAt_iff G f c.before c.deed c.reception)
+  cases t with
+  | floor =>
+      exact Iff.rfl
+  | actTime _ =>
+      simpa [waaPathClaimLanguage, WaaPathClaim.map, Tier.map] using
+        (map_shortfallClosedAt_iff G f c.before c.deed c.reception)
 
-/-- With target-carrier coverage, full enlightenment is display-invariant
+/-- With target-carrier coverage, effective termination is display-invariant
     outright. -/
-theorem map_waaFullyEnlightened_iff
+theorem map_waaEffectiveTerminus_iff
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
     (b : G.Being) :
-    WaaFullyEnlightened (G.map f) b ↔ WaaFullyEnlightened G b :=
-  ⟨fun h => map_waaFullyEnlightened_reflect G f h,
-    fun h => map_waaFullyEnlightened_of_surjective G f hsurj h⟩
+    WaaEffectiveTerminus (G.map f) b ↔ WaaEffectiveTerminus G b :=
+  ⟨fun h => map_waaEffectiveTerminus_reflect G f h,
+    fun h => map_waaEffectiveTerminus_of_surjective G f hsurj h⟩
 
-/-- Faith has no monotonicity or congruence law. Under coverage, the mapped
-    faith-object is propositionally the same object, so transport goes through
-    propositional extensionality. -/
-theorem map_faith_object_eq
+/-- Under coverage, the mapped effective-terminus proposition is
+    propositionally the same object. -/
+theorem map_effectiveTerminus_eq
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
     (Faith : Prop → Prop) (b : G.Being) :
-    Faith (WaaFullyEnlightened (G.map f) b) =
-      Faith (WaaFullyEnlightened G b) := by
-  rw [propext (map_waaFullyEnlightened_iff G f hsurj b)]
-
-/-- Reflection of the faith principle across a covering display
-    reparameterization, for the path-claim language. -/
-theorem map_waaFaithPrinciple_reflect
-    (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
-    {Faith : Prop → Prop}
-    (h : WaaFaithPrinciple (G.map f) (waaPathClaimLanguage (G.map f)) Faith) :
-    WaaFaithPrinciple G (waaPathClaimLanguage G) Faith := by
-  intro b hfaith u hutter
-  have hfaith' : Faith (WaaFullyEnlightened (G.map f) b) := by
-    rw [map_faith_object_eq G f hsurj Faith b]
-    exact hfaith
-  let u' : RecordedUtterance (G.map f) (waaPathClaimLanguage (G.map f)) :=
-    { weld := u.weld
-      actual := u.actual
-      offeredAt := Tier.floor
-      content := WaaPathClaim.map G f u.content }
-  have hfit' : u'.FitsOfferedTier :=
-    h b hfaith' u' hutter
-  change (waaPathClaimLanguage G).TrueAt u.offeredAt u.content
-  have hholds :
-      (waaPathClaimLanguage G).Holds u.offeredAt u.content :=
-    (map_waaPathClaim_holds_iff G f u'.offeredAt u.offeredAt
-      u.content).mp (by
-        change (waaPathClaimLanguage (G.map f)).TrueAt u'.offeredAt
-          u'.content at hfit'
-        simpa [ClaimLanguage.TrueAt, u'] using hfit')
-  simpa [ClaimLanguage.TrueAt] using hholds
+    Faith (WaaEffectiveTerminus (G.map f) b) =
+      Faith (WaaEffectiveTerminus G b) := by
+  rw [propext (map_waaEffectiveTerminus_iff G f hsurj b)]
 
 theorem map_waaAversionContext_iff
     (before : Config Contrib) (reception : G.Weld) :

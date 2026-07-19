@@ -64,15 +64,73 @@ inductive RowClaim
   | inForce (r : RowTag)
   | denied (r : RowTag)
 
-/-- Pole-affirming semantics. The conventional side is true at every act-time;
-    the denial side is true at act-time exactly at the pole-class. Thus a
-    pole-class act-time validates both sides by truth, not vacuity. -/
+/-- Floor-apophatic semantics. At `floor` no claim holds: the floor asserts
+    nothing, and fusion there is degeneracy of the claim-space, not joint
+    truth. At act-time the conventional side holds; the denial side holds
+    exactly at the pole-class, where it is earned as diagnosis (不昧). Nothing
+    in this language affirms a positive truth predicate of the floor. -/
 def rowLanguage (G : Grid Contrib) : ClaimLanguage G where
   Claim := RowClaim
   Holds
-    | .floor, _ => True
+    | .floor, _ => False
     | .actTime _, .inForce _ => True
     | .actTime w, .denied _ => AtBot (G.share w)
+
+/-- Nothing is assertable at the floor; the ultimate appears in the formal
+    language only as the point where the language runs out. -/
+theorem no_row_claim_holds_at_floor :
+    ∀ p : RowClaim, ¬ (rowLanguage G).Holds Tier.floor p := by
+  intro _p h
+  exact h
+
+/-- At the floor every distinction of this language degenerates. Fusion is by
+    silence, not by joint truth; compare `not_freeze_of_same_claim`. -/
+theorem floor_claims_indiscernible :
+    ∀ p q : RowClaim,
+      ((rowLanguage G).Holds Tier.floor p ↔
+        (rowLanguage G).Holds Tier.floor q) := by
+  intro _p _q
+  exact Iff.rfl
+
+/-- Without relying on the conventional, nothing is taught: any recorded
+    utterance that fits its offered tier is offered at an act-time tier. Error,
+    and therefore correction, exists only under separation (MMK 24.10). -/
+theorem fitting_offer_is_actTime
+    (u : RecordedUtterance G (rowLanguage G))
+    (hfit : u.FitsOfferedTier) :
+    ∃ w : G.Weld, u.offeredAt = Tier.actTime w := by
+  cases hoff : u.offeredAt with
+  | floor =>
+      change (rowLanguage G).TrueAt u.offeredAt u.content at hfit
+      rw [hoff] at hfit
+      exact hfit.elim
+  | actTime w =>
+      exact ⟨w, rfl⟩
+
+/-- A floor offer is error-free by silence: it asserts nothing, so nothing
+    convicts it. This is not a positive truth judgement at the floor. -/
+theorem not_misfits_of_floor_offer
+    (u : RecordedUtterance G (rowLanguage G))
+    (hoff : u.offeredAt = Tier.floor) :
+    ¬ u.MisfitsOfferedTier := by
+  rintro ⟨w, hact, _hfalse⟩
+  rw [hoff] at hact
+  cases hact
+
+/-- Failure to fit an act-time offer is exactly enough to introduce the
+    conventional error predicate. -/
+theorem misfits_of_not_fits_actTime
+    (u : RecordedUtterance G (rowLanguage G)) (w : G.Weld)
+    (hoff : u.offeredAt = Tier.actTime w) (hnot : ¬ u.FitsOfferedTier) :
+    u.MisfitsOfferedTier :=
+  ⟨w, hoff, hnot⟩
+
+/-- A fitting offer cannot be a conventional misfit. -/
+theorem not_misfits_of_fits
+    (u : RecordedUtterance G (rowLanguage G)) (hfit : u.FitsOfferedTier) :
+    ¬ u.MisfitsOfferedTier := by
+  rintro ⟨_w, _hoff, hnot⟩
+  exact hnot hfit
 
 def rowOf (G : Grid Contrib) (r : RowTag) : Distinction G :=
   { language := rowLanguage G
@@ -103,7 +161,7 @@ theorem rowOf_not_freeze (r : RowTag) :
   intro hfreeze
   apply hfreeze
   dsimp [rowOf, rowLanguage, ClaimLanguage.TrueAt]
-  constructor <;> intro _ <;> exact True.intro
+  exact Iff.rfl
 
 /-- The denial side can be true only where the offered tier is not live. -/
 theorem denied_holds_only_where_no_live_share
@@ -112,8 +170,7 @@ theorem denied_holds_only_where_no_live_share
     ¬ Tier.hasLiveShare G t := by
   cases t with
   | floor =>
-      intro hfloor
-      exact hfloor
+      exact h.elim
   | actTime _ =>
       intro hLive
       exact hLive h
@@ -133,7 +190,7 @@ theorem rowOf_obeys
     cases t with
     | floor =>
         dsimp [rowOf, rowLanguage, ClaimLanguage.TrueAt]
-        constructor <;> intro _ <;> exact True.intro
+        exact Iff.rfl
     | actTime w =>
         dsimp [rowOf, rowLanguage, ClaimLanguage.TrueAt]
         have hbot : AtBot (G.share w) := by
@@ -146,7 +203,7 @@ theorem rowOf_obeys
         · intro _h
           exact True.intro
 
-/-- For the pole-affirming row language, the refutation-only reading and full
+/-- For the floor-apophatic row language, the refutation-only reading and full
     separate/fuse obedience coincide under the local decidability needed to
     turn `¬¬ AtBot` into `AtBot` at non-live act-times. This is not a generic
     theorem about arbitrary distinctions; the satori clause is the load-bearing
@@ -199,6 +256,22 @@ theorem denied_misfits_live_offer
       dsimp [rowLanguage, ClaimLanguage.TrueAt] at hfit
       rw [hoff] at hlive
       exact hlive hfit
+
+/-- The error-predicate form of `denied_misfits_live_offer`: a live denial is
+    not merely unfit but a conventional misfit. -/
+theorem denied_misfits_live_offer_as_error
+    (r : RowTag)
+    (u : RecordedUtterance G (rowLanguage G))
+    (hcontent : u.content = .denied r)
+    (hlive : Tier.hasLiveShare G u.offeredAt) :
+    u.MisfitsOfferedTier := by
+  cases hoff : u.offeredAt with
+  | floor =>
+      rw [hoff] at hlive
+      cases hlive
+  | actTime w =>
+      exact misfits_of_not_fits_actTime G u w hoff
+        (denied_misfits_live_offer G r u hcontent hlive)
 
 abbrev layerRow (G : Grid Contrib) (l : ConventionLayer) : Distinction G :=
   rowOf G (.layer l)
