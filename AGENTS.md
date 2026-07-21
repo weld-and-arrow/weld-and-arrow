@@ -121,3 +121,4 @@ conflict check:
 - Commit messages must contain real hard line breaks, not merely visual wrapping. Use a one-line subject no longer than 75 columns, followed by a blank line. Hard-wrap body paragraphs at 75 columns in the stored commit message. Do not supply the body as one long git commit -m argument. Verify the final message before committing.
 - If the user responds "k" or "K", that means they pre-grant approval for every subsequent step of the AGENTS.md workflow, unless unexpected information surfaces, in which case rescinded - pause activity to raise the new information.
 - Don't worry that the task worktree is still present at C:/Users/alicl/.codex/worktrees/ afterwards, it's locked by the process. If you reach that, don't acknowledge it, raise anything else that's genuinely important or print "DONE".
+- You are permitted to git push to https://github.com/weld-and-arrow/weld-and-arrow and https://github.com/weld-and-arrow/weld-and-arrow-site
