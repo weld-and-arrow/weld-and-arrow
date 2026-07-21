@@ -226,7 +226,9 @@ def glossary : List GlossaryEntry := [
   { term := "pole"
     kind := .coinage .theory
     gloss := "A pole is the zero-share class in the ordering. In the grid it is represented by `AtBot`, so the system can speak of no live self-index without choosing a numerical scale."
-    anchors := [``AtBot, ``Grid.AtPoleClass]
+    anchors := [``AtBot, ``Grid.AtPoleClass,
+      ``Grid.terminus_iff_quietOn_univ,
+      ``Grid.atPoleClass_iff_quietOn_univ]
     seeAlso := ["share", "genjō"] },
   { term := "stone"
     kind := .coinage .theory
@@ -406,7 +408,9 @@ def glossary : List GlossaryEntry := [
   { term := "three doors"
     kind := .canonical
     gloss := "The three doors are body, speech, and mind. Canonical arhat display is fine-being quietness through all three; a regional śrāvaka-arhat may still carry body-door residue."
-    anchors := [``Grid.DoorQuiet, ``Grid.arhat_iff_three_doors_quiet]
+    anchors := [``Grid.DoorQuiet, ``Grid.arhat_iff_three_doors_quiet,
+      ``Grid.terminus_iff_quietOn_univ,
+      ``Grid.atPoleClass_iff_quietOn_univ]
     seeAlso := ["door", "pole"] },
   { term := "voicing"
     kind := .leanConvention

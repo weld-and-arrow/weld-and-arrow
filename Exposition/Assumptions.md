@@ -194,6 +194,8 @@ The clock and register-clock models anchor possibility checks and taxonomy examp
 | `WAA.Grid.classQuiet_no_clench_in_class` | None |
 | `WAA.Fetter.kind_lower_iff_cut_by_nonReturn` | None |
 | `WAA.Grid.arhatPathQuiet_iff_quietOn_univ` | None |
+| `WAA.Grid.terminus_iff_quietOn_univ` | None |
+| `WAA.Grid.atPoleClass_iff_quietOn_univ` | None |
 | `WAA.Grid.all_fetters_cut_at_arhat` | None |
 | `WAA.Grid.identityView_cut_iff_noDefiledVoicing` | None |
 | `WAA.Grid.conceit_excluded_of_quietOn` | None |
