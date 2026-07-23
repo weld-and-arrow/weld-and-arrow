@@ -50,8 +50,8 @@ end ContemporaryPosition
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /- Encoding check: the `retype` constructor exists and applies to any pair
    of distinctions (used by the Zahavi placement and the disposition/act

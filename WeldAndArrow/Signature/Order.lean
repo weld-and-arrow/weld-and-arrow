@@ -9,14 +9,16 @@ Reading and motivation: Identification/Commentary.lean, C.1.
 
 namespace WAA
 
-variable {α : Type}
+universe u
+
+variable {α : Type u}
 
 /- ==============================================================================
    §0  Dependency-free preorder infrastructure
 ============================================================================== -/
 
 /-- A bare preorder, rolled by hand and not assumed total or antisymmetric. -/
-class Preorder (α : Type) where
+class Preorder (α : Type u) where
   /-- The display-order relation: `a ≼ b` means `a` is no more self-driven
       than `b` in the ordinal Row-2 sense. -/
   le       : α → α → Prop
@@ -86,10 +88,10 @@ theorem no_strict_of_all_orderEq [Preorder α]
   not_strict_of_orderEq (h a b)
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-def DirectionVoid (α : Type) [Preorder α] : Prop := ∀ a b : α, ¬ Strict a b
+def DirectionVoid (α : Type u) [Preorder α] : Prop := ∀ a b : α, ¬ Strict a b
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-class PreorderBot (α : Type) extends Preorder α where
+class PreorderBot (α : Type u) extends Preorder α where
   bot    : α
   bot_le : ∀ a, le bot a
 

@@ -15,36 +15,65 @@ open Grid
 
 /-- A two-weld grid whose visible response, grade, and delivery data do not
     choose a door or a voicing interpretation. -/
-def grid : Grid Nat where
-  Being := Unit
-  Call := Bool
-  Response := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 1
-  conditions _ _ := True
+inductive Designatum
+  | being
+  | falseCall
+  | trueCall
+  | response
+  | falseOccurrence
+  | trueOccurrence
+deriving DecidableEq
 
-def wFalse : grid.Weld := ⟨(), false, ()⟩
+def occurrence : OccurrenceReading Designatum where
+  occurrence d := d = .falseOccurrence ∨ d = .trueOccurrence
+  isBeing d := d = .being
+  isCall d := d = .falseCall ∨ d = .trueCall
+  isResponse d := d = .response
+  agent d :=
+    match d with
+    | .falseOccurrence | .trueOccurrence => .being
+    | _ => d
+  call d :=
+    match d with
+    | .falseOccurrence => .falseCall
+    | .trueOccurrence => .trueCall
+    | _ => d
+  response d :=
+    match d with
+    | .falseOccurrence | .trueOccurrence => .response
+    | _ => d
 
-def wTrue : grid.Weld := ⟨(), true, ()⟩
+def grid : CoreReadings Designatum Nat where
+  occurrence := occurrence
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .being, .falseCall | .being, .trueCall => some .response
+      | _, _ => none
+  }
+  placement := { grade := fun _ => 1 }
+  conditioning := { conditions := fun _ _ => True }
+
+def wFalse : grid.Weld := ⟨.falseOccurrence, Or.inl rfl⟩
+
+def wTrue : grid.Weld := ⟨.trueOccurrence, Or.inr rfl⟩
 
 theorem wFalse_actual : grid.Actual wFalse := rfl
 
 theorem wTrue_actual : grid.Actual wTrue := rfl
 
 theorem wFalse_ne_wTrue : wFalse ≠ wTrue := by
-  intro h
-  have hcall : false = true := congrArg RawWeld.call h
-  cases hcall
+  decide
 
-abbrev W := RawWeld Unit Bool Unit
+abbrev W := grid.Weld
 
 abbrev GridData : Type :=
-  (Unit → Bool → Option Unit) ×
-    (Unit → Bool → Unit → Nat) ×
-      (W → W → Prop)
+  (Designatum → Designatum → Option Designatum) ×
+    (Designatum → Nat) ×
+      (Designatum → Designatum → Prop)
 
 def gridData : GridData :=
-  (grid.respondsTo, grid.grade, grid.conditions)
+  (grid.respondsTo, grid.grade, grid.conditioning.conditions)
 
 /-- A merged door reading diagnoses every weld as bodily. -/
 def mergedDoorReading : grid.DoorReading where
@@ -53,9 +82,7 @@ def mergedDoorReading : grid.DoorReading where
 /-- A split reading diagnoses the second weld as mind-door. -/
 def splitDoorReading : grid.DoorReading where
   door w :=
-    match w.call with
-    | false => .body
-    | true => .mind
+    if w = wFalse then .body else .mind
 
 theorem door_readings_disagree :
     mergedDoorReading.door wTrue = .body ∧

@@ -1,4 +1,5 @@
 import WeldAndArrow.Signature.Order
+import WeldAndArrow.Signature.Readings
 import WeldAndArrow.Signature.Grid
 import WeldAndArrow.Signature.SentienceConvention
 import WeldAndArrow.Signature.BeingConvention

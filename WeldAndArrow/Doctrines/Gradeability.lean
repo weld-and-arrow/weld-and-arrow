@@ -21,7 +21,7 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /-- A quotation in its strongest severed form: the response is attributed to
     an agent, but the call that made it an occurrence has been forgotten. There
@@ -30,38 +30,36 @@ variable {Contrib : Type} [PreorderBot Contrib]
     nothing is positioned for the taxonomy to classify. The generator-side
     standing verdict is therefore `severedVerdict`, a decline rather than a
     grade. -/
-structure SeveredTranscript (G : Grid Contrib) where
-  agent    : G.Being
-  response : G.Response
+@[ext]
+structure SeveredTranscript (G : CoreReadings Designatum Contrib) where
+  agent    : Designatum
+  response : Designatum
 
 namespace Weld
 
 /-- Forget the call carried by a weld. -/
-def sever {G : Grid Contrib} (w : G.Weld) : SeveredTranscript G :=
+def sever {G : CoreReadings Designatum Contrib} (w : G.Weld) : SeveredTranscript G :=
   { agent := w.agent, response := w.response }
 
 @[simp]
-theorem sever_agent {G : Grid Contrib} (w : G.Weld) :
+theorem sever_agent {G : CoreReadings Designatum Contrib} (w : G.Weld) :
     (w.sever).agent = w.agent :=
   rfl
 
 @[simp]
-theorem sever_response {G : Grid Contrib} (w : G.Weld) :
+theorem sever_response {G : CoreReadings Designatum Contrib} (w : G.Weld) :
     (w.sever).response = w.response :=
   rfl
 
 /-- Two welds with the same attributed agent and response have the same
     severed transcript, regardless of the calls they answered. -/
-theorem sever_eq_of_agent_response {G : Grid Contrib} {w₁ w₂ : G.Weld}
+theorem sever_eq_of_agent_response {G : CoreReadings Designatum Contrib} {w₁ w₂ : G.Weld}
     (hagent : w₁.agent = w₂.agent)
     (hresponse : w₁.response = w₂.response) :
     w₁.sever = w₂.sever := by
-  cases w₁
-  cases w₂
-  dsimp [sever] at hagent hresponse ⊢
-  cases hagent
-  cases hresponse
-  rfl
+  apply SeveredTranscript.ext
+  · exact hagent
+  · exact hresponse
 
 end Weld
 
@@ -69,12 +67,12 @@ namespace RecordedUtterance
 
 /-- A recorded utterance is severed by forgetting the call already carried in
     its weld. -/
-def sever {G : Grid Contrib} {L : ClaimLanguage G}
+def sever {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
     (u : RecordedUtterance G L) : SeveredTranscript G :=
   u.weld.sever
 
 @[simp]
-theorem sever_eq_weld_sever {G : Grid Contrib} {L : ClaimLanguage G}
+theorem sever_eq_weld_sever {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
     (u : RecordedUtterance G L) :
     u.sever = u.weld.sever :=
   rfl
@@ -83,7 +81,7 @@ end RecordedUtterance
 
 /-- The generator's public standing for a severed transcript: no call-carried
     utterance is present, so the taxonomy declines rather than grading. -/
-def severedVerdict (G : Grid Contrib) : GeneratorOutcome G :=
+def severedVerdict (G : CoreReadings Designatum Contrib) : GeneratorOutcome G :=
   .declined
 
 end Grid
@@ -93,33 +91,29 @@ end Grid
     identification of this call-carrying form with the koan genre remains a
     prose claim; the checked point is the carried call. -/
 theorem recordedUtterance_grade_determined
-    {Contrib : Type} [PreorderBot Contrib]
-    {G : Grid Contrib} {L : Grid.ClaimLanguage G}
+    {Designatum Contrib : Type} [PreorderBot Contrib]
+    {G : CoreReadings Designatum Contrib} {L : Grid.ClaimLanguage G}
     (u : Grid.RecordedUtterance G L) :
-    G.share u.weld = G.grade u.weld.agent u.weld.call u.weld.response :=
+    G.share u.weld = G.grade u.weld.val :=
   rfl
 
 namespace GradeabilityNegative
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /-- If two same-agent/same-response welds differ in grade, the missing field is
     necessarily the call. -/
 theorem call_ne_of_severed_grade_collision
-    {G : Grid Contrib} {w₁ w₂ : G.Weld}
+    {G : CoreReadings Designatum Contrib} {w₁ w₂ : G.Weld}
+    (hfaces :
+      ∀ x y : G.Weld,
+        x.agent = y.agent → x.call = y.call → x.response = y.response → x = y)
     (hagent : w₁.agent = w₂.agent)
     (hresponse : w₁.response = w₂.response)
     (hshare : G.share w₁ ≠ G.share w₂) :
     w₁.call ≠ w₂.call := by
   intro hcall
-  have hw : w₁ = w₂ := by
-    cases w₁
-    cases w₂
-    dsimp at hagent hresponse hcall
-    cases hagent
-    cases hcall
-    cases hresponse
-    rfl
+  have hw : w₁ = w₂ := hfaces w₁ w₂ hagent hcall hresponse
   exact hshare (by rw [hw])
 
 /-- Under a same-agent/same-response collision with different shares, no
@@ -127,7 +121,7 @@ theorem call_ne_of_severed_grade_collision
     actual weld. Because the collision already fixes the agent, the still
     barer response-only quotation is covered a fortiori. -/
 theorem no_grade_recovery_from_severed
-    {G : Grid Contrib} {w₁ w₂ : G.Weld}
+    {G : CoreReadings Designatum Contrib} {w₁ w₂ : G.Weld}
     (hactual₁ : G.Actual w₁) (hactual₂ : G.Actual w₂)
     (hagent : w₁.agent = w₂.agent)
     (hresponse : w₁.response = w₂.response)
@@ -149,12 +143,12 @@ theorem no_grade_recovery_from_severed
 /-- The gentle call in `backslideGrid`: same agent and response as the harsh
     call, but pole-class share. -/
 def severedGentle : backslideGrid.Weld :=
-  ⟨(), Cue.gentle, ()⟩
+  backslideWeld .gentle
 
 /-- The harsh call in `backslideGrid`: same agent and response as the gentle
     call, but live share. -/
 def severedHarsh : backslideGrid.Weld :=
-  ⟨(), Cue.harsh, ()⟩
+  backslideWeld .harsh
 
 /-- Concrete carrier for the gradeability rule's underdetermination face:
     same attributed quotation, different calls, different grades. -/
@@ -166,7 +160,7 @@ theorem gradeability_severed_underdetermination_witness :
             severedGentle.call ≠ severedHarsh.call ∧
               backslideGrid.share severedGentle ≠
                 backslideGrid.share severedHarsh := by
-  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_⟩
+  refine ⟨by rfl, by rfl, rfl, rfl, ?_, ?_⟩
   · intro h
     cases h
   · dsimp [Grid.share, backslideGrid, severedGentle, severedHarsh]

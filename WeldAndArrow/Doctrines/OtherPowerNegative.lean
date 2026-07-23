@@ -18,49 +18,89 @@ namespace OtherPowerNegative
 
 open Grid.DirectedConvention
 
-inductive Being
+inductive Designatum
   | source
   | receiver
-deriving DecidableEq
-
-inductive Call
   | live
   | pole
+  | response
+  | sourceLiveOccurrence
+  | sourcePoleOccurrence
+  | receiverLiveOccurrence
+  | receiverPoleOccurrence
 deriving DecidableEq
 
-inductive Response
-  | response
-deriving DecidableEq
+namespace Being
+abbrev source : Designatum := .source
+abbrev receiver : Designatum := .receiver
+end Being
+
+namespace Call
+abbrev live : Designatum := .live
+abbrev pole : Designatum := .pole
+end Call
+
+namespace Response
+abbrev response : Designatum := .response
+end Response
+
+def regimeOccurrence : OccurrenceReading Designatum where
+  occurrence d :=
+    d = .sourceLiveOccurrence ∨ d = .sourcePoleOccurrence ∨
+      d = .receiverLiveOccurrence ∨ d = .receiverPoleOccurrence
+  isBeing d := d = .source ∨ d = .receiver
+  isCall d := d = .live ∨ d = .pole
+  isResponse d := d = .response
+  agent d :=
+    match d with
+    | .sourceLiveOccurrence | .sourcePoleOccurrence => .source
+    | .receiverLiveOccurrence | .receiverPoleOccurrence => .receiver
+    | _ => d
+  call d :=
+    match d with
+    | .sourceLiveOccurrence | .receiverLiveOccurrence => .live
+    | .sourcePoleOccurrence | .receiverPoleOccurrence => .pole
+    | _ => d
+  response d :=
+    match d with
+    | .sourceLiveOccurrence | .sourcePoleOccurrence
+    | .receiverLiveOccurrence | .receiverPoleOccurrence => .response
+    | _ => d
 
 /-- Delivery is total; reception share is controlled only by the call. -/
-def regimeShareGrid : Grid Nat where
-  Being      := Being
-  Call       := Call
-  Response   := Response
-  respondsTo _ _ := some Response.response
-  grade _ c _ :=
-    match c with
-    | .live => 1
-    | .pole => 0
-  conditions _ _ := True
+def regimeShareGrid : CoreReadings Designatum Nat where
+  occurrence := regimeOccurrence
+  response := {
+    respondsTo := fun b c =>
+      if (b = .source ∨ b = .receiver) ∧ (c = .live ∨ c = .pole)
+      then some .response
+      else none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .sourceLiveOccurrence | .receiverLiveOccurrence => 1
+      | _ => 0
+  }
+  conditioning := { conditions := fun _ _ => True }
 
 def sameLiveDeed : regimeShareGrid.Weld :=
-  ⟨Being.source, Call.live, Response.response⟩
+  ⟨.sourceLiveOccurrence, Or.inl rfl⟩
 
 def sameLiveReception : regimeShareGrid.Weld :=
-  ⟨Being.source, Call.live, Response.response⟩
+  sameLiveDeed
 
 def samePoleReception : regimeShareGrid.Weld :=
-  ⟨Being.source, Call.pole, Response.response⟩
+  ⟨.sourcePoleOccurrence, Or.inr (Or.inl rfl)⟩
 
 def crossLiveDeed : regimeShareGrid.Weld :=
-  ⟨Being.source, Call.live, Response.response⟩
+  sameLiveDeed
 
 def crossLiveReception : regimeShareGrid.Weld :=
-  ⟨Being.receiver, Call.live, Response.response⟩
+  ⟨.receiverLiveOccurrence, Or.inr (Or.inr (Or.inl rfl))⟩
 
 def crossPoleReception : regimeShareGrid.Weld :=
-  ⟨Being.receiver, Call.pole, Response.response⟩
+  ⟨.receiverPoleOccurrence, Or.inr (Or.inr (Or.inr rfl))⟩
 
 theorem sameLiveLine :
     SameAgentDelivery regimeShareGrid sameLiveDeed sameLiveReception :=

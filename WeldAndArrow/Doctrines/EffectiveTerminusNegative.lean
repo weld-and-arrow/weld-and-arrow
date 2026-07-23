@@ -21,46 +21,43 @@ namespace EffectiveTerminusNegative
 open Grid
 open Grid.DirectedConvention
 
-abbrev baseGrid : Grid Nat :=
+abbrev baseGrid :
+    CoreReadings SraddhaNegative.CaseDesignatum Nat :=
   SraddhaNegative.zeroEffectGrid
 
-abbrev sealedGrid : Grid Nat :=
+abbrev sealedGrid :
+    CoreReadings SraddhaNegative.CaseDesignatum Nat :=
   baseGrid.withConditions (fun _ _ => False)
 
-def addedDelivery (deed reception : sealedGrid.Weld) : Prop :=
-  deed.agent = SraddhaNegative.Being.sraddha ∧
-    reception.agent = SraddhaNegative.Being.receiver
+def addedDelivery
+    (deed reception : SraddhaNegative.CaseDesignatum) : Prop :=
+  deed = .sraddhaOccurrence ∧ reception = .receiverOccurrence
 
-abbrev openedGrid : Grid Nat :=
+abbrev openedGrid :
+    CoreReadings SraddhaNegative.CaseDesignatum Nat :=
   sealedGrid.withConditions addedDelivery
 
-def b : sealedGrid.Being :=
-  SraddhaNegative.Being.sraddha
+def b : SraddhaNegative.CaseDesignatum :=
+  .sraddha
 
 def liveBefore : Config Nat :=
   SraddhaNegative.liveBefore
 
 def deed : sealedGrid.Weld :=
-  ⟨SraddhaNegative.Being.sraddha,
-    SraddhaNegative.Call.call,
-    SraddhaNegative.Response.response⟩
+  ⟨.sraddhaOccurrence, True.intro⟩
 
 def reception : sealedGrid.Weld :=
-  ⟨SraddhaNegative.Being.receiver,
-    SraddhaNegative.Call.call,
-    SraddhaNegative.Response.response⟩
+  ⟨.receiverOccurrence, True.intro⟩
 
 theorem sealed_responsiveTerminus :
-    sealedGrid.ResponsiveTerminus b := by
-  constructor
-  · intro _c
-    exact ⟨SraddhaNegative.Response.response, rfl⟩
-  · intro _c _r _hresp
-    exact Nat.le_refl 0
+    sealedGrid.ResponsiveTerminus b :=
+  SraddhaNegative.sraddha_responsiveTerminus
 
 theorem sealed_undelivered :
     ∀ (deed reception : sealedGrid.Weld),
-      deed.agent = b → ¬ DeliveredTo sealedGrid deed reception := by
+      deed.agent = b →
+        ¬ Grid.DirectedConvention.DeliveredTo
+          sealedGrid deed reception := by
   intro deed reception _hdeed hdel
   exact hdel
 
@@ -70,7 +67,7 @@ theorem sealed_waaEffectiveTerminus :
     sealedGrid sealed_responsiveTerminus sealed_undelivered
 
 theorem opened_delivered :
-    DeliveredTo openedGrid deed reception := by
+    Grid.DirectedConvention.DeliveredTo openedGrid deed reception := by
   exact ⟨rfl, rfl⟩
 
 theorem opened_liveBefore_not_atBot :
@@ -80,15 +77,16 @@ theorem opened_liveBefore_not_atBot :
 theorem opened_not_hasShareDropLanding :
     ¬ HasShareDropLanding openedGrid liveBefore deed := by
   rintro ⟨received, hland⟩
-  have hreceiver : received.agent = SraddhaNegative.Being.receiver :=
+  have hreceiver :
+      received.1 = SraddhaNegative.CaseDesignatum.receiverOccurrence :=
     hland.left.left.right
   have hdrop : Strict (openedGrid.share received) liveBefore.tendency :=
     hland.right
-  have hstrict : Strict (1 : Nat) 1 := by
-    simpa [openedGrid, sealedGrid, baseGrid, Grid.withConditions, Grid.share,
-      SraddhaNegative.zeroEffectGrid, liveBefore, SraddhaNegative.liveBefore,
-      hreceiver] using hdrop
-  exact strict_irrefl (1 : Nat) hstrict
+  rcases received with ⟨d, hd⟩
+  change d = SraddhaNegative.CaseDesignatum.receiverOccurrence at hreceiver
+  subst d
+  change Strict (1 : Nat) 1 at hdrop
+  exact strict_irrefl (1 : Nat) hdrop
 
 theorem opened_not_waaEffectiveTerminus :
     ¬ WaaEffectiveTerminus openedGrid b := by
@@ -100,10 +98,10 @@ theorem opened_not_waaEffectiveTerminus :
 /-- The actual-run transcript used by this collision: response function plus
     grade/share data, deliberately excluding the delivery relation. -/
 abbrev RunData : Type :=
-  (SraddhaNegative.Being -> SraddhaNegative.Call ->
-      Option SraddhaNegative.Response) ×
-    (SraddhaNegative.Being -> SraddhaNegative.Call ->
-      SraddhaNegative.Response -> Nat)
+  (SraddhaNegative.CaseDesignatum ->
+      SraddhaNegative.CaseDesignatum ->
+        Option SraddhaNegative.CaseDesignatum) ×
+    (SraddhaNegative.CaseDesignatum -> Nat)
 
 def sealedRunData : RunData :=
   (sealedGrid.respondsTo, sealedGrid.grade)
@@ -123,7 +121,8 @@ theorem share_agrees (w : sealedGrid.Weld) :
     sealedGrid.share w = openedGrid.share w :=
   rfl
 
-theorem respondsTo_agrees (being : sealedGrid.Being) (cue : sealedGrid.Call) :
+theorem respondsTo_agrees
+    (being cue : SraddhaNegative.CaseDesignatum) :
     sealedGrid.respondsTo being cue = openedGrid.respondsTo being cue :=
   rfl
 

@@ -13,8 +13,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /- ==============================================================================
    §2  Sower/reaper, reach-back, and WAA-ownership-face
@@ -110,15 +110,15 @@ namespace MemoryWitness
     the prudence witness's concrete registers under fresh names: memory and
     prudence share the same display grid without coupling their namespaces. -/
 def pastDeed : registerClockGrid.Weld :=
-  ⟨(1 : Nat), (), (2 : Nat)⟩
+  registerWeld 1
 
 /-- The later reception at which the trace is received and appropriated. -/
 def recall : registerClockGrid.Weld :=
-  ⟨(2 : Nat), (), (3 : Nat)⟩
+  registerWeld 2
 
 /-- A claimed deed whose delivery line does not reach `recall`. -/
 def confabulatedDeed : registerClockGrid.Weld :=
-  ⟨(0 : Nat), (), (1 : Nat)⟩
+  registerWeld 0
 
 /-- The trace-source deed is delivered to the later recall reception. -/
 theorem trace_delivered :
@@ -147,7 +147,8 @@ theorem recall_waaDiachronicWhose :
 /-- The confabulated deed is not delivered to the recall reception. -/
 theorem confabulated_not_delivered :
     NotDeliveredTo registerClockGrid confabulatedDeed recall := by
-  dsimp [NotDeliveredTo, registerClockGrid, confabulatedDeed, recall]
+  dsimp [NotDeliveredTo, Grid.conditions, registerClockGrid, registerWeld,
+    confabulatedDeed, recall]
   decide
 
 /-- False memory has the vacuous ownership face: the reception is actual and
@@ -206,24 +207,24 @@ namespace PrudentialPrivilegeNegative
 open BeingConvention
 
 /-- The present-side fine register. -/
-def deedAgent : Nat :=
-  1
+def deedAgent : RegisterCase :=
+  .register 1
 
 /-- The future-side fine register. -/
-def receptionAgent : Nat :=
-  2
+def receptionAgent : RegisterCase :=
+  .register 2
 
 /-- The future reception's mounted response. -/
-def receptionResponse : Nat :=
-  3
+def receptionResponse : RegisterCase :=
+  .result 3
 
 /-- The present concern/deed register in the checked prudence witness. -/
 def deed : registerClockGrid.Weld :=
-  ⟨deedAgent, (), receptionAgent⟩
+  registerWeld 1
 
 /-- The future reception register delivered by `deed`. -/
 def reception : registerClockGrid.Weld :=
-  ⟨receptionAgent, (), receptionResponse⟩
+  registerWeld 2
 
 /-- The concrete actual pair used to route the witness through the same
     `ReceptionPair` carrier as the diachronic ownership vocabulary. -/
@@ -265,7 +266,7 @@ abbrev kMerge : BeingCoarsening registerClockGrid Unit :=
   registerClockCoarsening
 
 /-- Split reading: each fine register keeps its own macro tag. -/
-def kSplit : BeingCoarsening registerClockGrid Nat where
+def kSplit : BeingCoarsening registerClockGrid RegisterCase where
   proj := id
 
 theorem merge_same_fiber :
@@ -273,11 +274,11 @@ theorem merge_same_fiber :
   rfl
 
 /-- Pairwise boundary induced by the merge reading. -/
-abbrev mergeBoundary (_p _q : Nat) : Prop :=
+abbrev mergeBoundary (_p _q : RegisterCase) : Prop :=
   True
 
 /-- Pairwise boundary induced by the split reading. -/
-abbrev splitBoundary (p q : Nat) : Prop :=
+abbrev splitBoundary (p q : RegisterCase) : Prop :=
   p = q
 
 theorem merge_boundary_holds :
@@ -285,17 +286,17 @@ theorem merge_boundary_holds :
   True.intro
 
 theorem split_boundary_fails :
-    ¬ ((1 : Nat) = (2 : Nat)) := by
+    ¬ ((RegisterCase.register 1) = (RegisterCase.register 2)) := by
   decide
 
 /-- The grid data visible to a convention-free standing-owner recovery. -/
 abbrev W : Type :=
-  RawWeld Nat Unit Nat
+  registerClockGrid.Weld
 
 /-- Function, grade, and delivery data, with no supplied being-convention. -/
 abbrev GridData : Type :=
-  (Nat -> Unit -> Option Nat) ×
-    (Nat -> Unit -> Nat -> Nat) ×
+  (RegisterCase -> RegisterCase -> Option RegisterCase) ×
+    (RegisterCase -> Nat) ×
       (W -> W -> Prop)
 
 def gridData : GridData :=
@@ -360,13 +361,13 @@ theorem rePitchSequence_final_tendency
     conditions. -/
 theorem deed_grade_independent_of_conditions
     (conditions1 conditions2 :
-      registerClockGrid.Weld -> registerClockGrid.Weld -> Prop) :
+      RegisterCase -> RegisterCase -> Prop) :
     (registerClockGrid.withConditions conditions1).grade
-        deed.agent deed.call deed.response =
+        deed.1 =
       (registerClockGrid.withConditions conditions2).grade
-        deed.agent deed.call deed.response :=
+        deed.1 :=
   registerClockGrid.grade_independent_of_conditions
-    conditions1 conditions2 deed.agent deed.call deed.response
+    conditions1 conditions2 deed.1
 
 /-- The checked prudence package: fresh reception-time ownership is available,
     but standing grid-data privilege, stored inheritance, and delivery-sensitive
@@ -378,11 +379,11 @@ theorem prudentialPrivilege_failure_modes :
           (ReceptionPair.rePitchSequence (G := registerClockGrid) before1 pair).snd =
             (ReceptionPair.rePitchSequence (G := registerClockGrid) before2 pair).snd) ∧
           (∀ conditions1 conditions2 :
-            registerClockGrid.Weld -> registerClockGrid.Weld -> Prop,
+            RegisterCase -> RegisterCase -> Prop,
             (registerClockGrid.withConditions conditions1).grade
-                deed.agent deed.call deed.response =
+                deed.1 =
               (registerClockGrid.withConditions conditions2).grade
-                deed.agent deed.call deed.response) :=
+                deed.1) :=
   ⟨reception_waaDiachronicWhose, not_prudentialPrivilege,
     rePitchSequence_final_forgets_prior, deed_grade_independent_of_conditions⟩
 
@@ -401,7 +402,7 @@ end DirectedConvention
 def SelfAnchored (w : G.Weld) : Prop :=
   G.index w = w.agent
 
-theorem selfAnchored (w : G.Weld) : G.SelfAnchored w := rfl
+theorem selfAnchored (w : G.Weld) : SelfAnchored G w := rfl
 
 /- ==============================================================================
    §3  Pole-typing and the verdict's own tier
@@ -415,21 +416,21 @@ def StateToolFits (w : G.Weld) : Prop :=
     corollary: no self-pole index remains for a state-tool to miss. -/
 theorem stateToolFits_of_atBot
     {w : G.Weld} (hshare : AtBot (G.share w)) :
-    G.StateToolFits w :=
+    StateToolFits G w :=
   G.no_self_pole_index_of_atBot w hshare
 
 /-- Literal equality with the designated bottom is a bridge into the
     pole-class pole-typing corollary. -/
 theorem stateToolFits_of_eq_shareBot
     {w : G.Weld} (hshare : G.share w = shareBot) :
-    G.StateToolFits w :=
-  G.stateToolFits_of_atBot (atBot_of_eq_shareBot hshare)
+    StateToolFits G w :=
+  stateToolFits_of_atBot G (atBot_of_eq_shareBot hshare)
 
 /-- With decidability of the one pole-class comparison, pole-typing can be
     read as an iff: the state-tool fits just where the share is at the
     pole-class. -/
 theorem atBot_of_stateToolFits {w : G.Weld}
-    [Decidable (AtBot (G.share w))] (hfits : G.StateToolFits w) :
+    [Decidable (AtBot (G.share w))] (hfits : StateToolFits G w) :
     AtBot (G.share w) := by
   by_cases hshare : AtBot (G.share w)
   · exact hshare
@@ -439,21 +440,21 @@ theorem atBot_of_stateToolFits {w : G.Weld}
     exact iff. -/
 theorem stateToolFits_iff_atBot (w : G.Weld)
     [Decidable (AtBot (G.share w))] :
-    G.StateToolFits w ↔ AtBot (G.share w) :=
-  ⟨G.atBot_of_stateToolFits, G.stateToolFits_of_atBot⟩
+    StateToolFits G w ↔ AtBot (G.share w) :=
+  ⟨atBot_of_stateToolFits G, stateToolFits_of_atBot G⟩
 
 /-- Terminus responses are reducible in the corollary's sense. -/
 theorem stateToolFits_of_terminus_response
-    {b : G.Being} {c : G.Call} {r : G.Response}
-    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
-    G.StateToolFits ⟨b, c, r⟩ :=
-  G.no_self_pole_index_of_terminus_response hterm hresp
+    {w : G.Weld}
+    (hterm : G.Terminus w.agent) (hactual : G.Actual w) :
+    StateToolFits G w :=
+  G.no_self_pole_index_of_terminus_response hterm hactual
 
 namespace DirectedConvention
 
 /-- If the state-tool fits a reception, the WAA-ownership-face cannot fire there. -/
 theorem not_waaOwnershipFace_of_stateToolFits
-    {deed reception : G.Weld} (hfits : G.StateToolFits reception) :
+    {deed reception : G.Weld} (hfits : StateToolFits G reception) :
     ¬ WaaOwnershipFace G deed reception :=
   fun hown => hfits hown.right
 
@@ -492,7 +493,7 @@ inductive WaaOwnershipOffice
 
 namespace WaaOwnershipOffice
 
-variable {Contrib : Type} [PreorderBot Contrib] {G : Grid Contrib}
+variable {Designatum Contrib : Type} [PreorderBot Contrib] {G : CoreReadings Designatum Contrib}
 
 /-- Each office is assigned to a weld's act-time tier (the office
     argument is unused). The paper's further claim — discharged *not by a
@@ -519,25 +520,41 @@ end WaaOwnershipOffice
 
 namespace SelfLineWitness
 
-inductive Being
+inductive Designatum
   | one
-
-inductive Call
   | call
-
-inductive Response
   | response
+  | occurrence
 
-def selfLineGrid : Grid Nat where
-  Being      := Being
-  Call       := Call
-  Response   := Response
-  respondsTo _ _ := some Response.response
-  grade _ _ _ := 1
-  conditions _ _ := True
+def selfLineOccurrence : OccurrenceReading Designatum where
+  occurrence d := d = .occurrence
+  isBeing d := d = .one
+  isCall d := d = .call
+  isResponse d := d = .response
+  agent
+    | .occurrence => .one
+    | d => d
+  call
+    | .occurrence => .call
+    | d => d
+  response
+    | .occurrence => .response
+    | d => d
+
+def selfLineGrid : CoreReadings Designatum Nat where
+  occurrence := selfLineOccurrence
+  response := {
+    respondsTo := fun _ _ => some .response
+  }
+  placement := {
+    grade := fun _ => 1
+  }
+  conditioning := {
+    conditions := fun _ _ => True
+  }
 
 def w : selfLineGrid.Weld :=
-  ⟨Being.one, Call.call, Response.response⟩
+  ⟨.occurrence, rfl⟩
 
 theorem w_waaAppropriates : selfLineGrid.WaaAppropriates w := by
   intro hbot

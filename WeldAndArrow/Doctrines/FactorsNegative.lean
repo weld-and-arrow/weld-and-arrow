@@ -13,23 +13,55 @@ namespace FactorsNegative
 
 open Grid
 
-inductive Call
+inductive CaseDesignatum
+  | being
   | first
   | second
+  | response
+  | firstOccurrence
+  | secondOccurrence
 
-def grid : Grid Nat where
-  Being := Unit
-  Call := Call
-  Response := Unit
-  respondsTo _ _ := some ()
-  grade _ c _ := match c with | .first => 1 | .second => 0
-  conditions _ _ := True
+def occurrenceReading : OccurrenceReading CaseDesignatum where
+  occurrence d := d = .firstOccurrence ∨ d = .secondOccurrence
+  isBeing d := d = .being
+  isCall
+    | .first | .second => True
+    | _ => False
+  isResponse d := d = .response
+  agent
+    | .firstOccurrence | .secondOccurrence => .being
+    | d => d
+  call
+    | .firstOccurrence => .first
+    | .secondOccurrence => .second
+    | d => d
+  response
+    | .firstOccurrence | .secondOccurrence => .response
+    | d => d
+
+def grid : CoreReadings CaseDesignatum Nat where
+  occurrence := occurrenceReading
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .being, .first | .being, .second => some .response
+      | _, _ => none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .firstOccurrence => 1
+      | _ => 0
+  }
+  conditioning := {
+    conditions := fun _ _ => True
+  }
 
 def reading : grid.DoorReading where
-  door w := match w.call with | .first => .speech | .second => .body
+  door w := match w.call with | .first => .speech | _ => .body
 
-def firstWeld : grid.Weld := ⟨(), .first, ()⟩
-def secondWeld : grid.Weld := ⟨(), .second, ()⟩
+def firstWeld : grid.Weld := ⟨.firstOccurrence, Or.inl rfl⟩
+def secondWeld : grid.Weld := ⟨.secondOccurrence, Or.inr rfl⟩
 
 def firstViewReading : grid.FetterReading where
   provocationClass f w :=
@@ -54,25 +86,29 @@ theorem conduct_class_inert (w : grid.Weld) :
   fun h => h
 
 theorem first_view_held :
-    grid.FactorHeld reading () firstViewReading .view [firstWeld] := by
+    grid.FactorHeld reading CaseDesignatum.being
+      firstViewReading .view [firstWeld] := by
   refine ⟨firstWeld, by simp, rfl, rfl, Or.inl rfl, ?_⟩
   dsimp [Grid.HasSelfPoleIndex, Grid.share, grid, firstWeld, AtBot, shareBot]
   show ¬ (1 : Nat) ≤ 0
   decide
 
 theorem second_view_released :
-    grid.FactorReleased reading () secondViewReading .view := by
-  intro w _hactual _hagent hclass
+    grid.FactorReleased reading CaseDesignatum.being
+      secondViewReading .view := by
+  rintro ⟨d, hd⟩ _hactual _hagent hclass
   rcases hclass with hclass | hclass
-  · cases w with
-    | mk agent call response =>
-      cases call <;> try { cases hclass }
-      dsimp [Grid.share, grid, AtBot, shareBot]
-      exact Nat.le_refl 0
+  · change d = CaseDesignatum.firstOccurrence ∨
+      d = CaseDesignatum.secondOccurrence at hd
+    change occurrenceReading.call d = CaseDesignatum.second at hclass
+    rcases hd with rfl | rfl
+    · contradiction
+    · exact Nat.le_refl 0
   · cases hclass
 
 abbrev GridData : Type :=
-  (Unit → Call → Option Unit) × (Unit → Call → Unit → Nat)
+  (CaseDesignatum → CaseDesignatum → Option CaseDesignatum) ×
+    (CaseDesignatum → Nat)
 
 def gridData : GridData := (grid.respondsTo, grid.grade)
 

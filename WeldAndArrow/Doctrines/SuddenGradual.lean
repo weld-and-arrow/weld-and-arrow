@@ -18,8 +18,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /- ==============================================================================
    Sudden and gradual arrival shapes
@@ -40,24 +40,24 @@ def rePitchRun (before : Config Contrib) (run : List G.Weld) :
 
 @[simp]
 theorem rePitchRun_nil (before : Config Contrib) :
-    G.rePitchRun before [] = before :=
+    rePitchRun G before [] = before :=
   rfl
 
 @[simp]
 theorem rePitchRun_cons
     (before : Config Contrib) (received : G.Weld) (rest : List G.Weld) :
-    G.rePitchRun before (received :: rest) =
-      G.rePitchRun (G.rePitch before received) rest :=
+    rePitchRun G before (received :: rest) =
+      rePitchRun G (G.rePitch before received) rest :=
   rfl
 
 /-- Gradual arrival, as a staged share-drop run that eventually reaches the
     pole-class. This is only the grid-legal face: a run can be staged; no
     stored attainment or rate preference is introduced. -/
 def WaaGradualArrival (before : Config Contrib) (run : List G.Weld) : Prop :=
-  G.ShareDropRun before run ∧
+  ShareDropRun G before run ∧
     run.length ≥ 2 ∧
       ¬ AtBot before.tendency ∧
-        AtBot ((G.rePitchRun before run).tendency)
+        AtBot ((rePitchRun G before run).tendency)
 
 /- ==============================================================================
    Rate invisibility
@@ -74,14 +74,14 @@ theorem rate_invisible_to_config
 
 theorem rePitchRun_append_singleton
     (before : Config Contrib) (run : List G.Weld) (last : G.Weld) :
-    G.rePitchRun before (run ++ [last]) =
-      G.rePitch (G.rePitchRun before run) last := by
+    rePitchRun G before (run ++ [last]) =
+      G.rePitch (rePitchRun G before run) last := by
   induction run generalizing before with
   | nil =>
       rfl
   | cons received rest ih =>
-      change G.rePitchRun (G.rePitch before received) (rest ++ [last]) =
-        G.rePitch (G.rePitchRun (G.rePitch before received) rest) last
+      change rePitchRun G (G.rePitch before received) (rest ++ [last]) =
+        G.rePitch (rePitchRun G (G.rePitch before received) rest) last
       exact ih (G.rePitch before received)
 
 /-- Run histories that share their final received weld have the same final
@@ -89,12 +89,12 @@ theorem rePitchRun_append_singleton
 theorem rePitchRun_forgets_same_final
     (before₁ before₂ : Config Contrib)
     (run₁ run₂ : List G.Weld) (last : G.Weld) :
-    G.rePitchRun before₁ (run₁ ++ [last]) =
-      G.rePitchRun before₂ (run₂ ++ [last]) := by
-  rw [G.rePitchRun_append_singleton before₁ run₁ last,
-    G.rePitchRun_append_singleton before₂ run₂ last]
-  exact G.rePitch_forgets (G.rePitchRun before₁ run₁)
-    (G.rePitchRun before₂ run₂) last
+    rePitchRun G before₁ (run₁ ++ [last]) =
+      rePitchRun G before₂ (run₂ ++ [last]) := by
+  rw [rePitchRun_append_singleton G before₁ run₁ last,
+    rePitchRun_append_singleton G before₂ run₂ last]
+  exact G.rePitch_forgets (rePitchRun G before₁ run₁)
+    (rePitchRun G before₂ run₂) last
 
 /-- Any score that factors through the final configuration agrees across run
     histories that share their final received weld. -/
@@ -102,14 +102,30 @@ theorem score_of_rePitchRun_constant_of_same_final
     {α : Type} (score : Config Contrib -> α)
     (before₁ before₂ : Config Contrib)
     (run₁ run₂ : List G.Weld) (last : G.Weld) :
-    score (G.rePitchRun before₁ (run₁ ++ [last])) =
-      score (G.rePitchRun before₂ (run₂ ++ [last])) := by
-  rw [G.rePitchRun_append_singleton before₁ run₁ last,
-    G.rePitchRun_append_singleton before₂ run₂ last]
+    score (rePitchRun G before₁ (run₁ ++ [last])) =
+      score (rePitchRun G before₂ (run₂ ++ [last])) := by
+  rw [rePitchRun_append_singleton G before₁ run₁ last,
+    rePitchRun_append_singleton G before₂ run₂ last]
   exact G.accumulated_attainment_constant_of_same_final score
-    (G.rePitchRun before₁ run₁) (G.rePitchRun before₂ run₂) last
+    (rePitchRun G before₁ run₁) (rePitchRun G before₂ run₂) last
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev WaaSuddenArrival (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaSuddenArrival G
+abbrev rePitchRun (G : CoreReadings Designatum Contrib) :=
+  Grid.rePitchRun G
+abbrev WaaGradualArrival (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaGradualArrival G
+abbrev rePitchRun_append_singleton
+    (G : CoreReadings Designatum Contrib) :=
+  Grid.rePitchRun_append_singleton G
+
+end CoreReadings
 
 /- ==============================================================================
    Concrete witnesses
@@ -121,7 +137,7 @@ theorem waaSuddenArrival_witness :
     ∃ (before : Config Nat) (received : clockGrid.Weld),
       clockGrid.WaaSuddenArrival before received := by
   refine ⟨{ tendency := 5 },
-    ⟨Clock.adaptive, Listener.present, Chime.chime⟩, ?_⟩
+    clockAdaptivePresent, ?_⟩
   constructor
   · rfl
   · constructor
@@ -143,8 +159,8 @@ theorem waaSuddenArrival_witness :
 theorem waaGradualArrival_witness :
     ∃ (before : Config Nat) (run : List registerClockGrid.Weld),
       registerClockGrid.WaaGradualArrival before run := by
-  let first : registerClockGrid.Weld := ⟨(2 : Nat), (), (3 : Nat)⟩
-  let second : registerClockGrid.Weld := ⟨(0 : Nat), (), (1 : Nat)⟩
+  let first : registerClockGrid.Weld := registerWeld 2
+  let second : registerClockGrid.Weld := registerWeld 0
   refine ⟨{ tendency := 5 }, [first, second], ?_⟩
   constructor
   · refine Grid.ShareDropRun.cons ?_ ?_ ?_

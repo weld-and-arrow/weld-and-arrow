@@ -263,7 +263,7 @@ theorem undefinedZeroRowRetired_retired :
     per-call/global row has no collapse occupant while its collapse and freeze
     refutations remain checked. -/
 theorem emptyCells_anchor
-    {Contrib : Type} [PreorderBot Contrib] (G : Grid Contrib) :
+    {Designatum Contrib : Type} [PreorderBot Contrib] (G : CoreReadings Designatum Contrib) :
     hasCollapseOccupant RowTag.perCallGlobal = false ∧
       hasFreezeOccupant RowTag.perCallGlobal = true ∧
         (∀ t, ¬ (perCallGlobalRow G).Collapse t) ∧
@@ -310,21 +310,21 @@ theorem foxNeverTestsPole_oldMan_misfit_anchor :
 theorem thirdArrival_stone_at_pole :
     clockGrid.StoneAct
       (Grid.SentienceReading.allInsentient clockGrid)
-      ⟨Clock.adaptive, Listener.present, Chime.chime⟩ :=
+      clockAdaptivePresent :=
   clock_pole_readings_split.left
 
 /-- The retired absence is kept as the dukkha-free-by-construction check:
     a terminus response has no live mismatch. -/
 theorem thirdArrival_not_clenchMismatch :
     ¬ clockGrid.ClenchMismatch
-        ⟨Clock.adaptive, Listener.present, Chime.chime⟩ :=
+        clockAdaptivePresent :=
   clockGrid.not_clenchMismatch_of_terminus_response adaptive_is_terminus rfl
 
 /-- The fourth-truth anchor is still only an implication type: the grid proves
     the conditional and does not detach the injunction. -/
 theorem fourthTruthWithheld_conditional
-    {Contrib : Type} [PreorderBot Contrib] (G : Grid Contrib)
-    (g : G.Being) (before : Config Contrib) (deed reception : G.Weld) :
+    {Designatum Contrib : Type} [PreorderBot Contrib] (G : CoreReadings Designatum Contrib)
+    (g : Designatum) (before : Config Contrib) (deed reception : G.Weld) :
     WaaPathOught G g before deed reception :=
   waaPathOught_conditional G g before deed reception
 
@@ -336,7 +336,7 @@ theorem fourthTruthWithheld_detached_voice :
 /-- A terminal safe stage would be a final ladder level; the ladder theorem
     rules that out for an error-free seed. -/
 theorem noSafeStage_anchor
-    {Contrib : Type} [PreorderBot Contrib] {G : Grid Contrib}
+    {Designatum Contrib : Type} [PreorderBot Contrib] {G : CoreReadings Designatum Contrib}
     {d : Grid.Distinction G} (h : Grid.ErrorFree G d) :
     ¬ ∃ n, (ladder d n).Freeze :=
   no_final_level_of_errorFree (G := G) h
@@ -350,7 +350,7 @@ theorem prudentialPrivilege_underivable_anchor :
 /-- The icchantika decline records the honest agent-side bar without turning it
     into a permanent foreclosure verdict. -/
 theorem icchantikaDeclined_agent_anchor
-    {Contrib : Type} [PreorderBot Contrib] {G : Grid Contrib} {b : G.Being}
+    {Designatum Contrib : Type} [PreorderBot Contrib] {G : CoreReadings Designatum Contrib} {b : Designatum}
     (h : Icchantika G b) :
     ¬ G.Terminus b ∧ ¬ WaaEffectiveTerminus G b :=
   ⟨icchantika_not_terminus (G := G) h,
@@ -359,8 +359,8 @@ theorem icchantikaDeclined_agent_anchor
 /-- The receiver-side half of the icchantika decline: actual icchantika
     receptions discharge the live-aversion antecedent. -/
 theorem icchantikaDeclined_receiver_anchor
-    {Contrib : Type} [PreorderBot Contrib] {G : Grid Contrib}
-    {before : Config Contrib} {b : G.Being} {reception : G.Weld}
+    {Designatum Contrib : Type} [PreorderBot Contrib] {G : CoreReadings Designatum Contrib}
+    {before : Config Contrib} {b : Designatum} {reception : G.Weld}
     (hagent : reception.agent = b) (hic : Icchantika G b)
     (hactual : G.Actual reception) (hlive : ¬ AtBot before.tendency) :
     WaaAversionContext G before reception :=
@@ -370,13 +370,14 @@ theorem icchantikaDeclined_receiver_anchor
 /-- The concrete non-foreclosure witness is part of the absence anchor: the
     icchantika run does not recover a permanent "no landing ever" verdict. -/
 theorem icchantikaDeclined_nonforeclosure_anchor :
-    ∃ (before : Config Nat) (b : IcchantikaCase.grid.Being)
+    ∃ (before : Config Nat) (b : IcchantikaCase.CaseDesignatum)
       (deed reception : IcchantikaCase.grid.Weld),
       Icchantika IcchantikaCase.grid b ∧
         reception.agent = b ∧
           IcchantikaCase.grid.Actual reception ∧
             ¬ AtBot before.tendency ∧
-              DeliveredTo IcchantikaCase.grid deed reception ∧
+              Grid.DirectedConvention.DeliveredTo
+                  IcchantikaCase.grid deed reception ∧
                 IcchantikaCase.grid.IsShareDrop before reception ∧
                   HasShareDropLanding IcchantikaCase.grid before deed :=
   icchantika_release_not_foreclosed
@@ -391,7 +392,7 @@ theorem rebirthCosmology_anchor :
 /-- The floor-truth refusal is anchored by the two apophatic pins: no row
     claim holds there, while every pair of row claims is indiscernible there. -/
 theorem floorTruthPredicate_anchor
-    {Contrib : Type} [PreorderBot Contrib] (G : Grid Contrib) :
+    {Designatum Contrib : Type} [PreorderBot Contrib] (G : CoreReadings Designatum Contrib) :
     (∀ p : RowClaim, ¬ (rowLanguage G).Holds Tier.floor p) ∧
       ∀ p q : RowClaim,
         ((rowLanguage G).Holds Tier.floor p ↔

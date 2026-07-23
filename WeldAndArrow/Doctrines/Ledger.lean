@@ -18,8 +18,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 namespace DirectedConvention
 
@@ -32,13 +32,13 @@ open BeingConvention
 /-- A being mounts responses only at calls in a supplied modality. This is
     neutral function-side vocabulary: the modality is a predicate on calls, not
     a value judgement about the receiver. -/
-def MountsOnlyIn (b : G.Being) (M : G.Call -> Prop) : Prop :=
+def MountsOnlyIn (b : Designatum) (M : Designatum -> Prop) : Prop :=
   ∀ c r, G.respondsTo b c = some r -> M c
 
 /-- An actual weld at a modality-restricted receiver carries a call in that
     modality. -/
 theorem modality_of_actual
-    {M : G.Call -> Prop} {w : G.Weld}
+    {M : Designatum -> Prop} {w : G.Weld}
     (hM : MountsOnlyIn G w.agent M) (hactual : G.Actual w) :
     M w.call :=
   hM w.call w.response hactual
@@ -46,7 +46,7 @@ theorem modality_of_actual
 /-- Any landing at a modality-restricted receiver carries a call in that
     modality. -/
 theorem landing_call_in_modality
-    {M : G.Call -> Prop} {deed reception : G.Weld}
+    {M : Designatum -> Prop} {deed reception : G.Weld}
     (hM : MountsOnlyIn G reception.agent M)
     (hland : LandsAt G deed reception) :
     M reception.call :=
@@ -54,7 +54,7 @@ theorem landing_call_in_modality
 
 /-- A weld whose call lies outside the receiver's modality cannot be actual. -/
 theorem not_actual_outside_modality
-    {M : G.Call -> Prop} {w : G.Weld}
+    {M : Designatum -> Prop} {w : G.Weld}
     (hM : MountsOnlyIn G w.agent M) (hout : ¬ M w.call) :
     ¬ G.Actual w :=
   fun hactual => hout (modality_of_actual G hM hactual)
@@ -62,7 +62,7 @@ theorem not_actual_outside_modality
 /-- A reception whose call lies outside the receiver's modality cannot be a
     landing. -/
 theorem no_landing_outside_modality
-    {M : G.Call -> Prop} {deed reception : G.Weld}
+    {M : Designatum -> Prop} {deed reception : G.Weld}
     (hM : MountsOnlyIn G reception.agent M) (hout : ¬ M reception.call) :
     ¬ LandsAt G deed reception :=
   fun hland => hout (landing_call_in_modality G hM hland)
@@ -73,8 +73,8 @@ namespace BeingConvention
     landing in that fiber carries a call in the same modality. -/
 theorem fiber_landing_call_in_modality
     {Macro : Type} (κ : BeingCoarsening G Macro)
-    {b : Macro} {M : G.Call -> Prop}
-    (hfiberM : ∀ p : G.Being, κ.proj p = b -> MountsOnlyIn G p M)
+    {b : Macro} {M : Designatum -> Prop}
+    (hfiberM : ∀ p : Designatum, κ.proj p = b -> MountsOnlyIn G p M)
     {deed reception : G.Weld}
     (hfiber : κ.InFiber b reception)
     (hland : LandsAt G deed reception) :
@@ -157,65 +157,111 @@ open Grid
 open Grid.DirectedConvention
 open Grid.DirectedConvention.BeingConvention
 
-inductive Being
+inductive Designatum
   | master
   | official
   | practitioner
-deriving DecidableEq
-
-inductive Call
   | economic
   | floor
   | decree
-deriving DecidableEq
-
-inductive Response
   | code
   | comply
   | display
+  | codeOccurrence
+  | officialComplyOccurrence
+  | practitionerCodeOccurrence
+  | decreeOccurrence
+  | commandedOccurrence
 deriving DecidableEq
 
+namespace Being
+abbrev master : Designatum := .master
+abbrev official : Designatum := .official
+abbrev practitioner : Designatum := .practitioner
+end Being
+
+namespace Call
+abbrev economic : Designatum := .economic
+abbrev floor : Designatum := .floor
+abbrev decree : Designatum := .decree
+end Call
+
+namespace Response
+abbrev code : Designatum := .code
+abbrev comply : Designatum := .comply
+abbrev display : Designatum := .display
+end Response
+
 /-- The economic modality: the one call class the official ledger can receive. -/
-def economicModality : Call -> Prop
+def economicModality : Designatum -> Prop
   | .economic => True
-  | .floor    => False
-  | .decree   => False
+  | _ => False
+
+def ledgerOccurrence : OccurrenceReading Designatum where
+  occurrence d :=
+    d = .codeOccurrence ∨ d = .officialComplyOccurrence ∨
+      d = .practitionerCodeOccurrence ∨ d = .decreeOccurrence ∨
+        d = .commandedOccurrence
+  isBeing d := d = .master ∨ d = .official ∨ d = .practitioner
+  isCall d := d = .economic ∨ d = .floor ∨ d = .decree
+  isResponse d := d = .code ∨ d = .comply ∨ d = .display
+  agent d :=
+    match d with
+    | .codeOccurrence | .decreeOccurrence => .master
+    | .officialComplyOccurrence | .commandedOccurrence => .official
+    | .practitionerCodeOccurrence => .practitioner
+    | _ => d
+  call d :=
+    match d with
+    | .codeOccurrence | .officialComplyOccurrence
+    | .practitionerCodeOccurrence => .economic
+    | .decreeOccurrence => .decree
+    | .commandedOccurrence => .floor
+    | _ => d
+  response d :=
+    match d with
+    | .codeOccurrence | .practitionerCodeOccurrence => .code
+    | .officialComplyOccurrence | .commandedOccurrence => .comply
+    | .decreeOccurrence => .display
+    | _ => d
 
 /-- Three beings, three calls, three responses, constant live grade. Delivery
     reaches exactly receptions whose response is `code` or `comply`; actuality
     remains controlled by `respondsTo`. -/
-def ledgerGrid : Grid Nat where
-  Being      := Being
-  Call       := Call
-  Response   := Response
-  respondsTo b c :=
-    match b, c with
-    | .master, .economic       => some .code
-    | .master, .decree         => some .display
-    | .official, .economic     => some .comply
-    | .practitioner, .economic => some .code
-    | _, _                     => none
-  grade _ _ _ := 1
-  conditions _ reception :=
-    match reception.response with
-    | .code    => True
-    | .comply  => True
-    | .display => False
+def ledgerGrid : CoreReadings Designatum Nat where
+  occurrence := ledgerOccurrence
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .master, .economic => some .code
+      | .master, .decree => some .display
+      | .official, .economic => some .comply
+      | .practitioner, .economic => some .code
+      | _, _ => none
+  }
+  placement := { grade := fun _ => 1 }
+  conditioning := {
+    conditions := fun _ reception =>
+      match reception with
+      | .codeOccurrence | .officialComplyOccurrence
+      | .practitionerCodeOccurrence | .commandedOccurrence => True
+      | _ => False
+  }
 
 def codeWeld : ledgerGrid.Weld :=
-  ⟨Being.master, Call.economic, Response.code⟩
+  ⟨.codeOccurrence, Or.inl rfl⟩
 
 def officialComplyWeld : ledgerGrid.Weld :=
-  ⟨Being.official, Call.economic, Response.comply⟩
+  ⟨.officialComplyOccurrence, Or.inr (Or.inl rfl)⟩
 
 def practitionerCodeWeld : ledgerGrid.Weld :=
-  ⟨Being.practitioner, Call.economic, Response.code⟩
+  ⟨.practitionerCodeOccurrence, Or.inr (Or.inr (Or.inl rfl))⟩
 
 def decreeWeld : ledgerGrid.Weld :=
-  ⟨Being.master, Call.decree, Response.display⟩
+  ⟨.decreeOccurrence, Or.inr (Or.inr (Or.inr (Or.inl rfl)))⟩
 
 def commandedReception : ledgerGrid.Weld :=
-  ⟨Being.official, Call.floor, Response.comply⟩
+  ⟨.commandedOccurrence, Or.inr (Or.inr (Or.inr (Or.inr rfl)))⟩
 
 theorem codeWeld_actual :
     ledgerGrid.Actual codeWeld :=
@@ -236,8 +282,7 @@ theorem decreeWeld_actual :
 theorem official_mountsOnlyIn_economic :
     MountsOnlyIn ledgerGrid Being.official economicModality := by
   intro c r h
-  cases c <;> cases r <;>
-    simp [ledgerGrid, economicModality] at h ⊢
+  cases c <;> simp [ledgerGrid, economicModality] at h ⊢
 
 theorem official_actualAgentInhabited :
     ledgerGrid.ActualAgentInhabited Being.official :=
@@ -248,11 +293,8 @@ theorem official_landing_only_economic
     (hagent : reception.agent = Being.official)
     (hland : LandsAt ledgerGrid deed reception) :
     economicModality reception.call := by
-  cases reception with
-  | mk agent call response =>
-      cases hagent
-      exact landing_call_in_modality ledgerGrid
-        official_mountsOnlyIn_economic hland
+  apply landing_call_in_modality ledgerGrid ?_ hland
+  simpa [hagent] using official_mountsOnlyIn_economic
 
 theorem floor_speech_never_lands_at_official
     {deed reception : ledgerGrid.Weld}
@@ -288,9 +330,7 @@ inductive Sector
 deriving DecidableEq
 
 def sectorCoarsening : BeingCoarsening ledgerGrid Sector where
-  proj
-    | Being.official => Sector.state
-    | _              => Sector.sangha
+  proj p := if p = Being.official then Sector.state else Sector.sangha
 
 def ledgerSentienceReading : ledgerGrid.SentienceReading :=
   Grid.SentienceReading.allSentient ledgerGrid
@@ -302,17 +342,12 @@ theorem state_tag_sentient :
       exact True.intro⟩, rfl⟩
 
 theorem state_fiber_shares_register :
-    ∀ p : ledgerGrid.Being,
+    ∀ p : Designatum,
       sectorCoarsening.proj p = Sector.state ->
         MountsOnlyIn ledgerGrid p economicModality := by
   intro p hp
-  cases p with
-  | official =>
-      exact official_mountsOnlyIn_economic
-  | master =>
-      cases hp
-  | practitioner =>
-      cases hp
+  cases p <;> simp [sectorCoarsening] at hp
+  exact official_mountsOnlyIn_economic
 
 theorem state_fiber_landing_economic
     {deed reception : ledgerGrid.Weld}
@@ -323,7 +358,8 @@ theorem state_fiber_landing_economic
     state_fiber_shares_register hfiber hland
 
 theorem commandedReception_delivered :
-    DeliveredTo ledgerGrid decreeWeld commandedReception :=
+    Grid.DirectedConvention.DeliveredTo
+      ledgerGrid decreeWeld commandedReception :=
   True.intro
 
 theorem commandedReception_not_actual :
@@ -350,7 +386,8 @@ theorem decree_utterance_not_fits :
 /-- The decree can engineer the delivery line while failing to command the
     purported reception. -/
 theorem decree_engineers_calls_not_receptions :
-    DeliveredTo ledgerGrid decreeWeld commandedReception ∧
+    Grid.DirectedConvention.DeliveredTo
+        ledgerGrid decreeWeld commandedReception ∧
       ¬ ledgerGrid.Actual commandedReception ∧
         ¬ decreeUtterance.FitsOfferedTier :=
   ⟨commandedReception_delivered, commandedReception_not_actual,

@@ -16,8 +16,8 @@ namespace Grid
 
 namespace DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /-- The sho face of a single occurrence: an actual weld whose share sits in
     the pole-class. No standing rank is implied; the fact is about this act
@@ -63,7 +63,7 @@ theorem waaPoleDeed_of_produced_terminus
     delivery, because `ShortfallClosedAt` asserts existence of a share-drop
     landing for that deed. -/
 theorem waaEffectiveOccurrence_of_waaEffectiveTerminus
-    {b : G.Being} {before : Config Contrib} {deed reception : G.Weld}
+    {b : Designatum} {before : Config Contrib} {deed reception : G.Weld}
     (h : WaaEffectiveTerminus G b)
     (hdeed : deed.agent = b)
     (hactual : G.Actual deed)
@@ -82,7 +82,7 @@ theorem waaEffectiveOccurrence_of_waaEffectiveTerminus
 /-- The old sraddha landing route factors through the per-occurrence face once
     the speaker's deed is known to be actual. -/
 theorem waa_path_landing_factors
-    {g : G.Being} {before : Config Contrib} {deed reception : G.Weld}
+    {g : Designatum} {before : Config Contrib} {deed reception : G.Weld}
     (hfaith : WaaEffectiveTerminus G g)
     (hdeed : deed.agent = g)
     (hactual : G.Actual deed)
@@ -97,18 +97,18 @@ theorem waa_path_landing_factors
     least one actual effective occurrence witnessing it. The sealed-regime
     terminus satisfies the standing predicate vacuously and fails this enacted
     form. -/
-def WaaEffectivenessEnacted (b : G.Being) : Prop :=
+def WaaEffectivenessEnacted (b : Designatum) : Prop :=
   WaaEffectiveTerminus G b ∧
     ∃ before deed reception,
       deed.agent = b ∧ WaaEffectiveOccurrence G before deed reception
 
 theorem waaEffectiveTerminus_of_effectivenessEnacted
-    {b : G.Being} (h : WaaEffectivenessEnacted G b) :
+    {b : Designatum} (h : WaaEffectivenessEnacted G b) :
     WaaEffectiveTerminus G b :=
   h.left
 
 theorem not_effectivenessEnacted_of_undelivered
-    {b : G.Being}
+    {b : Designatum}
     (hundelivered : ∀ (deed reception : G.Weld),
       deed.agent = b → ¬ DeliveredTo G deed reception) :
     ¬ WaaEffectivenessEnacted G b := by

@@ -20,8 +20,8 @@ namespace Grid
 
 namespace DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /-- The receiver-side aversion context: a live prior tendency together with an
     actual live-mismatch reception. No imported desire primitive is added. -/
@@ -45,7 +45,7 @@ theorem hasSelfPoleIndex_of_waaAversionContext
 /-- Given faith-shaped closure, delivery, and the receiver's live aversion
     context, the share-drop landing follows. -/
 theorem waa_path_landing
-    {g : G.Being} {before : Config Contrib} {deed reception : G.Weld}
+    {g : Designatum} {before : Config Contrib} {deed reception : G.Weld}
     (hfaith : WaaEffectiveTerminus G g)
     (hdeed : deed.agent = g)
     (hdel : DeliveredTo G deed reception)
@@ -56,7 +56,7 @@ theorem waa_path_landing
 /-- The fourth-truth ought as an implication type only. The detached consequent
     appears nowhere in this definition. -/
 def WaaPathOught
-    (g : G.Being) (before : Config Contrib) (deed reception : G.Weld) :
+    (g : Designatum) (before : Config Contrib) (deed reception : G.Weld) :
     Prop :=
   WaaEffectiveTerminus G g →
     deed.agent = g →
@@ -67,7 +67,7 @@ def WaaPathOught
 /-- The grid proves only the conditional: faith, delivery, and live aversion
     imply the landing. -/
 theorem waaPathOught_conditional
-    (g : G.Being) (before : Config Contrib) (deed reception : G.Weld) :
+    (g : Designatum) (before : Config Contrib) (deed reception : G.Weld) :
     WaaPathOught G g before deed reception := by
   intro hfaith hdeed hdel hctx
   exact waa_path_landing G hfaith hdeed hdel hctx

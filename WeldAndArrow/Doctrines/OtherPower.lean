@@ -21,25 +21,25 @@ namespace WAA
 namespace Grid
 namespace DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /-- Changing only the delivery relation does not change the reception's grade,
     share, or actuality. The sower's identity is delivery data; reception
     typing reads the weld itself. -/
 theorem reception_typing_ignores_sower
-    (conditions₁ conditions₂ : G.Weld -> G.Weld -> Prop)
+    (conditions₁ conditions₂ : Designatum -> Designatum -> Prop)
     (reception : G.Weld) :
     (G.withConditions conditions₁).grade
-        reception.agent reception.call reception.response =
+        reception.val =
       (G.withConditions conditions₂).grade
-        reception.agent reception.call reception.response ∧
+        reception.val ∧
     (G.withConditions conditions₁).share reception =
       (G.withConditions conditions₂).share reception ∧
     ((G.withConditions conditions₁).Actual reception ↔
       (G.withConditions conditions₂).Actual reception) :=
   ⟨G.grade_independent_of_conditions conditions₁ conditions₂
-      reception.agent reception.call reception.response,
+      reception.val,
     G.share_independent_of_conditions conditions₁ conditions₂ reception,
     Iff.rfl⟩
 
@@ -75,38 +75,73 @@ namespace TarikiCase
 open Grid
 open Grid.DirectedConvention
 
-inductive Being
+inductive Designatum
   | invoker
   | name
-deriving DecidableEq
-
-inductive Call
   | heard
-deriving DecidableEq
-
-inductive Response
   | chime
   | receive
+  | nameOccurrence
+  | invokerOccurrence
 deriving DecidableEq
+
+namespace Being
+abbrev invoker : Designatum := .invoker
+abbrev name : Designatum := .name
+end Being
+
+namespace Call
+abbrev heard : Designatum := .heard
+end Call
+
+namespace Response
+abbrev chime : Designatum := .chime
+abbrev receive : Designatum := .receive
+end Response
+
+def tarikiOccurrence : OccurrenceReading Designatum where
+  occurrence d := d = .nameOccurrence ∨ d = .invokerOccurrence
+  isBeing d := d = .name ∨ d = .invoker
+  isCall d := d = .heard
+  isResponse d := d = .chime ∨ d = .receive
+  agent d :=
+    match d with
+    | .nameOccurrence => .name
+    | .invokerOccurrence => .invoker
+    | _ => d
+  call d :=
+    match d with
+    | .nameOccurrence | .invokerOccurrence => .heard
+    | _ => d
+  response d :=
+    match d with
+    | .nameOccurrence => .chime
+    | .invokerOccurrence => .receive
+    | _ => d
 
 /-- A two-being model: the name chimes independent of the call, the invoker
     receives, and delivery sends the name's weld to every invoker reception.
     This checks grammar only; it asserts no Pure Land doctrine and no ranking
     of regimes. -/
-def tarikiGrid : Grid Nat where
-  Being      := Being
-  Call       := Call
-  Response   := Response
-  respondsTo b _ :=
-    match b with
-    | .name    => some Response.chime
-    | .invoker => some Response.receive
-  grade b _ _ :=
-    match b with
-    | .name    => 0
-    | .invoker => 1
-  conditions deed reception :=
-    deed.agent = Being.name ∧ reception.agent = Being.invoker
+def tarikiGrid : CoreReadings Designatum Nat where
+  occurrence := tarikiOccurrence
+  response := {
+    respondsTo := fun b _ =>
+      match b with
+      | .name => some .chime
+      | .invoker => some .receive
+      | _ => none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .invokerOccurrence => 1
+      | _ => 0
+  }
+  conditioning := {
+    conditions := fun deed reception =>
+      deed = .nameOccurrence ∧ reception = .invokerOccurrence
+  }
 
 def liveBefore : Config Nat :=
   { tendency := 2 }
@@ -114,10 +149,10 @@ def liveBefore : Config Nat :=
 /-- The fixed call-source weld. Its call is still carried by the weld; a
     quotation severed from its call would be quotable, never gradeable. -/
 def nameWeld : tarikiGrid.Weld :=
-  ⟨Being.name, Call.heard, Response.chime⟩
+  ⟨.nameOccurrence, Or.inl rfl⟩
 
 def invokerReception : tarikiGrid.Weld :=
-  ⟨Being.invoker, Call.heard, Response.receive⟩
+  ⟨.invokerOccurrence, Or.inr rfl⟩
 
 theorem nameWeld_actual :
     tarikiGrid.Actual nameWeld :=
@@ -135,26 +170,35 @@ theorem liveBefore_not_atBot :
 theorem name_responseInvariant :
     tarikiGrid.ResponseInvariant Being.name := by
   intro c₁ c₂ r₁ r₂ h₁ h₂
-  cases c₁
-  cases c₂
-  cases r₁ <;> cases r₂ <;> simp [tarikiGrid] at h₁ h₂ ⊢
+  change some .chime = some r₁ at h₁
+  change some .chime = some r₂ at h₂
+  exact Option.some.inj (h₁.symm.trans h₂)
 
 theorem name_actualAgentInhabited :
     tarikiGrid.ActualAgentInhabited Being.name :=
-  ⟨⟨Being.name, Call.heard, Response.chime⟩, rfl, rfl⟩
+  ⟨nameWeld, rfl, rfl⟩
 
 theorem name_share_bot
     (w : tarikiGrid.Weld) (hagent : w.agent = Being.name) :
     tarikiGrid.share w = 0 := by
-  cases w with
-  | mk agent call response =>
-      cases hagent
-      rfl
+  rcases w with ⟨d, hd⟩
+  change d = .nameOccurrence ∨ d = .invokerOccurrence at hd
+  rcases hd with rfl | rfl
+  · rfl
+  · cases hagent
 
 theorem name_object_axis_entire
     (reception : tarikiGrid.Weld) (hagent : reception.agent = Being.invoker) :
-    DeliveredTo tarikiGrid nameWeld reception :=
-  ⟨rfl, hagent⟩
+    Grid.DirectedConvention.DeliveredTo tarikiGrid nameWeld reception :=
+  by
+    rcases reception with ⟨d, hd⟩
+    change d = .nameOccurrence ∨ d = .invokerOccurrence at hd
+    rcases hd with rfl | rfl
+    · cases hagent
+    · change
+        Designatum.nameOccurrence = Designatum.nameOccurrence ∧
+          Designatum.invokerOccurrence = Designatum.invokerOccurrence
+      exact ⟨rfl, rfl⟩
 
 /-- The fixed-call source lands at every actual invoker reception as a
     share-drop from `liveBefore`. This is the effective corner opposite
@@ -167,15 +211,15 @@ theorem universal_fixed_call_lands_without_reading
     HasShareDropLanding tarikiGrid liveBefore nameWeld := by
   refine ⟨reception,
     ⟨⟨name_object_axis_entire reception hagent, hactual⟩, ?_⟩⟩
-  cases reception with
-  | mk agent call response =>
-      cases hagent
-      dsimp [Grid.IsShareDrop, Grid.share, tarikiGrid, liveBefore]
-      constructor
-      · show (1 : Nat) ≤ 2
-        decide
-      · show ¬ (2 : Nat) ≤ 1
-        decide
+  rcases reception with ⟨d, hd⟩
+  change d = .nameOccurrence ∨ d = .invokerOccurrence at hd
+  rcases hd with rfl | rfl
+  · cases hagent
+  · constructor
+    · show (1 : Nat) ≤ 2
+      decide
+    · show ¬ (2 : Nat) ≤ 1
+      decide
 
 theorem name_to_invoker_tarikiLine :
     WaaTarikiLine tarikiGrid nameWeld invokerReception := by

@@ -12,8 +12,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 namespace DirectedConvention
 namespace BeingConvention
@@ -25,37 +25,73 @@ namespace GridConvention
 /-- Content-bearing language for the same layer claims. The convention-live
     side is still the live-share condition; the denial side now has content
     specific to the row. -/
-def contentLayerLanguage (G : Grid Contrib) : ClaimLanguage G where
+def contentLayerLanguage (G : CoreReadings Designatum Contrib) : ClaimLanguage G where
   Claim := LayerClaim
   Holds
     | .floor, _ => False
     | .actTime w, .conventionLive _ => G.HasSelfPoleIndex w
     | .actTime _, .layerDenied .directedTime => DirectionVoid Contrib
     | .actTime _, .layerDenied .intraWeldArrow =>
-        ∀ b : G.Being, ¬ G.ResponseVariesWithCall b
+        ∀ b : Designatum, ¬ G.ResponseVariesWithCall b
     | .actTime _, .layerDenied .beings => ¬ ∃ w : G.Weld, G.Actual w
     | .actTime _, .layerDenied .gridLens => ∀ t : Tier G, ¬ Tier.hasLiveShare G t
     | .actTime _, .layerDenied .weldGrain => ¬ ∃ w : G.Weld, G.Actual w
 
-def contentLayerRow (G : Grid Contrib) (l : ConventionLayer) : Distinction G :=
+def contentLayerRow (G : CoreReadings Designatum Contrib) (l : ConventionLayer) : Distinction G :=
   { language := contentLayerLanguage G
     sideA := .conventionLive l
     sideB := .layerDenied l }
 
-def contentBeforeAfterRow (G : Grid Contrib) : Distinction G :=
+def contentBeforeAfterRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   contentLayerRow G .directedTime
 
-def contentIntraWeldArrowRow (G : Grid Contrib) : Distinction G :=
+def contentIntraWeldArrowRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   contentLayerRow G .intraWeldArrow
 
-def contentBeingsRow (G : Grid Contrib) : Distinction G :=
+def contentBeingsRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   contentLayerRow G .beings
 
-def contentGridLensRow (G : Grid Contrib) : Distinction G :=
+def contentGridLensRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   contentLayerRow G .gridLens
 
-def contentWeldRow (G : Grid Contrib) : Distinction G :=
+def contentWeldRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   contentLayerRow G .weldGrain
+
+/-- A content denial cannot fuse with the live-side claim at a non-live
+    act-time where that denial is true.  Concrete countermodels need only
+    supply the non-live occurrence and the denial witness. -/
+theorem contentLayerRow_not_obeys_of_nonlive_denial
+    (l : ConventionLayer) (w : G.Weld)
+    (hnonlive : ¬ G.HasSelfPoleIndex w)
+    (hdenial :
+      (contentLayerLanguage G).TrueAt (.actTime w) (.layerDenied l)) :
+    ¬ (contentLayerRow G l).ObeysSeparateFuse := by
+  intro h
+  have hiff := h.right (.actTime w) hnonlive
+  have hlive : G.HasSelfPoleIndex w := by
+    exact hiff.mpr hdenial
+  exact hnonlive hlive
+
+/-- If the occurrence reading selects nothing, every content row obeys
+    vacuously: only the floor tier remains.  This is a boundary theorem, not a
+    missing-hypothesis countermodel, because there is no act-time at which
+    fusion could fail. -/
+theorem contentLayerRow_obeys_of_no_occurrences
+    (l : ConventionLayer) (hno : ∀ _w : G.Weld, False) :
+    (contentLayerRow G l).ObeysSeparateFuse := by
+  constructor
+  · intro t hlive
+    cases t with
+    | floor =>
+        exact False.elim hlive
+    | actTime w =>
+        exact False.elim (hno w)
+  · intro t _hnonlive
+    cases t with
+    | floor =>
+        exact Iff.rfl
+    | actTime w =>
+        exact False.elim (hno w)
 
 theorem contentLayerRow_obeys_of_direction
     (h : ∃ a b : Contrib, Strict a b) :
@@ -107,7 +143,7 @@ theorem contentLayerRow_obeys_of_being
           exact False.elim (hnone h)
 
 theorem contentLayerRow_obeys_of_variation
-    (h : ∃ b : G.Being, G.ResponseVariesWithCall b) :
+    (h : ∃ b : Designatum, G.ResponseVariesWithCall b) :
     (contentLayerRow G .intraWeldArrow).ObeysSeparateFuse := by
   rcases h with ⟨b, hvaries⟩
   constructor
@@ -186,7 +222,7 @@ theorem contentBeforeAfterRow_obeys_of_direction
   contentLayerRow_obeys_of_direction G h
 
 theorem contentIntraWeldArrowRow_obeys_of_variation
-    (h : ∃ b : G.Being, G.ResponseVariesWithCall b) :
+    (h : ∃ b : Designatum, G.ResponseVariesWithCall b) :
     (contentIntraWeldArrowRow G).ObeysSeparateFuse :=
   contentLayerRow_obeys_of_variation G h
 
@@ -244,7 +280,7 @@ theorem interior_order_denial_unfit_for_live_utterer
     ¬ RecordedUtterance.FitsOfferedTier u :=
   denied_misfits_live_offer G (.layer .intraWeldArrow) u hcontent hlive
 
-def contentBeingsLadder (G : Grid Contrib) : Nat → Distinction G :=
+def contentBeingsLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (contentBeingsRow G)
 
 theorem contentBeingsLadder_obeys_of_being

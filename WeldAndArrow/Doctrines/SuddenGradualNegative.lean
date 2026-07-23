@@ -21,20 +21,20 @@ open Grid.DirectedConvention
    Delivery frequency is not recovered from response/grade data
 ============================================================================== -/
 
-def deliveredClockGrid : Grid Nat :=
+def deliveredClockGrid : CoreReadings ClockCase Nat :=
   clockGrid.withConditions (fun _ _ => True)
 
-def undeliveredClockGrid : Grid Nat :=
+def undeliveredClockGrid : CoreReadings ClockCase Nat :=
   clockGrid.withConditions (fun _ _ => False)
 
 def deliveredPole : deliveredClockGrid.Weld :=
-  ⟨Clock.adaptive, Listener.present, Chime.chime⟩
+  clockAdaptivePresent
 
 def undeliveredPole : undeliveredClockGrid.Weld :=
-  ⟨Clock.adaptive, Listener.present, Chime.chime⟩
+  clockAdaptivePresent
 
 abbrev ClockResponseGradeData : Type :=
-  (Clock -> Listener -> Option Chime) × (Clock -> Listener -> Chime -> Nat)
+  (ClockCase -> ClockCase -> Option ClockCase) × (ClockCase -> Nat)
 
 def deliveredResponseGradeData : ClockResponseGradeData :=
   (deliveredClockGrid.respondsTo, deliveredClockGrid.grade)
@@ -54,20 +54,22 @@ theorem share_data_agree :
     (fun _ _ => True) (fun _ _ => False) w
 
 theorem grade_data_agree :
-    ∀ b c r,
-      deliveredClockGrid.grade b c r = undeliveredClockGrid.grade b c r := by
-  intro b c r
+    ∀ d : ClockCase,
+      deliveredClockGrid.grade d = undeliveredClockGrid.grade d := by
+  intro d
   exact clockGrid.grade_independent_of_conditions
-    (fun _ _ => True) (fun _ _ => False) b c r
+    (fun _ _ => True) (fun _ _ => False) d
 
 theorem deliveredPole_has_delivery :
     ∃ reception : deliveredClockGrid.Weld,
-      DeliveredTo deliveredClockGrid deliveredPole reception :=
+      Grid.DirectedConvention.DeliveredTo
+        deliveredClockGrid deliveredPole reception :=
   ⟨deliveredPole, True.intro⟩
 
 theorem undeliveredPole_no_delivery :
     ¬ ∃ reception : undeliveredClockGrid.Weld,
-      DeliveredTo undeliveredClockGrid undeliveredPole reception := by
+      Grid.DirectedConvention.DeliveredTo
+        undeliveredClockGrid undeliveredPole reception := by
   rintro ⟨_reception, hdelivered⟩
   exact hdelivered
 
@@ -78,10 +80,12 @@ theorem no_response_grade_recovery_of_pole_delivery :
     ¬ ∃ recover : ClockResponseGradeData -> Prop,
         (recover deliveredResponseGradeData ↔
           ∃ reception : deliveredClockGrid.Weld,
-            DeliveredTo deliveredClockGrid deliveredPole reception) ∧
+            Grid.DirectedConvention.DeliveredTo
+              deliveredClockGrid deliveredPole reception) ∧
         (recover undeliveredResponseGradeData ↔
           ∃ reception : undeliveredClockGrid.Weld,
-            DeliveredTo undeliveredClockGrid undeliveredPole reception) := by
+            Grid.DirectedConvention.DeliveredTo
+              undeliveredClockGrid undeliveredPole reception) := by
   rintro ⟨recover, hdelivered, hundelivered⟩
   have hrecoveredDelivered : recover deliveredResponseGradeData :=
     hdelivered.mpr deliveredPole_has_delivery
@@ -97,19 +101,23 @@ theorem subitism_frequency_underdetermined :
     deliveredResponseGradeData = undeliveredResponseGradeData ∧
       (∀ w : clockGrid.Weld,
         deliveredClockGrid.share w = undeliveredClockGrid.share w) ∧
-      (∀ b c r,
-        deliveredClockGrid.grade b c r = undeliveredClockGrid.grade b c r) ∧
+      (∀ d : ClockCase,
+        deliveredClockGrid.grade d = undeliveredClockGrid.grade d) ∧
       (∃ reception : deliveredClockGrid.Weld,
-        DeliveredTo deliveredClockGrid deliveredPole reception) ∧
+        Grid.DirectedConvention.DeliveredTo
+          deliveredClockGrid deliveredPole reception) ∧
       ¬ (∃ reception : undeliveredClockGrid.Weld,
-        DeliveredTo undeliveredClockGrid undeliveredPole reception) ∧
+        Grid.DirectedConvention.DeliveredTo
+          undeliveredClockGrid undeliveredPole reception) ∧
       ¬ ∃ recover : ClockResponseGradeData -> Prop,
         (recover deliveredResponseGradeData ↔
           ∃ reception : deliveredClockGrid.Weld,
-            DeliveredTo deliveredClockGrid deliveredPole reception) ∧
+            Grid.DirectedConvention.DeliveredTo
+              deliveredClockGrid deliveredPole reception) ∧
         (recover undeliveredResponseGradeData ↔
           ∃ reception : undeliveredClockGrid.Weld,
-            DeliveredTo undeliveredClockGrid undeliveredPole reception) :=
+            Grid.DirectedConvention.DeliveredTo
+              undeliveredClockGrid undeliveredPole reception) :=
   ⟨response_grade_data_agree, share_data_agree, grade_data_agree,
     deliveredPole_has_delivery, undeliveredPole_no_delivery,
     no_response_grade_recovery_of_pole_delivery⟩

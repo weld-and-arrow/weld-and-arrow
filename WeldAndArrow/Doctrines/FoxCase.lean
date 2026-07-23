@@ -33,6 +33,7 @@ def foxSpeechReading : foxGrid.SpeechReading (rowLanguage foxGrid) where
     | .notFall => some (.denied .foxWeld)
     | .release => some (.inForce .foxWeld)
     | .clench => none
+    | _ => none
 
 def oldManProduction : foxGrid.ProducedUtterance foxSpeechReading where
   weld := sentenceWeld
@@ -81,6 +82,7 @@ def foxFloorSpeechReading : foxGrid.SpeechReading (rowLanguage foxGrid) where
     | .notFall => some (.denied .foxWeld)
     | .release => some (.denied .foxWeld)
     | .clench => none
+    | _ => none
 
 def jinshinIngaFloorProduction :
     foxGrid.ProducedUtterance foxFloorSpeechReading where

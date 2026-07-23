@@ -17,34 +17,35 @@ open Grid.DirectedConvention
 
 /- The total quiet class still carries no actual-occurrence conjunct. -/
 
-def noActualGrid : Grid Nat where
-  Being := Unit
-  Call := Unit
-  Response := Unit
-  respondsTo _ _ := none
-  grade _ _ _ := 0
-  conditions _ _ := False
+def noActualOccurrence : OccurrenceReading Unit where
+  occurrence _ := False
+  isBeing _ := False
+  isCall _ := False
+  isResponse _ := False
+  agent := id
+  call := id
+  response := id
+
+def noActualGrid : CoreReadings Unit Nat where
+  occurrence := noActualOccurrence
+  response := {
+    respondsTo := fun _ _ => none
+  }
+  placement := {
+    grade := fun _ => 0
+  }
+  conditioning := {
+    conditions := fun _ _ => False
+  }
 
 theorem noActual_quiet : QuietOn noActualGrid () (fun _ => True) := by
-  intro w hactual
-  cases w with
-  | mk agent c r =>
-    cases agent
-    cases c
-    cases r
-    change (none : Option Unit) = some () at hactual
-    cases hactual
+  rintro ⟨_d, hd⟩
+  exact False.elim hd
 
 theorem noActual_no_occurrence :
     ¬ ∃ w : noActualGrid.Weld, noActualGrid.Actual w := by
   rintro ⟨w, hactual⟩
-  cases w with
-  | mk agent c r =>
-      cases agent
-      cases c
-      cases r
-      change (none : Option Unit) = some () at hactual
-      cases hactual
+  exact False.elim w.property
 
 /-- Total `QuietOn` alone is compatible with a grid having no actual welds. -/
 theorem total_cut_carries_no_actual_occurrence :
@@ -54,59 +55,85 @@ theorem total_cut_carries_no_actual_occurrence :
 
 theorem sraddha_total_quiet :
     QuietOn SraddhaNegative.zeroEffectGrid
-      SraddhaNegative.Being.sraddha (fun _ => True) := by
-  intro w _hactual hagent _
-  cases w with
-  | mk agent _c _r =>
-    cases agent with
-    | sraddha =>
-        dsimp [Grid.share, SraddhaNegative.zeroEffectGrid, AtBot, shareBot]
-        exact Nat.le_refl 0
-    | receiver => cases hagent
+      SraddhaNegative.CaseDesignatum.sraddha (fun _ => True) := by
+  intro w hactual hagent _
+  exact SraddhaNegative.sraddha_responsiveTerminus.right
+    w hactual hagent
 
 theorem sraddha_has_actual_occurrence :
     SraddhaNegative.zeroEffectGrid.ActualAgentInhabited
-      SraddhaNegative.Being.sraddha :=
-  ⟨⟨SraddhaNegative.Being.sraddha, SraddhaNegative.Call.call,
-      SraddhaNegative.Response.response⟩, rfl, rfl⟩
+      SraddhaNegative.CaseDesignatum.sraddha :=
+  ⟨SraddhaNegative.deed, rfl, rfl⟩
 
 /-- Quietness plus an actual occurrence still does not entail regime-relative
     effectiveness. -/
 theorem total_cut_with_actual_occurrence_not_waaEffectiveTerminus :
     QuietOn SraddhaNegative.zeroEffectGrid
-      SraddhaNegative.Being.sraddha (fun _ => True) ∧
+      SraddhaNegative.CaseDesignatum.sraddha (fun _ => True) ∧
       SraddhaNegative.zeroEffectGrid.ActualAgentInhabited
-        SraddhaNegative.Being.sraddha ∧
+        SraddhaNegative.CaseDesignatum.sraddha ∧
         ¬ WaaEffectiveTerminus SraddhaNegative.zeroEffectGrid
-          SraddhaNegative.Being.sraddha :=
+          SraddhaNegative.CaseDesignatum.sraddha :=
   ⟨sraddha_total_quiet, sraddha_has_actual_occurrence,
     SraddhaNegative.not_waaEffectiveTerminus⟩
 
 /- A quiet seen weld does not settle a fresh weld in the same fetter class. -/
 
-inductive Call
+inductive QuietDesignatum
+  | being
   | seen
   | fresh
+  | response
+  | seenOccurrence
+  | freshOccurrence
 
-def quietGrid : Grid Nat where
-  Being := Unit
-  Call := Call
-  Response := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions _ _ := True
+def quietOccurrence : OccurrenceReading QuietDesignatum where
+  occurrence d := d = .seenOccurrence ∨ d = .freshOccurrence
+  isBeing d := d = .being
+  isCall
+    | .seen | .fresh => True
+    | _ => False
+  isResponse d := d = .response
+  agent
+    | .seenOccurrence | .freshOccurrence => .being
+    | d => d
+  call
+    | .seenOccurrence => .seen
+    | .freshOccurrence => .fresh
+    | d => d
+  response
+    | .seenOccurrence | .freshOccurrence => .response
+    | d => d
 
-def freshClenchGrid : Grid Nat where
-  Being := Unit
-  Call := Call
-  Response := Unit
-  respondsTo _ _ := some ()
-  grade _ c _ := match c with | .seen => 0 | .fresh => 1
-  conditions _ _ := True
+def quietGrid : CoreReadings QuietDesignatum Nat where
+  occurrence := quietOccurrence
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .being, .seen | .being, .fresh => some .response
+      | _, _ => none
+  }
+  placement := {
+    grade := fun _ => 0
+  }
+  conditioning := {
+    conditions := fun _ _ => True
+  }
 
-def quietSeen : quietGrid.Weld := ⟨(), .seen, ()⟩
-def freshSeen : freshClenchGrid.Weld := ⟨(), .seen, ()⟩
-def freshWeld : freshClenchGrid.Weld := ⟨(), .fresh, ()⟩
+def freshClenchGrid : CoreReadings QuietDesignatum Nat where
+  occurrence := quietOccurrence
+  response := quietGrid.response
+  placement := {
+    grade := fun d =>
+      match d with
+      | .freshOccurrence => 1
+      | _ => 0
+  }
+  conditioning := quietGrid.conditioning
+
+def quietSeen : quietGrid.Weld := ⟨.seenOccurrence, Or.inl rfl⟩
+def freshSeen : freshClenchGrid.Weld := ⟨.seenOccurrence, Or.inl rfl⟩
+def freshWeld : freshClenchGrid.Weld := ⟨.freshOccurrence, Or.inr rfl⟩
 
 def quietReading : quietGrid.FetterReading where
   provocationClass _ _ := True
@@ -115,7 +142,7 @@ def freshReading : freshClenchGrid.FetterReading where
   provocationClass _ _ := True
 
 theorem quiet_seen_run :
-    quietGrid.RunQuietOn ()
+    quietGrid.RunQuietOn QuietDesignatum.being
       (quietReading.provocationClass Fetter.identityView) [quietSeen] := by
   intro w _hmem _hactual _hagent _hclass
   cases w
@@ -123,7 +150,7 @@ theorem quiet_seen_run :
   exact Nat.le_refl 0
 
 theorem fresh_seen_run :
-    freshClenchGrid.RunQuietOn ()
+    freshClenchGrid.RunQuietOn QuietDesignatum.being
       (freshReading.provocationClass Fetter.identityView) [freshSeen] := by
   intro w hmem _hactual _hagent _hclass
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hmem
@@ -132,14 +159,14 @@ theorem fresh_seen_run :
   exact Nat.le_refl 0
 
 theorem quiet_fetterCut :
-    quietGrid.FetterCut () quietReading Fetter.identityView := by
-  intro w _hactual _hagent _hclass
-  cases w
-  dsimp [Grid.share, quietGrid, AtBot, shareBot]
+    quietGrid.FetterCut QuietDesignatum.being
+      quietReading Fetter.identityView := by
+  intro _w _hactual _hagent _hclass
   exact Nat.le_refl 0
 
 theorem fresh_not_fetterCut :
-    ¬ freshClenchGrid.FetterCut () freshReading Fetter.identityView := by
+    ¬ freshClenchGrid.FetterCut QuietDesignatum.being
+      freshReading Fetter.identityView := by
   intro hcut
   have hbot := hcut freshWeld rfl rfl True.intro
   dsimp [Grid.share, freshClenchGrid, freshWeld, AtBot, shareBot] at hbot
@@ -148,12 +175,14 @@ theorem fresh_not_fetterCut :
 /-- Identical one-weld quiet transcripts admit opposite whole-class verdicts
     because the fresh weld is outside the run. -/
 theorem seen_run_underdetermines_fetterCut :
-    quietGrid.RunQuietOn ()
+    quietGrid.RunQuietOn QuietDesignatum.being
         (quietReading.provocationClass Fetter.identityView) [quietSeen] ∧
-      freshClenchGrid.RunQuietOn ()
+      freshClenchGrid.RunQuietOn QuietDesignatum.being
         (freshReading.provocationClass Fetter.identityView) [freshSeen] ∧
-      quietGrid.FetterCut () quietReading Fetter.identityView ∧
-        ¬ freshClenchGrid.FetterCut () freshReading Fetter.identityView :=
+      quietGrid.FetterCut QuietDesignatum.being
+          quietReading Fetter.identityView ∧
+        ¬ freshClenchGrid.FetterCut QuietDesignatum.being
+          freshReading Fetter.identityView :=
   ⟨quiet_seen_run, fresh_seen_run, quiet_fetterCut, fresh_not_fetterCut⟩
 
 /- View content is also supplied rather than recovered. -/
@@ -169,8 +198,8 @@ def ownerNone : quietGrid.ViewReading viewLanguage where
   ownerClaim _ := False
 
 abbrev ViewGridData : Type :=
-  (Unit → Call → Option Unit) ×
-    (Unit → Call → Unit → Nat)
+  (QuietDesignatum → QuietDesignatum → Option QuietDesignatum) ×
+    (QuietDesignatum → Nat)
 
 def viewGridData : ViewGridData := (quietGrid.respondsTo, quietGrid.grade)
 
@@ -191,13 +220,26 @@ inductive MergeClaim
   | other
 deriving DecidableEq
 
-def mergeGrid : Grid Nat where
-  Being := Bool
-  Call := Unit
-  Response := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions _ _ := True
+def mergeOccurrence : OccurrenceReading Bool where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent := id
+  call := id
+  response := id
+
+def mergeGrid : CoreReadings Bool Nat where
+  occurrence := mergeOccurrence
+  response := {
+    respondsTo := fun b _ => some b
+  }
+  placement := {
+    grade := fun _ => 0
+  }
+  conditioning := {
+    conditions := fun _ _ => True
+  }
 
 def mergeLanguage : ClaimLanguage mergeGrid where
   Claim := MergeClaim
@@ -238,26 +280,33 @@ def factorFetterReading : Grid.doorWitnessGrid.FetterReading where
     | _ => False
 
 theorem factor_view_cut :
-    Grid.doorWitnessGrid.FetterCut () factorFetterReading
+    Grid.doorWitnessGrid.FetterCut
+      Grid.DoorWitnessDesignatum.being factorFetterReading
       Fetter.identityView := by
-  intro w _hactual _hagent hclass
-  cases w with
-  | mk agent call response =>
-    cases call <;> try { cases hclass }
-    dsimp [Grid.share, Grid.doorWitnessGrid, AtBot, shareBot]
-    exact Nat.le_refl 0
+  rintro ⟨d, hd⟩ _hactual _hagent hclass
+  change d = Grid.DoorWitnessDesignatum.speechOccurrence ∨
+    d = .mindOccurrence ∨ d = .bodyOccurrence at hd
+  change Grid.doorWitnessOccurrence.call d =
+    Grid.DoorWitnessDesignatum.mind at hclass
+  rcases hd with rfl | rfl | rfl
+  · contradiction
+  · exact Nat.le_refl 0
+  · contradiction
 
 theorem factor_rites_not_cut :
-    ¬ Grid.doorWitnessGrid.FetterCut () factorFetterReading
+    ¬ Grid.doorWitnessGrid.FetterCut
+      Grid.DoorWitnessDesignatum.being factorFetterReading
       Fetter.ritesGrasp := by
   intro hcut
   have hbot := hcut Grid.doorWitnessBodyWeld rfl rfl rfl
   exact Grid.doorWitnessBodyWeld_live hbot
 
 theorem view_cut_rites_cut_split :
-    Grid.doorWitnessGrid.FetterCut () factorFetterReading
+    Grid.doorWitnessGrid.FetterCut
+      Grid.DoorWitnessDesignatum.being factorFetterReading
         Fetter.identityView ∧
-      ¬ Grid.doorWitnessGrid.FetterCut () factorFetterReading
+      ¬ Grid.doorWitnessGrid.FetterCut
+        Grid.DoorWitnessDesignatum.being factorFetterReading
         Fetter.ritesGrasp :=
   ⟨factor_view_cut, factor_rites_not_cut⟩
 

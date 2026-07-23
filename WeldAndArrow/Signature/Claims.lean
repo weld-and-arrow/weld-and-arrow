@@ -25,14 +25,14 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-inductive Tier (G : Grid Contrib)
+inductive Tier (G : CoreReadings Designatum Contrib)
   | floor
   | actTime (w : G.Weld)
 
-variable (G : Grid Contrib)
+variable (G : CoreReadings Designatum Contrib)
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
 def Tier.hasLiveShare : Tier G → Prop
@@ -44,7 +44,7 @@ def Tier.hasLiveShare : Tier G → Prop
     files can instantiate `Claim` with the concrete syntax their theorem or
     taxonomy needs, while Theory can already state the separate/fuse rule
     over inspectable claim-objects rather than over anonymous predicates. -/
-structure ClaimLanguage (G : Grid Contrib) where
+structure ClaimLanguage (G : CoreReadings Designatum Contrib) where
   Claim : Type
   Holds : Tier G → Claim → Prop
 
@@ -54,7 +54,7 @@ namespace ClaimLanguage
     satisfied at tier `t` in language `L`. It is still a `Prop`, but it is
     not merely a free-floating `Tier → Prop`; the claim being judged is an
     object of the chosen language. -/
-def TrueAt {G : Grid Contrib} (L : ClaimLanguage G) (t : Tier G) (p : L.Claim) :
+def TrueAt {G : CoreReadings Designatum Contrib} (L : ClaimLanguage G) (t : Tier G) (p : L.Claim) :
     Prop :=
   L.Holds t p
 
@@ -68,7 +68,7 @@ end ClaimLanguage
     The proof of `actual` keeps this type for actual recorded utterances rather
     than hypothetical ones. The severed case is handled in
     `Doctrines/Gradeability.lean`. -/
-structure RecordedUtterance (G : Grid Contrib) (L : ClaimLanguage G) where
+structure RecordedUtterance (G : CoreReadings Designatum Contrib) (L : ClaimLanguage G) where
   weld      : G.Weld
   actual    : G.Actual weld
   offeredAt : Tier G
@@ -78,14 +78,14 @@ namespace RecordedUtterance
 
 /-- The call this utterance answers, exposed as a projection so classifiers can
     respect the gradeability rule without unpacking the weld by hand. -/
-def answersCall {G : Grid Contrib} {L : ClaimLanguage G}
-    (u : RecordedUtterance G L) : G.Call :=
+def answersCall {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
+    (u : RecordedUtterance G L) : Designatum :=
   u.weld.call
 
 /-- Whether the utterance's content is satisfied at the tier at which it was
     offered. Fox-style tier-errors are expected to fail this test; the
     taxonomy that classifies such failures belongs downstream. -/
-def FitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
+def FitsOfferedTier {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
     (u : RecordedUtterance G L) : Prop :=
   L.TrueAt u.offeredAt u.content
 
@@ -93,7 +93,7 @@ def FitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
     act-time offer whose content is not satisfied there. Floor offers do not
     count as errors: at the floor the claim-language has run out rather than
     issued a false conventional assertion. -/
-def MisfitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
+def MisfitsOfferedTier {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
     (u : RecordedUtterance G L) : Prop :=
   ∃ w : G.Weld,
     u.offeredAt = Tier.actTime w ∧ ¬ L.TrueAt u.offeredAt u.content
@@ -101,36 +101,36 @@ def MisfitsOfferedTier {G : Grid Contrib} {L : ClaimLanguage G}
 end RecordedUtterance
 
 /-- A distinction: two claim-objects a diagnosis might hold apart. -/
-structure Distinction (G : Grid Contrib) where
+structure Distinction (G : CoreReadings Designatum Contrib) where
   language : ClaimLanguage G
   sideA : language.Claim
   sideB : language.Claim
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-def Distinction.Fused {G : Grid Contrib} (d : Distinction G) (t : Tier G) : Prop :=
+def Distinction.Fused {G : CoreReadings Designatum Contrib} (d : Distinction G) (t : Tier G) : Prop :=
   ¬ Tier.hasLiveShare G t →
     (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-def Distinction.Collapse {G : Grid Contrib} (d : Distinction G) (t : Tier G) : Prop :=
+def Distinction.Collapse {G : CoreReadings Designatum Contrib} (d : Distinction G) (t : Tier G) : Prop :=
   Tier.hasLiveShare G t ∧
     (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)
 
 /-- Freeze: the rule's other violation — holding a distinction SEPARATE at
     the floor, where it should fuse. -/
-def Distinction.Freeze {G : Grid Contrib} (d : Distinction G) : Prop :=
+def Distinction.Freeze {G : CoreReadings Designatum Contrib} (d : Distinction G) : Prop :=
   ¬ (d.language.TrueAt Tier.floor d.sideA ↔
       d.language.TrueAt Tier.floor d.sideB)
 
 /-- Separation: at a live act-time tier, the two sides are not
     interchangeable. -/
-def Distinction.Separated {G : Grid Contrib} (d : Distinction G) (t : Tier G) :
+def Distinction.Separated {G : CoreReadings Designatum Contrib} (d : Distinction G) (t : Tier G) :
     Prop :=
   Tier.hasLiveShare G t ∧
     ¬ (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-def Distinction.ObeysSeparateFuse {G : Grid Contrib} (d : Distinction G) :
+def Distinction.ObeysSeparateFuse {G : CoreReadings Designatum Contrib} (d : Distinction G) :
     Prop :=
   (∀ t, Tier.hasLiveShare G t →
       ¬ (d.language.TrueAt t d.sideA ↔ d.language.TrueAt t d.sideB)) ∧
@@ -160,20 +160,20 @@ end ErrorGrade
 /-- The generator's four possible public outcomes: the two violations of a
     distinction, a declined classification, or a retyping that redraws the
     distinction itself. -/
-inductive GeneratorOutcome (G : Grid Contrib)
+inductive GeneratorOutcome (G : CoreReadings Designatum Contrib)
   | collapse (d : Distinction G) (t : Tier G) (h : d.Collapse t)
   | freeze (d : Distinction G) (h : d.Freeze)
   | declined
   | retype (oldDistinction newDistinction : Distinction G)
 
 theorem not_collapse_of_obeysSeparateFuse
-    {G : Grid Contrib} {d : Distinction G} (h : d.ObeysSeparateFuse)
+    {G : CoreReadings Designatum Contrib} {d : Distinction G} (h : d.ObeysSeparateFuse)
     (t : Tier G) :
     ¬ d.Collapse t :=
   fun hc => (h.left t hc.left) hc.right
 
 theorem not_freeze_of_obeysSeparateFuse
-    {G : Grid Contrib} {d : Distinction G} (h : d.ObeysSeparateFuse) :
+    {G : CoreReadings Designatum Contrib} {d : Distinction G} (h : d.ObeysSeparateFuse) :
     ¬ d.Freeze :=
   fun hf => hf (h.right Tier.floor (fun hfloor => hfloor))
 
@@ -190,25 +190,25 @@ namespace DirectedConvention
 namespace BeingConvention
 namespace GridConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /- The abstract separate/fuse machinery remains defined at `Grid` level for
    compatibility; these aliases expose its innermost reading-home. -/
 
-abbrev Tier (G : Grid Contrib) := Grid.Tier G
+abbrev Tier (G : CoreReadings Designatum Contrib) := Grid.Tier G
 
-abbrev ClaimLanguage (G : Grid Contrib) := Grid.ClaimLanguage G
+abbrev ClaimLanguage (G : CoreReadings Designatum Contrib) := Grid.ClaimLanguage G
 
-abbrev RecordedUtterance (G : Grid Contrib) (L : Grid.ClaimLanguage G) :=
+abbrev RecordedUtterance (G : CoreReadings Designatum Contrib) (L : Grid.ClaimLanguage G) :=
   Grid.RecordedUtterance G L
 
-abbrev Distinction (G : Grid Contrib) := Grid.Distinction G
+abbrev Distinction (G : CoreReadings Designatum Contrib) := Grid.Distinction G
 
 abbrev VerdictVoice := Grid.VerdictVoice
 
 abbrev ErrorGrade := Grid.ErrorGrade
 
-abbrev GeneratorOutcome (G : Grid Contrib) := Grid.GeneratorOutcome G
+abbrev GeneratorOutcome (G : CoreReadings Designatum Contrib) := Grid.GeneratorOutcome G
 
 end GridConvention
 end BeingConvention

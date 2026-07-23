@@ -13,58 +13,58 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 namespace DirectedConvention
 namespace BeingConvention
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-abbrev MountsAt (b : G.Being) (c : G.Call) : Prop := G.MountsAt b c
+abbrev MountsAt (b : Designatum) (c : Designatum) : Prop := G.MountsAt b c
 
 /-- Re-rooted name for call-entire response. -/
-abbrev RespondsToEveryCall (b : G.Being) : Prop := G.RespondsToEveryCall b
+abbrev RespondsToEveryCall (b : Designatum) : Prop := G.RespondsToEveryCall b
 
 /-- Re-rooted name for the pole-class responder. -/
-abbrev Terminus (b : G.Being) : Prop := G.Terminus b
+abbrev Terminus (b : Designatum) : Prop := G.Terminus b
 
 /-- Re-rooted name for non-vacuous terminus response. -/
-abbrev LiveTerminus (b : G.Being) : Prop := G.LiveTerminus b
+abbrev LiveTerminus (b : Designatum) : Prop := G.LiveTerminus b
 
 /-- Re-rooted name for call-entire terminus response. -/
-abbrev ResponsiveTerminus (b : G.Being) : Prop := G.ResponsiveTerminus b
+abbrev ResponsiveTerminus (b : Designatum) : Prop := G.ResponsiveTerminus b
 
 /-- Re-rooted name for terminus typing at the pole-class. -/
-abbrev AtPoleClass (b : G.Being) : Prop := G.AtPoleClass b
+abbrev AtPoleClass (b : Designatum) : Prop := G.AtPoleClass b
 
 /-- Re-rooted name for the probe, because the probe reads a being's
     composition rather than adding a field to the signature. -/
-abbrev ProbeConstant (b : G.Being) (cs : G.Call → Prop) : Prop :=
+abbrev ProbeConstant (b : Designatum) (cs : Designatum → Prop) : Prop :=
   G.ProbeConstant b cs
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-structure BeingCoarsening (G : Grid Contrib) (Macro : Type) where
-  proj : G.Being → Macro
+structure BeingCoarsening (G : CoreReadings Designatum Contrib) (Macro : Type) where
+  proj : Designatum → Macro
 
 namespace BeingCoarsening
 
-variable {G : Grid Contrib} {Macro : Type} (κ : BeingCoarsening G Macro)
+variable {G : CoreReadings Designatum Contrib} {Macro : Type} (κ : BeingCoarsening G Macro)
 
 /-- The identity being coarsening: every fine tag remains its own macro tag. -/
-protected def id (G : Grid Contrib) : BeingCoarsening G G.Being where
+protected def id (G : CoreReadings Designatum Contrib) : BeingCoarsening G Designatum where
   proj := id
 
 @[simp]
-theorem id_proj (p : G.Being) :
+theorem id_proj (p : Designatum) :
     (BeingCoarsening.id G).proj p = p :=
   rfl
 
 /-- The total being coarsening: all fine tags are read as one macro tag. -/
-def total (G : Grid Contrib) : BeingCoarsening G Unit where
+def total (G : CoreReadings Designatum Contrib) : BeingCoarsening G Unit where
   proj _ := ()
 
 @[simp]
-theorem total_proj (p : G.Being) :
+theorem total_proj (p : Designatum) :
     (BeingCoarsening.total G).proj p = () :=
   rfl
 
@@ -76,7 +76,7 @@ def comp {Macro' : Type} (κ : BeingCoarsening G Macro)
 
 @[simp]
 theorem comp_proj {Macro' : Type} (κ : BeingCoarsening G Macro)
-    (f : Macro → Macro') (p : G.Being) :
+    (f : Macro → Macro') (p : Designatum) :
     (κ.comp f).proj p = f (κ.proj p) :=
   rfl
 
@@ -84,18 +84,18 @@ theorem comp_proj {Macro' : Type} (κ : BeingCoarsening G Macro)
 def InFiber (b : Macro) (w : G.Weld) : Prop := κ.proj w.agent = b
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
-def SameFiber (p q : G.Being) : Prop := κ.proj p = κ.proj q
+def SameFiber (p q : Designatum) : Prop := κ.proj p = κ.proj q
 
-theorem total_sameFiber (p q : G.Being) :
+theorem total_sameFiber (p q : Designatum) :
     (BeingCoarsening.total G).SameFiber p q :=
   rfl
 
-theorem id_not_sameFiber_of_ne {p q : G.Being} (h : p ≠ q) :
+theorem id_not_sameFiber_of_ne {p q : Designatum} (h : p ≠ q) :
     ¬ (BeingCoarsening.id G).SameFiber p q :=
   fun hsame => h hsame
 
 /-- A fiber has at least one fine tag under it. -/
-def FiberInhabited (b : Macro) : Prop := ∃ p : G.Being, κ.proj p = b
+def FiberInhabited (b : Macro) : Prop := ∃ p : Designatum, κ.proj p = b
 
 /-- A fiber has at least one actual weld under it. This is the live/vacuity
     guard needed for exclusivity facts below. -/
@@ -149,35 +149,35 @@ def LiveFiberAtPole (b : Macro) : Prop :=
 
 /-- A fiber reads at the pole on a supplied call-class. This is neutral fiber
     vocabulary: downstream doctrines supply the class predicate. -/
-def FiberAtPoleOn (b : Macro) (cs : G.Call → Prop) : Prop :=
+def FiberAtPoleOn (b : Macro) (cs : Designatum → Prop) : Prop :=
   ∀ w : G.Weld, G.Actual w → κ.InFiber b w → cs w.call → AtBot (G.share w)
 
 /-- Fiber-at-pole restricted on both axes: over a call-class `cs` and a fine
     tag-class `ts`. The single-axis restrictions and plain fiber reading are
     its specializations. -/
-def FiberAtPoleOnWithin (b : Macro) (cs : G.Call → Prop)
-    (ts : G.Being → Prop) : Prop :=
+def FiberAtPoleOnWithin (b : Macro) (cs : Designatum → Prop)
+    (ts : Designatum → Prop) : Prop :=
   ∀ w : G.Weld, G.Actual w → κ.InFiber b w →
     cs w.call → ts w.agent → AtBot (G.share w)
 
 /-- A fiber reads at the pole within a supplied fine tag-class. -/
-def FiberAtPoleWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+def FiberAtPoleWithin (b : Macro) (ts : Designatum → Prop) : Prop :=
   κ.FiberAtPoleOnWithin b (fun _ => True) ts
 
 /-- A fiber has an actual weld in the supplied call-class. -/
-def ActualFiberInhabitedOn (b : Macro) (cs : G.Call → Prop) : Prop :=
+def ActualFiberInhabitedOn (b : Macro) (cs : Designatum → Prop) : Prop :=
   ∃ w : G.Weld, G.Actual w ∧ κ.InFiber b w ∧ cs w.call
 
 /-- A fiber has an actual weld whose agent lies in the supplied tag-class. -/
-def ActualFiberInhabitedWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+def ActualFiberInhabitedWithin (b : Macro) (ts : Designatum → Prop) : Prop :=
   ∃ w : G.Weld, G.Actual w ∧ κ.InFiber b w ∧ ts w.agent
 
 /-- The live, non-vacuous class-restricted fiber-at-pole predicate. -/
-def LiveFiberAtPoleOn (b : Macro) (cs : G.Call → Prop) : Prop :=
+def LiveFiberAtPoleOn (b : Macro) (cs : Designatum → Prop) : Prop :=
   κ.ActualFiberInhabitedOn b cs ∧ κ.FiberAtPoleOn b cs
 
 /-- The live, non-vacuous tag-restricted fiber-at-pole predicate. -/
-def LiveFiberAtPoleWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+def LiveFiberAtPoleWithin (b : Macro) (ts : Designatum → Prop) : Prop :=
   κ.ActualFiberInhabitedWithin b ts ∧ κ.FiberAtPoleWithin b ts
 
 /-- Every actual weld in the fiber carries a live self-pole index.
@@ -188,7 +188,7 @@ def SelfAptTag (b : Macro) : Prop :=
 
 /-- Every actual weld in the supplied tag-class carries a live self-pole index.
     Vacuous unless paired with a live/inhabited hypothesis. -/
-def SelfAptTagWithin (b : Macro) (ts : G.Being → Prop) : Prop :=
+def SelfAptTagWithin (b : Macro) (ts : Designatum → Prop) : Prop :=
   ∀ w : G.Weld, G.Actual w → κ.InFiber b w →
     ts w.agent → G.HasSelfPoleIndex w
 
@@ -203,7 +203,7 @@ def Patchy (b : Macro) : Prop := ¬ κ.FiberAtPole b ∧ ¬ κ.SelfAptTag b
 /-- If every fine tag in the fiber is terminus-typed, the whole actual fiber
     reads at the pole. -/
 theorem fiberAtPole_of_fiber_termini {b : Macro}
-    (h : ∀ p : G.Being, κ.proj p = b → G.Terminus p) :
+    (h : ∀ p : Designatum, κ.proj p = b → G.Terminus p) :
     κ.FiberAtPole b := by
   intro w hactual hfiber
   exact G.atBot_of_terminus_response (h w.agent hfiber) hactual
@@ -211,8 +211,8 @@ theorem fiberAtPole_of_fiber_termini {b : Macro}
 /-- If every fine tag in the fiber and supplied tag-class is terminus-typed,
     the tag-restricted actual fiber reads at the pole. -/
 theorem fiberAtPoleWithin_of_class_termini {b : Macro}
-    {ts : G.Being → Prop}
-    (h : ∀ p : G.Being, κ.proj p = b → ts p → G.Terminus p) :
+    {ts : Designatum → Prop}
+    (h : ∀ p : Designatum, κ.proj p = b → ts p → G.Terminus p) :
     κ.FiberAtPoleWithin b ts := by
   intro w hactual hfiber _hclass htag
   exact G.atBot_of_terminus_response (h w.agent hfiber htag) hactual
@@ -225,24 +225,24 @@ theorem no_live_index_under_fiberAtPole {b : Macro}
     ¬ G.HasSelfPoleIndex w :=
   G.no_self_pole_index_of_atBot w (h w hactual hfiber)
 
-theorem fiberAtPoleOn_mono {b : Macro} {cs ds : G.Call → Prop}
+theorem fiberAtPoleOn_mono {b : Macro} {cs ds : Designatum → Prop}
     (h : κ.FiberAtPoleOn b cs)
-    (hsub : ∀ c : G.Call, ds c → cs c) :
+    (hsub : ∀ c : Designatum, ds c → cs c) :
     κ.FiberAtPoleOn b ds :=
   fun w hactual hfiber hds => h w hactual hfiber (hsub w.call hds)
 
 theorem fiberAtPoleOnWithin_mono_call {b : Macro}
-    {cs ds : G.Call → Prop} {ts : G.Being → Prop}
+    {cs ds : Designatum → Prop} {ts : Designatum → Prop}
     (h : κ.FiberAtPoleOnWithin b cs ts)
-    (hsub : ∀ c : G.Call, ds c → cs c) :
+    (hsub : ∀ c : Designatum, ds c → cs c) :
     κ.FiberAtPoleOnWithin b ds ts :=
   fun w hactual hfiber hds htag =>
     h w hactual hfiber (hsub w.call hds) htag
 
 theorem fiberAtPoleOnWithin_mono_tag {b : Macro}
-    {cs : G.Call → Prop} {ts us : G.Being → Prop}
+    {cs : Designatum → Prop} {ts us : Designatum → Prop}
     (h : κ.FiberAtPoleOnWithin b cs ts)
-    (hsub : ∀ p : G.Being, us p → ts p) :
+    (hsub : ∀ p : Designatum, us p → ts p) :
     κ.FiberAtPoleOnWithin b cs us :=
   fun w hactual hfiber hclass hus =>
     h w hactual hfiber hclass (hsub w.agent hus)
@@ -256,7 +256,7 @@ theorem fiberAtPoleOn_univ_iff (b : Macro) :
     exact h w hactual hfiber
 
 theorem fiberAtPoleOnWithin_univTags_iff
-    (b : Macro) (cs : G.Call → Prop) :
+    (b : Macro) (cs : Designatum → Prop) :
     κ.FiberAtPoleOnWithin b cs (fun _ => True) ↔
       κ.FiberAtPoleOn b cs := by
   constructor
@@ -266,7 +266,7 @@ theorem fiberAtPoleOnWithin_univTags_iff
     exact h w hactual hfiber hclass
 
 theorem fiberAtPoleOnWithin_univCalls_iff
-    (b : Macro) (ts : G.Being → Prop) :
+    (b : Macro) (ts : Designatum → Prop) :
     κ.FiberAtPoleOnWithin b (fun _ => True) ts ↔
       κ.FiberAtPoleWithin b ts :=
   Iff.rfl
@@ -281,20 +281,20 @@ theorem fiberAtPoleOnWithin_univ_univ_iff (b : Macro) :
     exact h w hactual hfiber
 
 theorem fiberAtPoleWithin_of_fiberAtPole {b : Macro}
-    {ts : G.Being → Prop}
+    {ts : Designatum → Prop}
     (h : κ.FiberAtPole b) :
     κ.FiberAtPoleWithin b ts := by
   intro w hactual hfiber _hclass _htag
   exact h w hactual hfiber
 
-theorem no_live_index_under_fiberAtPoleOn {b : Macro} {cs : G.Call → Prop}
+theorem no_live_index_under_fiberAtPoleOn {b : Macro} {cs : Designatum → Prop}
     (h : κ.FiberAtPoleOn b cs) {w : G.Weld}
     (hactual : G.Actual w) (hfiber : κ.InFiber b w) (hclass : cs w.call) :
     ¬ G.HasSelfPoleIndex w :=
   G.no_self_pole_index_of_atBot w (h w hactual hfiber hclass)
 
 theorem no_live_index_under_fiberAtPoleOnWithin {b : Macro}
-    {cs : G.Call → Prop} {ts : G.Being → Prop}
+    {cs : Designatum → Prop} {ts : Designatum → Prop}
     (h : κ.FiberAtPoleOnWithin b cs ts) {w : G.Weld}
     (hactual : G.Actual w) (hfiber : κ.InFiber b w)
     (hclass : cs w.call) (htag : ts w.agent) :
@@ -324,7 +324,7 @@ theorem liveFiberAtPole_not_selfAptTag {b : Macro}
   fun hself => κ.fiberAtPole_selfAptTag_exclusive h.left h.right hself
 
 theorem liveFiberAtPoleWithin_not_selfAptTagWithin {b : Macro}
-    {ts : G.Being → Prop}
+    {ts : Designatum → Prop}
     (h : κ.LiveFiberAtPoleWithin b ts) :
     ¬ κ.SelfAptTagWithin b ts := by
   intro hself

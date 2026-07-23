@@ -15,32 +15,62 @@ open Grid.DirectedConvention
 
 /-! ### A pole-share producer with true speech and a false thought -/
 
-inductive Call
+inductive CaseDesignatum
+  | producer
   | speech
   | mind
   | target
-deriving DecidableEq
+  | response
+  | speechOccurrence
+  | mindOccurrence
+  | targetOccurrence
+  deriving DecidableEq
+
+def occurrenceReading : OccurrenceReading CaseDesignatum where
+  occurrence
+    | .speechOccurrence | .mindOccurrence | .targetOccurrence => True
+    | _ => False
+  isBeing d := d = .producer
+  isCall
+    | .speech | .mind | .target => True
+    | _ => False
+  isResponse d := d = .response
+  agent
+    | .speechOccurrence | .mindOccurrence | .targetOccurrence => .producer
+    | d => d
+  call
+    | .speechOccurrence => .speech
+    | .mindOccurrence => .mind
+    | .targetOccurrence => .target
+    | d => d
+  response
+    | .speechOccurrence | .mindOccurrence | .targetOccurrence => .response
+    | d => d
 
 /-- Speech and thought occur at the pole.  The target is a merely possible
     reception used to make the thought-content false. -/
-def grid : Grid Nat where
-  Being := Unit
-  Call := Call
-  Response := Unit
-  respondsTo _ c :=
-    match c with
-    | .speech | .mind => some ()
-    | .target => none
-  grade _ c _ :=
-    match c with
-    | .speech | .mind => 0
-    | .target => 1
-  conditions deed reception :=
-    deed.call = .mind ∧ reception.call = .target
+def grid : CoreReadings CaseDesignatum Nat where
+  occurrence := occurrenceReading
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .producer, .speech | .producer, .mind => some .response
+      | _, _ => none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .targetOccurrence => 1
+      | _ => 0
+  }
+  conditioning := {
+    conditions := fun deed reception =>
+      deed = .mindOccurrence ∧ reception = .targetOccurrence
+  }
 
-def speechWeld : grid.Weld := ⟨(), .speech, ()⟩
-def mindWeld : grid.Weld := ⟨(), .mind, ()⟩
-def targetWeld : grid.Weld := ⟨(), .target, ()⟩
+def speechWeld : grid.Weld := ⟨.speechOccurrence, True.intro⟩
+def mindWeld : grid.Weld := ⟨.mindOccurrence, True.intro⟩
+def targetWeld : grid.Weld := ⟨.targetOccurrence, True.intro⟩
 
 def poleBefore : Config Nat := ⟨0⟩
 def liveBefore : Config Nat := ⟨1⟩
@@ -56,12 +86,12 @@ def reading : SpeechReading grid (waaPathClaimLanguage grid) where
     match w.call with
     | .speech => .speech
     | .mind => .mind
-    | .target => .body
+    | _ => .body
   voices w :=
     match w.call with
     | .speech => some trueContent
     | .mind => some falseContent
-    | .target => none
+    | _ => none
 
 def speechProduction : ProducedUtterance reading where
   weld := speechWeld
@@ -86,20 +116,22 @@ theorem liveBefore_not_atBot : ¬ AtBot liveBefore.tendency := by
   exact Nat.not_succ_le_zero 0 h
 
 theorem mind_delivered_to_target :
-    DeliveredTo grid mindWeld targetWeld :=
+    Grid.DirectedConvention.DeliveredTo grid mindWeld targetWeld :=
   ⟨rfl, rfl⟩
 
 theorem mind_has_no_shareDropLanding :
     ¬ HasShareDropLanding grid liveBefore mindWeld := by
   rintro ⟨received, hland⟩
-  have htarget : received.call = Call.target := hland.left.left.right
+  have htarget :
+      received.1 = CaseDesignatum.targetOccurrence :=
+    hland.left.left.right
   have hactual : grid.Actual received := hland.left.right
-  cases received with
-  | mk agent call response =>
-      simp only at htarget
-      subst call
-      change (none : Option Unit) = some response at hactual
-      cases hactual
+  rcases received with ⟨d, hd⟩
+  change d = CaseDesignatum.targetOccurrence at htarget
+  subst d
+  change (none : Option CaseDesignatum) =
+    some CaseDesignatum.response at hactual
+  contradiction
 
 theorem falseContent_not_trueAt :
     ¬ (waaPathClaimLanguage grid).TrueAt
@@ -116,45 +148,43 @@ theorem all_speech_productions_true :
   intro u hspeech
   cases hcall : u.weld.call with
   | speech =>
-      have hweld : u.weld = speechWeld := by
-        apply RawWeld.ext
-        · change (u.weld.agent : Unit) = ()
-          exact Unit.ext _ _
-        · exact hcall
-        · change (u.weld.response : Unit) = ()
-          exact Unit.ext _ _
-      have hvoiced := u.voiced
-      rw [hweld] at hvoiced ⊢
       have hcontent : u.content = trueContent := by
-        change some trueContent = some u.content at hvoiced
-        exact (Option.some.inj hvoiced).symm
+        simpa [reading, hcall] using u.voiced.symm
       rw [hcontent]
-      exact trueContent_trueAt
+      intro hlive
+      exact False.elim (hlive (Nat.le_refl 0))
   | mind => simp [reading, hcall] at hspeech
   | target => simp [reading, hcall] at hspeech
+  | producer => simp [reading, hcall] at hspeech
+  | response => simp [reading, hcall] at hspeech
+  | speechOccurrence => simp [reading, hcall] at hspeech
+  | mindOccurrence => simp [reading, hcall] at hspeech
+  | targetOccurrence => simp [reading, hcall] at hspeech
 
 /-- Production-instantiated fidelity sees precisely speech-door productions,
     all of which are true in the strictness model. -/
 theorem old_speech_side_holds :
-    WaaNoDelusion grid (ProductionFidelity grid reading) () := by
+    WaaNoDelusion grid (ProductionFidelity grid reading)
+      CaseDesignatum.producer := by
   intro record _hagent hfid _w _hoff
   rcases hfid with ⟨u, hspeech, rfl⟩
   exact all_speech_productions_true u hspeech
 
 theorem not_noNescience :
-    ¬ WaaNoNescience grid reading () := by
+    ¬ WaaNoNescience grid reading CaseDesignatum.producer := by
   intro h
   exact falseContent_not_trueAt
     (h mindProduction rfl (Or.inr rfl) (Nat.le_refl 0))
 
 /-- No-nescience is deliberately stronger than the former speech-only test. -/
 theorem noNescience_strictly_stronger_witness :
-    WaaNoDelusion grid (ProductionFidelity grid reading) () ∧
+    WaaNoDelusion grid (ProductionFidelity grid reading)
+        CaseDesignatum.producer ∧
       (∀ u : ProducedUtterance reading,
         reading.door u.weld = .speech →
           (waaPathClaimLanguage grid).TrueAt
             (Tier.actTime u.weld) u.content) ∧
-      ¬ WaaNoNescience grid reading () :=
+      ¬ WaaNoNescience grid reading CaseDesignatum.producer :=
   ⟨old_speech_side_holds, all_speech_productions_true, not_noNescience⟩
 
 /-- The false thought is cognitive error but not defiled: its occurrence has
@@ -170,44 +200,71 @@ theorem aklishta_ajnana_witness :
   exact grid.no_self_pole_index_of_atBot mindProduction.weld
     (Nat.le_refl 0)
 
-theorem quiet_everywhere : QuietOn grid () (fun _ => True) := by
-  intro w hactual _hagent _
-  cases hcall : w.call with
-  | speech =>
-      change AtBot (grid.grade w.agent w.call w.response)
-      rw [hcall]
-      change AtBot (0 : Nat)
+theorem quiet_everywhere :
+    QuietOn grid CaseDesignatum.producer (fun _ => True) := by
+  rintro ⟨d, hd⟩ hactual _hagent _
+  change occurrenceReading.occurrence d at hd
+  change WAA.Actual grid.occurrence grid.response ⟨d, hd⟩ at hactual
+  change AtBot (grid.placement.grade d)
+  cases d with
+  | producer | speech | mind | target | response =>
+      change False at hd
+      contradiction
+  | speechOccurrence | mindOccurrence =>
       exact Nat.le_refl 0
-  | mind =>
-      change AtBot (grid.grade w.agent w.call w.response)
-      rw [hcall]
-      change AtBot (0 : Nat)
-      exact Nat.le_refl 0
-  | target =>
-      unfold Grid.Actual at hactual
-      rw [hcall] at hactual
-      simp [grid] at hactual
+  | targetOccurrence =>
+      change (none : Option CaseDesignatum) =
+        some CaseDesignatum.response at hactual
+      contradiction
 
 /-- Three-door arhat quietness removes the afflictive self-pole but does not by
     itself make every speech-or-mind production true. -/
 theorem arhat_retains_nescience_witness :
-    QuietOn grid () (fun _ => True) ∧
-      ¬ WaaNoNescience grid reading () :=
+    QuietOn grid CaseDesignatum.producer (fun _ => True) ∧
+      ¬ WaaNoNescience grid reading CaseDesignatum.producer :=
   ⟨quiet_everywhere, not_noNescience⟩
 
 /-! ### Sealed silent and thinking buddhas -/
 
 namespace Sealed
 
-def grid : Grid Nat where
-  Being := Unit
-  Call := Unit
-  Response := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions _ _ := False
+inductive SealedDesignatum
+  | buddha
+  | call
+  | response
+  | occurrence
 
-def weld : grid.Weld := ⟨(), (), ()⟩
+def occurrenceReading : OccurrenceReading SealedDesignatum where
+  occurrence d := d = .occurrence
+  isBeing d := d = .buddha
+  isCall d := d = .call
+  isResponse d := d = .response
+  agent
+    | .occurrence => .buddha
+    | d => d
+  call
+    | .occurrence => .call
+    | d => d
+  response
+    | .occurrence => .response
+    | d => d
+
+def grid : CoreReadings SealedDesignatum Nat where
+  occurrence := occurrenceReading
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .buddha, .call => some .response
+      | _, _ => none
+  }
+  placement := {
+    grade := fun _ => 0
+  }
+  conditioning := {
+    conditions := fun _ _ => False
+  }
+
+def weld : grid.Weld := ⟨.occurrence, rfl⟩
 def poleBefore : Config Nat := ⟨0⟩
 def content : WaaPathClaim grid := ⟨poleBefore, weld, weld⟩
 
@@ -225,19 +282,25 @@ def thought : ProducedUtterance thinkingReading where
   content := content
   voiced := rfl
 
-theorem responsiveTerminus : grid.ResponsiveTerminus () := by
+theorem responsiveTerminus :
+    grid.ResponsiveTerminus SealedDesignatum.buddha := by
   constructor
-  · intro _
-    exact ⟨(), rfl⟩
-  · intro _ _ _
+  · intro c hc
+    change c = SealedDesignatum.call at hc
+    subst c
+    exact ⟨SealedDesignatum.response, by simp [grid]⟩
+  · intro _w _hactual _hagent
     exact Nat.le_refl 0
 
 theorem own_deeds_undelivered
-    (deed reception : grid.Weld) (_hdeed : deed.agent = ()) :
-    ¬ DeliveredTo grid deed reception := by
-  simp [DeliveredTo, grid]
+    (deed reception : grid.Weld)
+    (_hdeed : deed.agent = SealedDesignatum.buddha) :
+    ¬ Grid.DirectedConvention.DeliveredTo grid deed reception := by
+  change ¬ False
+  exact not_false
 
-theorem effectiveTerminus : WaaEffectiveTerminus grid () :=
+theorem effectiveTerminus :
+    WaaEffectiveTerminus grid SealedDesignatum.buddha :=
   waaEffectiveTerminus_of_responsiveTerminus_of_undelivered
     grid responsiveTerminus own_deeds_undelivered
 
@@ -246,37 +309,41 @@ theorem content_trueAt :
   intro hlive
   exact False.elim (hlive (Nat.le_refl 0))
 
-theorem silent_noNescience : WaaNoNescience grid silentReading () := by
+theorem silent_noNescience :
+    WaaNoNescience grid silentReading SealedDesignatum.buddha := by
   intro u _ _ _
   have := u.voiced
   simp [silentReading] at this
 
-theorem thinking_noNescience : WaaNoNescience grid thinkingReading () := by
+theorem thinking_noNescience :
+    WaaNoNescience grid thinkingReading SealedDesignatum.buddha := by
   intro u _ _ _
   have hcontent : u.content = content := by
     simpa [thinkingReading] using u.voiced.symm
   rw [hcontent]
-  rcases u.weld with ⟨⟨⟩, ⟨⟩, ⟨⟩⟩
-  exact content_trueAt
+  intro hlive
+  exact False.elim (hlive (Nat.le_refl 0))
 
 theorem silent_fullyEnlightened :
-    WaaFullyEnlightened grid silentReading () :=
+    WaaFullyEnlightened grid silentReading SealedDesignatum.buddha :=
   ⟨effectiveTerminus, silent_noNescience⟩
 
 theorem thinking_fullyEnlightened :
-    WaaFullyEnlightened grid thinkingReading () :=
+    WaaFullyEnlightened grid thinkingReading SealedDesignatum.buddha :=
   ⟨effectiveTerminus, thinking_noNescience⟩
 
 def noFidelity
     (_ : RecordedUtterance grid (waaPathClaimLanguage grid)) : Prop := False
 
 theorem silent_no_speech_occurrence :
-    ¬ WaaFaithfulSpeechOccurrence grid silentReading noFidelity () := by
+    ¬ WaaFaithfulSpeechOccurrence grid silentReading noFidelity
+      SealedDesignatum.buddha := by
   rintro ⟨u, _hagent, hspeech, _⟩
   simp [silentReading] at hspeech
 
 theorem thinking_no_speech_occurrence :
-    ¬ WaaFaithfulSpeechOccurrence grid thinkingReading noFidelity () := by
+    ¬ WaaFaithfulSpeechOccurrence grid thinkingReading noFidelity
+      SealedDesignatum.buddha := by
   rintro ⟨u, _hagent, hspeech, _⟩
   simp [thinkingReading] at hspeech
 
@@ -286,20 +353,22 @@ theorem thinking_has_mind_production :
   ⟨thought, rfl⟩
 
 theorem no_effectiveness_enacted :
-    ¬ WaaEffectivenessEnacted grid () :=
+    ¬ WaaEffectivenessEnacted grid SealedDesignatum.buddha :=
   not_effectivenessEnacted_of_undelivered grid own_deeds_undelivered
 
 /-- Both sealed readings are fully enlightened.  One produces no thought and
     the other produces a true thought; neither silently acquires a testimonial
     or enacted deed witness. -/
 theorem silent_buddha_models :
-    WaaFullyEnlightened grid silentReading () ∧
-      WaaFullyEnlightened grid thinkingReading () ∧
-      (¬ WaaFaithfulSpeechOccurrence grid silentReading noFidelity ()) ∧
-      (¬ WaaFaithfulSpeechOccurrence grid thinkingReading noFidelity ()) ∧
+    WaaFullyEnlightened grid silentReading SealedDesignatum.buddha ∧
+      WaaFullyEnlightened grid thinkingReading SealedDesignatum.buddha ∧
+      (¬ WaaFaithfulSpeechOccurrence grid silentReading noFidelity
+        SealedDesignatum.buddha) ∧
+      (¬ WaaFaithfulSpeechOccurrence grid thinkingReading noFidelity
+        SealedDesignatum.buddha) ∧
       (∃ u : ProducedUtterance thinkingReading,
         thinkingReading.door u.weld = .mind) ∧
-      ¬ WaaEffectivenessEnacted grid () :=
+      ¬ WaaEffectivenessEnacted grid SealedDesignatum.buddha :=
   ⟨silent_fullyEnlightened, thinking_fullyEnlightened,
     silent_no_speech_occurrence, thinking_no_speech_occurrence,
     thinking_has_mind_production, no_effectiveness_enacted⟩

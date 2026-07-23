@@ -13,7 +13,7 @@ namespace WAA
 
 open Grid.DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /- ==============================================================================
    Icchantika typing
@@ -23,31 +23,29 @@ variable {Contrib : Type} [PreorderBot Contrib]
     an actual occurrence is supplied, and every actual response remains live
     at the self-pole index. Reading and motivation:
     `Identification/Commentary.lean`, C.13. -/
-def Icchantika (G : Grid Contrib) (b : G.Being) : Prop :=
+def Icchantika (G : CoreReadings Designatum Contrib) (b : Designatum) : Prop :=
   G.ActualAgentInhabited b ∧
-    ∀ c r, G.respondsTo b c = some r → G.HasSelfPoleIndex ⟨b, c, r⟩
+    ∀ w : G.Weld, G.Actual w → w.agent = b → G.HasSelfPoleIndex w
 
 /-- An icchantika is the terminus's inverse on its mounted run: the mounted
     witness supplies a live self-pole index where terminus typing would force
     the pole-class. Reading and motivation:
     `Identification/Commentary.lean`, C.13. -/
 theorem icchantika_not_terminus
-    {G : Grid Contrib} {b : G.Being} (h : Icchantika G b) :
+    {G : CoreReadings Designatum Contrib} {b : Designatum} (h : Icchantika G b) :
     ¬ G.Terminus b := by
   intro hterm
   rcases h.left with ⟨w, hactual, hagent⟩
-  have hresp : G.respondsTo b w.call = some w.response := by
-    rw [← hagent]
-    exact hactual
-  exact h.right w.call w.response hresp
-    (G.atBot_of_terminus_response hterm hresp)
+  subst b
+  exact h.right w hactual rfl
+    (G.atBot_of_terminus_response hterm hactual)
 
 /-- The honest negative fact: an icchantika cannot be seated as a fully
     enlightened agent on this run, because `WaaEffectiveTerminus` includes
     terminus typing. This is not a verdict that the being cannot become buddha.
     Reading and motivation: `Identification/Commentary.lean`, C.13. -/
 theorem not_waaEffectiveTerminus_of_icchantika
-    {G : Grid Contrib} {b : G.Being} (h : Icchantika G b) :
+    {G : CoreReadings Designatum Contrib} {b : Designatum} (h : Icchantika G b) :
     ¬ WaaEffectiveTerminus G b := by
   intro hfull
   exact icchantika_not_terminus (G := G) h hfull.left.right
@@ -57,7 +55,7 @@ theorem not_waaEffectiveTerminus_of_icchantika
     is available. Reading and motivation:
     `Identification/Commentary.lean`, C.13. -/
 theorem aversionContext_of_icchantika_reception
-    {G : Grid Contrib} {before : Config Contrib} {b : G.Being}
+    {G : CoreReadings Designatum Contrib} {before : Config Contrib} {b : Designatum}
     {reception : G.Weld}
     (hagent : reception.agent = b) (hic : Icchantika G b)
     (hactual : G.Actual reception) (hlive : ¬ AtBot before.tendency) :
@@ -66,8 +64,7 @@ theorem aversionContext_of_icchantika_reception
     { liveBefore := hlive
       clenchMismatch := ?_ }
   refine ⟨hactual, ?_⟩
-  subst b
-  simpa using hic.right reception.call reception.response hactual
+  exact hic.right reception hactual hagent
 
 /-- If a fully enlightened deliverer reaches an icchantika reception, the
     existing sraddha theorem supplies the share-drop landing: the icchantika is
@@ -75,11 +72,11 @@ theorem aversionContext_of_icchantika_reception
     agent on its run. Reading and motivation:
     `Identification/Commentary.lean`, C.13. -/
 theorem icchantika_reachable
-    {G : Grid Contrib} {g b : G.Being} {before : Config Contrib}
+    {G : CoreReadings Designatum Contrib} {g b : Designatum} {before : Config Contrib}
     {deed reception : G.Weld}
     (hfaith : WaaEffectiveTerminus G g)
     (hdeed : deed.agent = g)
-    (hdel : DeliveredTo G deed reception)
+    (hdel : Grid.DirectedConvention.DeliveredTo G deed reception)
     (hreceiver : reception.agent = b) (hic : Icchantika G b)
     (hactual : G.Actual reception) (hlive : ¬ AtBot before.tendency) :
     HasShareDropLanding G before deed :=
@@ -93,32 +90,56 @@ theorem icchantika_reachable
 
 namespace IcchantikaCase
 
-/-- The small carrier used only to witness the declined foreclosure reading. -/
-inductive Being
+/-- The one designatum carrier for the declined foreclosure witness. -/
+inductive CaseDesignatum
   | buddha
   | icchantika
-
-/-- The single call used by the icchantika witness. -/
-inductive Call
   | call
-
-/-- The single response used by the icchantika witness. -/
-inductive Response
   | response
+  | buddhaOccurrence
+  | icchantikaOccurrence
+  deriving DecidableEq
+
+def occurrenceReading : OccurrenceReading CaseDesignatum where
+  occurrence
+    | .buddhaOccurrence | .icchantikaOccurrence => True
+    | _ => False
+  isBeing
+    | .buddha | .icchantika => True
+    | _ => False
+  isCall d := d = .call
+  isResponse d := d = .response
+  agent
+    | .buddhaOccurrence => .buddha
+    | .icchantikaOccurrence => .icchantika
+    | d => d
+  call
+    | .buddhaOccurrence | .icchantikaOccurrence => .call
+    | d => d
+  response
+    | .buddhaOccurrence | .icchantikaOccurrence => .response
+    | d => d
 
 /-- A concrete grid where the icchantika mounts a live response and a buddha
     deed is delivered to that response. -/
-def grid : Grid Nat where
-  Being := Being
-  Call := Call
-  Response := Response
-  respondsTo _ _ := some Response.response
-  grade b _ _ :=
-    match b with
-    | .buddha => 0
-    | .icchantika => 1
-  conditions deed reception :=
-    deed.agent = Being.buddha ∧ reception.agent = Being.icchantika
+def grid : CoreReadings CaseDesignatum Nat where
+  occurrence := occurrenceReading
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .buddha, .call | .icchantika, .call => some .response
+      | _, _ => none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .icchantikaOccurrence => 1
+      | _ => 0
+  }
+  conditioning := {
+    conditions := fun deed reception =>
+      deed = .buddhaOccurrence ∧ reception = .icchantikaOccurrence
+  }
 
 /-- A live prior tendency high enough for the icchantika reception itself to
     be a share-drop. -/
@@ -127,11 +148,11 @@ def liveBefore : Config Nat :=
 
 /-- The delivered buddha-side deed in the concrete witness. -/
 def deed : grid.Weld :=
-  ⟨Being.buddha, Call.call, Response.response⟩
+  ⟨.buddhaOccurrence, True.intro⟩
 
 /-- The icchantika-side reception in the concrete witness. -/
 def reception : grid.Weld :=
-  ⟨Being.icchantika, Call.call, Response.response⟩
+  ⟨.icchantikaOccurrence, True.intro⟩
 
 /-- The prior tendency in the witness is live. -/
 theorem liveBefore_not_atBot :
@@ -152,19 +173,36 @@ theorem deed_actual :
 
 /-- The witness receiver satisfies the icchantika run-shape. -/
 theorem receiver_icchantika :
-    Icchantika grid Being.icchantika := by
+    Icchantika grid CaseDesignatum.icchantika := by
   constructor
   · exact ⟨reception, reception_actual, rfl⟩
-  · intro c r _hresp
-    cases c
-    cases r
-    dsimp [Grid.HasSelfPoleIndex, Grid.share, grid, AtBot, shareBot]
-    show ¬ (1 : Nat) ≤ 0
-    decide
+  · rintro ⟨d, hd⟩ _hactual hagent
+    change occurrenceReading.occurrence d at hd
+    change occurrenceReading.agent d = CaseDesignatum.icchantika at hagent
+    change ¬ AtBot (grid.placement.grade d)
+    cases d with
+    | buddha =>
+        change False at hd
+        contradiction
+    | icchantika =>
+        change False at hd
+        contradiction
+    | call =>
+        change False at hd
+        contradiction
+    | response =>
+        change False at hd
+        contradiction
+    | buddhaOccurrence =>
+        change CaseDesignatum.buddha = CaseDesignatum.icchantika at hagent
+        contradiction
+    | icchantikaOccurrence =>
+        change ¬ (1 : Nat) ≤ 0
+        decide
 
 /-- The buddha deed is delivered to the icchantika reception. -/
 theorem delivered :
-    DeliveredTo grid deed reception :=
+    Grid.DirectedConvention.DeliveredTo grid deed reception :=
   ⟨rfl, rfl⟩
 
 /-- The icchantika reception is itself a share-drop from the live prior
@@ -180,8 +218,8 @@ theorem reception_shareDrop :
 
 /-- The concrete icchantika receiver is constructible. -/
 theorem constructible :
-    ∃ b : grid.Being, Icchantika grid b :=
-  ⟨Being.icchantika, receiver_icchantika⟩
+    ∃ b : CaseDesignatum, Icchantika grid b :=
+  ⟨CaseDesignatum.icchantika, receiver_icchantika⟩
 
 /-- The delivered icchantika reception lands as a share-drop in the concrete
     witness. -/
@@ -196,16 +234,17 @@ end IcchantikaCase
     in a share-drop landing from a live prior tendency. Reading and motivation:
     `Identification/Commentary.lean`, C.13. -/
 theorem icchantika_release_not_foreclosed :
-    ∃ (before : Config Nat) (b : IcchantikaCase.grid.Being)
+    ∃ (before : Config Nat) (b : IcchantikaCase.CaseDesignatum)
       (deed reception : IcchantikaCase.grid.Weld),
       Icchantika IcchantikaCase.grid b ∧
         reception.agent = b ∧
           IcchantikaCase.grid.Actual reception ∧
             ¬ AtBot before.tendency ∧
-              DeliveredTo IcchantikaCase.grid deed reception ∧
+              Grid.DirectedConvention.DeliveredTo
+                  IcchantikaCase.grid deed reception ∧
                 IcchantikaCase.grid.IsShareDrop before reception ∧
                   HasShareDropLanding IcchantikaCase.grid before deed := by
-  refine ⟨IcchantikaCase.liveBefore, IcchantikaCase.Being.icchantika,
+  refine ⟨IcchantikaCase.liveBefore, IcchantikaCase.CaseDesignatum.icchantika,
     IcchantikaCase.deed, IcchantikaCase.reception, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact IcchantikaCase.receiver_icchantika
   · rfl

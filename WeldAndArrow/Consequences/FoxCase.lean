@@ -22,47 +22,114 @@ open Grid.DirectedConvention
 open Grid.DirectedConvention.BeingConvention
 open Grid.DirectedConvention.BeingConvention.GridConvention
 
-inductive FoxCall
+inductive FoxDesignatum
+  | life (n : Nat)
   | question
   | fruit
   | turningWord
-deriving DecidableEq
-
-inductive FoxResponse
   | notFall
   | clench
   | release
+  | sentenceOccurrence
+  | lifeReceptionOccurrence (n : Nat)
+  | releaseOccurrence
 deriving DecidableEq
+
+namespace FoxCall
+
+abbrev question : FoxDesignatum := .question
+abbrev fruit : FoxDesignatum := .fruit
+abbrev turningWord : FoxDesignatum := .turningWord
+
+end FoxCall
+
+namespace FoxResponse
+
+abbrev notFall : FoxDesignatum := .notFall
+abbrev clench : FoxDesignatum := .clench
+abbrev release : FoxDesignatum := .release
+
+end FoxResponse
+
+def foxOccurrence : OccurrenceReading FoxDesignatum where
+  occurrence d :=
+    match d with
+    | .sentenceOccurrence
+    | .lifeReceptionOccurrence _
+    | .releaseOccurrence => True
+    | _ => False
+  isBeing d :=
+    match d with
+    | .life _ => True
+    | _ => False
+  isCall d :=
+    match d with
+    | .question | .fruit | .turningWord => True
+    | _ => False
+  isResponse d :=
+    match d with
+    | .notFall | .clench | .release => True
+    | _ => False
+  agent d :=
+    match d with
+    | .sentenceOccurrence => .life 0
+    | .lifeReceptionOccurrence n => .life n
+    | .releaseOccurrence => .life 1
+    | _ => d
+  call d :=
+    match d with
+    | .sentenceOccurrence => .question
+    | .lifeReceptionOccurrence _ => .fruit
+    | .releaseOccurrence => .turningWord
+    | _ => d
+  response d :=
+    match d with
+    | .sentenceOccurrence => .notFall
+    | .lifeReceptionOccurrence _ => .clench
+    | .releaseOccurrence => .release
+    | _ => d
+
+def foxAgentNumber : FoxDesignatum → Nat
+  | .sentenceOccurrence => 0
+  | .lifeReceptionOccurrence n => n
+  | .releaseOccurrence => 1
+  | .life n => n
+  | _ => 0
 
 /-- The concrete fox grid: life 0 answers the question; later lives receive
     fruit; the turning word releases without reaching the pole. -/
-def foxGrid : Grid Nat where
-  Being      := Nat
-  Call       := FoxCall
-  Response   := FoxResponse
-  respondsTo b c :=
-    match b, c with
-    | 0, .question    => some .notFall
-    | _, .fruit       => some .clench
-    | _, .turningWord => some .release
-    | _, _            => none
-  grade _ _ r :=
-    match r with
-    | .notFall => 5
-    | .clench  => 5
-    | .release => 1
-  conditions deed reception :=
-    reception.agent = deed.agent + 1 ∨ deed.agent = 0
+def foxGrid : CoreReadings FoxDesignatum Nat where
+  occurrence := foxOccurrence
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .life 0, .question => some .notFall
+      | .life _, .fruit => some .clench
+      | .life _, .turningWord => some .release
+      | _, _ => none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .sentenceOccurrence
+      | .lifeReceptionOccurrence _ => 5
+      | .releaseOccurrence => 1
+      | _ => 0
+  }
+  conditioning := {
+    conditions := fun deed reception =>
+      foxAgentNumber reception = foxAgentNumber deed + 1 ∨
+        foxAgentNumber deed = 0
+  }
 
 def sentenceWeld : foxGrid.Weld :=
-  ⟨(show foxGrid.Being from (0 : Nat)), FoxCall.question, FoxResponse.notFall⟩
+  ⟨.sentenceOccurrence, True.intro⟩
 
 def lifeReception (n : Nat) : foxGrid.Weld :=
-  ⟨n, FoxCall.fruit, FoxResponse.clench⟩
+  ⟨.lifeReceptionOccurrence n, True.intro⟩
 
 def releaseWeld : foxGrid.Weld :=
-  ⟨(show foxGrid.Being from (1 : Nat)), FoxCall.turningWord,
-    FoxResponse.release⟩
+  ⟨.releaseOccurrence, True.intro⟩
 
 def beforeRelease : Config Nat :=
   { tendency := 5 }
@@ -87,10 +154,10 @@ theorem fox_sentence_live_selfPole :
 /-- "The arrow carries delivery, not desert": changing delivery leaves grade
     and share data untouched. -/
 theorem fox_arrow_index_free
-    (conditions₁ conditions₂ : foxGrid.Weld -> foxGrid.Weld -> Prop) :
-    (∀ b c r,
-      (foxGrid.withConditions conditions₁).grade b c r =
-        (foxGrid.withConditions conditions₂).grade b c r) ∧
+    (conditions₁ conditions₂ : FoxDesignatum -> FoxDesignatum -> Prop) :
+    (∀ d,
+      (foxGrid.withConditions conditions₁).grade d =
+        (foxGrid.withConditions conditions₂).grade d) ∧
       ∀ w,
         (foxGrid.withConditions conditions₁).share w =
           (foxGrid.withConditions conditions₂).share w :=
@@ -100,8 +167,10 @@ theorem fox_arrow_index_free
 /-- "Five hundred fox lives arrive": the sentence's fruit is delivered
     life by life. -/
 theorem fox_returns_delivered (n : Nat) :
-    DeliveredTo foxGrid sentenceWeld (lifeReception (n + 1)) := by
-  dsimp [DeliveredTo, foxGrid, sentenceWeld, lifeReception]
+    Grid.DirectedConvention.DeliveredTo
+      foxGrid sentenceWeld (lifeReception (n + 1)) := by
+  dsimp [Grid.DirectedConvention.DeliveredTo, WAA.DeliveredTo, foxGrid,
+    sentenceWeld, lifeReception]
   exact Or.inr rfl
 
 /-- "Each life's receiving is itself a deed": every fruit reception is actual
@@ -173,19 +242,43 @@ theorem fox_nothing_kept
     model's grades, so the absence is part of the display. -/
 theorem fox_never_tests_pole :
     ∀ w : foxGrid.Weld, foxGrid.Actual w -> ¬ AtBot (foxGrid.share w) := by
-  intro w _hactual
-  cases w with
-  | mk agent call response =>
-      cases response <;> dsimp [Grid.share, foxGrid, AtBot, shareBot]
-      · show ¬ (5 : Nat) ≤ 0
-        decide
-      · show ¬ (5 : Nat) ≤ 0
-        decide
-      · show ¬ (1 : Nat) ≤ 0
-        decide
+  rintro ⟨d, hd⟩ _hactual
+  change foxOccurrence.occurrence d at hd
+  change ¬ foxGrid.placement.grade d ≤ (0 : Nat)
+  cases d with
+  | life _ =>
+      change False at hd
+      exact hd.elim
+  | question =>
+      change False at hd
+      exact hd.elim
+  | fruit =>
+      change False at hd
+      exact hd.elim
+  | turningWord =>
+      change False at hd
+      exact hd.elim
+  | notFall =>
+      change False at hd
+      exact hd.elim
+  | clench =>
+      change False at hd
+      exact hd.elim
+  | release =>
+      change False at hd
+      exact hd.elim
+  | sentenceOccurrence =>
+      show ¬ (5 : Nat) ≤ 0
+      decide
+  | lifeReceptionOccurrence _ =>
+      show ¬ (5 : Nat) ≤ 0
+      decide
+  | releaseOccurrence =>
+      show ¬ (1 : Nat) ≤ 0
+      decide
 
 /-- The display convention merging all lives into "the fox"; the fine tags
-    remain natural-numbered lives. -/
+    remain distinct designata. -/
 def foxSeriesCoarsening : BeingCoarsening foxGrid Unit where
   proj _ := ()
 
@@ -194,8 +287,7 @@ def foxSeriesSentienceReading : foxGrid.SentienceReading :=
 
 theorem foxSeries_macro_sentient :
     foxSeriesCoarsening.SentientTag foxSeriesSentienceReading () :=
-  ⟨⟨(0 : Nat), FoxCall.question, FoxResponse.notFall⟩,
-    ⟨rfl, by change True; exact True.intro⟩, rfl⟩
+  ⟨sentenceWeld, ⟨sentenceWeld_actual, True.intro⟩, rfl⟩
 
 theorem foxSeries_macro_selfConditioning :
     foxSeriesCoarsening.SelfConditioningTag () := by

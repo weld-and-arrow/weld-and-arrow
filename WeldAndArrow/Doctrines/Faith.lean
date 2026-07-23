@@ -13,8 +13,8 @@ namespace WAA
 namespace Grid
 namespace DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 structure WaaPathClaim where
   before : Config Contrib
@@ -35,7 +35,7 @@ def Factive (Faith : Prop → Prop) : Prop :=
     target for the deliberate strengthening to `WaaNoNescience`. -/
 def WaaNoDelusion
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (b : G.Being) : Prop :=
+    (b : Designatum) : Prop :=
   ∀ u : RecordedUtterance G (waaPathClaimLanguage G),
     u.weld.agent = b → Fidelity u →
       ∀ w : G.Weld, u.offeredAt = Tier.actTime w →
@@ -54,7 +54,7 @@ def ProductionFidelity
     pole-share production. This is the cognitive-obscuration conjunct:
     thoughts are included, while testimony remains speech-only. -/
 def WaaNoNescience
-    (sr : SpeechReading G (waaPathClaimLanguage G)) (b : G.Being) : Prop :=
+    (sr : SpeechReading G (waaPathClaimLanguage G)) (b : Designatum) : Prop :=
   ∀ u : ProducedUtterance sr,
     u.weld.agent = b →
       (sr.door u.weld = .speech ∨ sr.door u.weld = .mind) →
@@ -65,7 +65,7 @@ def WaaNoNescience
 /-- For a terminus producer, every production-instantiated speech record is at
     pole, so no-nescience supplies the old speech-side no-delusion theorem. -/
 theorem noDelusion_of_noNescience_of_terminus
-    (sr : SpeechReading G (waaPathClaimLanguage G)) {b : G.Being}
+    (sr : SpeechReading G (waaPathClaimLanguage G)) {b : Designatum}
     (hnescience : WaaNoNescience G sr b) (hterm : G.Terminus b) :
     WaaNoDelusion G (ProductionFidelity G sr) b := by
   intro record hagent hfid w hoff
@@ -81,7 +81,7 @@ theorem noDelusion_of_noNescience_of_terminus
 
 theorem waaNoDelusion_not_misfits
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {b : G.Being} (h : WaaNoDelusion G Fidelity b)
+    {b : Designatum} (h : WaaNoDelusion G Fidelity b)
     (u : RecordedUtterance G (waaPathClaimLanguage G))
     (hutter : u.weld.agent = b) (hfid : Fidelity u) :
     ¬ u.MisfitsOfferedTier := by
@@ -93,7 +93,7 @@ theorem waaNoDelusion_not_misfits
     jñeyāvaraṇa face is stronger than faithful speech alone. -/
 structure WaaFullyEnlightened
     (sr : SpeechReading G (waaPathClaimLanguage G))
-    (b : G.Being) : Prop where
+    (b : Designatum) : Prop where
   effective : WaaEffectiveTerminus G b
   noNescience : WaaNoNescience G sr b
 
@@ -102,7 +102,7 @@ structure WaaFullyEnlightened
 def WaaFaithfulSpeechOccurrence
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (b : G.Being) : Prop :=
+    (b : Designatum) : Prop :=
   ∃ u : ProducedUtterance sr,
     u.weld.agent = b ∧
       ∃ hspeech : sr.door u.weld = .speech,
@@ -114,47 +114,47 @@ def WaaFaithfulSpeechOccurrence
 def WaaFaithfulSpeechEnacted
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (b : G.Being) : Prop :=
+    (b : Designatum) : Prop :=
   WaaFullyEnlightened G sr b ∧
     WaaFaithfulSpeechOccurrence G sr Fidelity b
 
 structure WaaFullyEnlightenedEnacted
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (b : G.Being) : Prop where
+    (b : Designatum) : Prop where
   standing : WaaFullyEnlightened G sr b
   deedWitness : WaaEffectivenessEnacted G b
   speechOccurrence : WaaFaithfulSpeechOccurrence G sr Fidelity b
 
 theorem waaEffectiveTerminus_of_fullyEnlightened
-    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : G.Being}
+    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : Designatum}
     (h : WaaFullyEnlightened G sr b) : WaaEffectiveTerminus G b :=
   h.effective
 
 theorem waaFullyEnlightened_of_fullyEnlightenedEnacted
     {sr : SpeechReading G (waaPathClaimLanguage G)}
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {b : G.Being} (h : WaaFullyEnlightenedEnacted G sr Fidelity b) :
+    {b : Designatum} (h : WaaFullyEnlightenedEnacted G sr Fidelity b) :
     WaaFullyEnlightened G sr b :=
   h.standing
 
 theorem waaEffectivenessEnacted_of_fullyEnlightenedEnacted
     {sr : SpeechReading G (waaPathClaimLanguage G)}
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {b : G.Being} (h : WaaFullyEnlightenedEnacted G sr Fidelity b) :
+    {b : Designatum} (h : WaaFullyEnlightenedEnacted G sr Fidelity b) :
     WaaEffectivenessEnacted G b :=
   h.deedWitness
 
 theorem waaFaithfulSpeechEnacted_of_fullyEnlightenedEnacted
     {sr : SpeechReading G (waaPathClaimLanguage G)}
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {b : G.Being} (h : WaaFullyEnlightenedEnacted G sr Fidelity b) :
+    {b : Designatum} (h : WaaFullyEnlightenedEnacted G sr Fidelity b) :
     WaaFaithfulSpeechEnacted G sr Fidelity b :=
   ⟨h.standing, h.speechOccurrence⟩
 
 theorem waaNoNescience_of_factive_faith
     {Faith : Prop → Prop}
-    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : G.Being}
+    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : Designatum}
     (hfact : Factive Faith) (hfaith : Faith (WaaFullyEnlightened G sr b)) :
     WaaNoNescience G sr b :=
   (hfact _ hfaith).noNescience
@@ -164,7 +164,7 @@ theorem waaNoNescience_of_factive_faith
     testimonial route. -/
 theorem waa_says_true_of_faith
     {Faith : Prop → Prop}
-    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : G.Being}
+    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : Designatum}
     (hfact : Factive Faith) (hfaith : Faith (WaaFullyEnlightened G sr b))
     (record : RecordedUtterance G (waaPathClaimLanguage G))
     (hagent : record.weld.agent = b)
@@ -183,7 +183,7 @@ theorem waa_says_true_of_faith
 
 theorem waa_no_misfit_of_stance
     {Faith : Prop → Prop}
-    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : G.Being}
+    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : Designatum}
     (hfact : Factive Faith) (hfaith : Faith (WaaFullyEnlightened G sr b))
     (record : RecordedUtterance G (waaPathClaimLanguage G))
     (hagent : record.weld.agent = b)
@@ -201,7 +201,7 @@ theorem waaPath_not_misfits_of_floor_offer
   cases hact
 
 theorem fitsOfferedTier_of_waaEffectiveTerminus_ownDeed
-    {b : G.Being} (h : WaaEffectiveTerminus G b)
+    {b : Designatum} (h : WaaEffectiveTerminus G b)
     (u : RecordedUtterance G (waaPathClaimLanguage G))
     (hdeed : u.content.deed.agent = b)
     (w : G.Weld) (hoff : u.offeredAt = Tier.actTime w) :
@@ -212,7 +212,7 @@ theorem fitsOfferedTier_of_waaEffectiveTerminus_ownDeed
 
 theorem waa_path_landing_of_stance
     {Faith : Prop → Prop}
-    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : G.Being}
+    {sr : SpeechReading G (waaPathClaimLanguage G)} {b : Designatum}
     (hfact : Factive Faith) (hfaith : Faith (WaaFullyEnlightened G sr b))
     (u : RecordedUtterance G (waaPathClaimLanguage G))
     (hagent : u.weld.agent = b) (hproduction : ProductionFidelity G sr u)
@@ -235,7 +235,7 @@ theorem waa_path_landing_of_stance
 def WaaFaithOught
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (Faith : Prop → Prop) (b : G.Being)
+    (Faith : Prop → Prop) (b : Designatum)
     (u : RecordedUtterance G (waaPathClaimLanguage G)) : Prop :=
   Factive Faith → Faith (WaaFullyEnlightened G sr b) → Fidelity u →
     (∀ record, Fidelity record → ProductionFidelity G sr record) →
@@ -247,7 +247,7 @@ def WaaFaithOught
 theorem waaFaithOught_conditional
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (Faith : Prop → Prop) (b : G.Being)
+    (Faith : Prop → Prop) (b : Designatum)
     (u : RecordedUtterance G (waaPathClaimLanguage G)) :
     WaaFaithOught G sr Fidelity Faith b u := by
   intro hfact hfaith hfid hproduces hagent hdel hctx

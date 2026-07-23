@@ -112,22 +112,26 @@ def assumptionLedger : List AssumptionEntry := [
   { «section» := .asserted
     number := 1
     title := "No prior agent"
-    statement := "A weld is the primitive occurrence. `Grid.index` and `Grid.share` are projections from a completed `RawWeld`, not fields recovered from a separate performer or act. `no_agent_recovery_of_field_collision` records the internal obstruction: the same call-response field residue can be produced by distinct actual agents."
+    statement := "A weld is an occurrence designatum selected by an `OccurrenceReading`. Its agent, call, and response are role-readings of that occurrence; `Grid.index` and `Grid.share` are derived projections, not fields recovered from a separate performer or act. `Grid.no_agent_recovery_of_field_collision` records the internal obstruction: the same call-response field residue can be produced by distinct actual agents."
     anchors := [
-      sigProof ``RawWeld,
+      sigProof ``OccurrenceReading.Weld,
+      sigProof ``OccurrenceReading.Weld.agent,
+      sigProof ``OccurrenceReading.Weld.call,
+      sigProof ``OccurrenceReading.Weld.response,
       sigProof ``Grid.index,
       sigProof ``Grid.share,
-      sigWitness ``no_agent_recovery_of_field_collision
+      sigWitness ``Grid.no_agent_recovery_of_field_collision
     ] },
   { «section» := .asserted
     number := 2
     title := "Nothing self-indexed is stored"
-    statement := "`Config` stores only `tendency : Contrib`. It has no owner, being, weld, or field-residue slot. `rePitch` uses the received weld's share and ignores the prior configuration value. The checked claim is architectural and definability-level: the record has no `Being`-typed slot, relabelling agents acts trivially on configurations and commutes with `rePitch`, and no relabelling-equivariant recovery of an agent from a configuration exists. It is not an information-flow claim; see the declined entry below."
+    statement := "`Config` stores only `tendency : Contrib`. It has no owner, designatum, weld, or field-residue slot. `rePitch` uses the received weld's share and ignores the prior configuration value. The checked claim is architectural and definability-level: whole-carrier relabelling acts trivially on configurations and commutes with `rePitch`, and no relabelling-equivariant recovery of a designatum from a configuration exists. It is not an information-flow claim; see the declined entry below."
     anchors := [
       sigProof ``Config,
       sigProof ``Config.tendency,
       sigProof ``Grid.rePitch,
-      sigProof ``RawWeld.mapAgent,
+      downProof ``Equiv,
+      downProof ``Grid.relabel,
       downProof ``Config.relabel_fixed,
       downProof ``Grid.relabel_rePitch,
       downWitness ``Grid.no_natural_agent_recovery_from_config,
@@ -202,7 +206,7 @@ def assumptionLedger : List AssumptionEntry := [
       sigWitness ``Grid.transpose,
       sigWitness ``Grid.transpose_conditionsEither_iff,
       sigWitness ``Grid.DirectedConvention.transpose_deliveredTo_iff,
-      sigWitness ``RawWeld.transposeCR,
+      sigWitness ``OccurrenceReading.transposeCR,
       sigWitness ``AssumptionLocalWitnesses.no_direction_recovery_from_conditionsEither,
       sigWitness ``InteriorDirectionNegative.no_interior_direction_recovery,
       downWitness ``DirectionNegative.no_direction_recovery_from_conditionsEither
@@ -243,10 +247,10 @@ def assumptionLedger : List AssumptionEntry := [
       sigProof ``Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_within_tick,
       sigProof ``Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_of_resolutionBounded_subsingleton,
       sigWitness ``Grid.DirectedConvention.DirectionCoarsening.transpose_subTickDelivery,
-      downWitness ``DirectionCoarseningWitness.registerClock_unitTick_not_resolutionBounded,
       downWitness ``DirectionCoarseningWitness.unit_directionVoid_via_mergeToUnit,
-      downWitness ``DirectionCoarseningWitness.fullyCoarseRegisterClock_no_timeDirection,
-      downWitness ``DirectionCoarseningWitness.registerClock_directionCoarsening_independence
+      downWitness ``DirectionCoarseningWitness.twoResolution_directionCoarsening_independence,
+      downProof ``Grid.DirectedConvention.DirectionCoarsening.mapDir_resolutionBounded_iff,
+      downWitness ``CoverageNegative.directionVoid_needs_coverage
     ] },
   { «section» := .declined
     number := 5
@@ -334,7 +338,11 @@ def assumptionLedger : List AssumptionEntry := [
     anchors := [
       sigProof ``Grid.respondsTo,
       sigProof ``Grid.Actual,
-      sigProof ``Grid.DirectedConvention.EnvironsLine
+      sigProof ``Grid.DirectedConvention.EnvironsLine,
+      downWitness ``ContentNegative.hypotheticalGrid_no_actual,
+      downWitness ``ContentNegative.contentBeingsRow_not_obeys_hypothetical,
+      downWitness ``ContentNegative.fixedResponseGrid_no_variation,
+      downWitness ``ContentNegative.contentIntraWeldArrowRow_not_obeys_fixedResponse
     ] },
   { «section» := .declined
     number := 13

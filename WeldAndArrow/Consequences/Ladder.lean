@@ -12,8 +12,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 namespace DirectedConvention
 namespace BeingConvention
@@ -31,7 +31,7 @@ inductive LadderSide
 /-- Re-empty a distinction: the new row is silent at the floor and separates,
     at act-time, the lower row's live separation from the claim that the lower
     row has frozen. -/
-def reEmptied {G : Grid Contrib} (d : Distinction G) : Distinction G where
+def reEmptied {G : CoreReadings Designatum Contrib} (d : Distinction G) : Distinction G where
   language :=
     { Claim := LadderSide
       Holds := fun t c =>
@@ -42,7 +42,7 @@ def reEmptied {G : Grid Contrib} (d : Distinction G) : Distinction G where
   sideA := .liveBelow
   sideB := .finalBelow
 
-def ladder {G : Grid Contrib} (d : Distinction G) : Nat → Distinction G
+def ladder {G : CoreReadings Designatum Contrib} (d : Distinction G) : Nat → Distinction G
   | 0 => d
   | n + 1 => reEmptied (ladder d n)
 
@@ -156,22 +156,22 @@ theorem ladder_collapse_self_refuting
   intro n t
   exact Grid.not_collapse_of_obeysSeparateFuse (ladder_obeys (G := G) h n) t
 
-def beingsLadder (G : Grid Contrib) : Nat → Distinction G :=
+def beingsLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (beingsRow G)
 
-def beforeAfterLadder (G : Grid Contrib) : Nat → Distinction G :=
+def beforeAfterLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (beforeAfterRow G)
 
-def intraWeldArrowLadder (G : Grid Contrib) : Nat → Distinction G :=
+def intraWeldArrowLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (intraWeldArrowRow G)
 
-def gridLensLadder (G : Grid Contrib) : Nat → Distinction G :=
+def gridLensLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (gridLensRow G)
 
-def weldLadder (G : Grid Contrib) : Nat → Distinction G :=
+def weldLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (weldRow G)
 
-def doerDeedLadder (G : Grid Contrib) : Nat → Distinction G :=
+def doerDeedLadder (G : CoreReadings Designatum Contrib) : Nat → Distinction G :=
   ladder (doerDeedRow G)
 
 theorem beingsLadder_obeys

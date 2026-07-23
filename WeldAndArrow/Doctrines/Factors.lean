@@ -21,7 +21,7 @@ namespace PathFactor
 
 /-- Factor blocker classes are weld-classes. Speech is now the supplied
     speech-door class; conduct remains deliberately inert. -/
-def blockerClass {Contrib : Type} [PreorderBot Contrib] {G : Grid Contrib}
+def blockerClass {Designatum Contrib : Type} [PreorderBot Contrib] {G : CoreReadings Designatum Contrib}
     (dr : G.DoorReading) (fr : G.FetterReading) :
     PathFactor → G.Weld → Prop
   | .rites, w => fr.provocationClass Fetter.ritesGrasp w
@@ -38,8 +38,8 @@ end PathFactor
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 theorem ritesView_union_covers_streamEntry_fetters
     (dr : G.DoorReading) (fr : G.FetterReading) (w : G.Weld) :
@@ -102,33 +102,33 @@ theorem lower_fetters_covered_by_rites_view_resolve
 
 /-- A factor is held when the finite run contains an actual live weld of `b`
     in the factor's blocker class. -/
-def FactorHeld (dr : G.DoorReading) (b : G.Being)
+def FactorHeld (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) (factor : PathFactor) (run : List G.Weld) : Prop :=
   ∃ w ∈ run, G.Actual w ∧ w.agent = b ∧
     PathFactor.blockerClass dr fr factor w ∧ G.HasSelfPoleIndex w
 
 /-- A factor is released when the fine being is quiet on its blocker class. -/
-def FactorReleased (dr : G.DoorReading) (b : G.Being)
+def FactorReleased (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) (factor : PathFactor) : Prop :=
   QuietOn G b (PathFactor.blockerClass dr fr factor)
 
 theorem not_factorHeld_of_factorReleased
-    {dr : G.DoorReading} {b : G.Being} {fr : G.FetterReading}
+    {dr : G.DoorReading} {b : Designatum} {fr : G.FetterReading}
     {factor : PathFactor} {run : List G.Weld}
-    (h : G.FactorReleased dr b fr factor) :
-    ¬ G.FactorHeld dr b fr factor run := by
+    (h : FactorReleased G dr b fr factor) :
+    ¬ FactorHeld G dr b fr factor run := by
   rintro ⟨w, _hmem, hactual, hagent, hclass, hidx⟩
   exact hidx (h w hactual hagent hclass)
 
 theorem factorReleased_rites_iff_ritesGrasp_cut
-    (dr : G.DoorReading) (b : G.Being) (fr : G.FetterReading) :
-    G.FactorReleased dr b fr .rites ↔
+    (dr : G.DoorReading) (b : Designatum) (fr : G.FetterReading) :
+    FactorReleased G dr b fr .rites ↔
       G.FetterCut b fr .ritesGrasp :=
   Iff.rfl
 
 theorem factorReleased_view_iff
-    (dr : G.DoorReading) (b : G.Being) (fr : G.FetterReading) :
-    G.FactorReleased dr b fr .view ↔
+    (dr : G.DoorReading) (b : Designatum) (fr : G.FetterReading) :
+    FactorReleased G dr b fr .view ↔
       G.FetterCut b fr .identityView ∧ G.FetterCut b fr .doubt := by
   constructor
   · intro h
@@ -139,8 +139,8 @@ theorem factorReleased_view_iff
     · exact hdoubt w hactual hagent hc
 
 theorem factorReleased_resolve_iff
-    (dr : G.DoorReading) (b : G.Being) (fr : G.FetterReading) :
-    G.FactorReleased dr b fr .resolve ↔
+    (dr : G.DoorReading) (b : Designatum) (fr : G.FetterReading) :
+    FactorReleased G dr b fr .resolve ↔
       G.FetterCut b fr .sensualDesire ∧ G.FetterCut b fr .illWill := by
   constructor
   · intro h
@@ -150,47 +150,47 @@ theorem factorReleased_resolve_iff
     · exact hsensual w hactual hagent hc
     · exact hill w hactual hagent hc
 
-def WaaStreamEnterer (dr : G.DoorReading) (b : G.Being)
+def WaaStreamEnterer (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) (run : List G.Weld) : Prop :=
-  G.FactorReleased dr b fr .rites ∧ G.FactorHeld dr b fr .view run
+  FactorReleased G dr b fr .rites ∧ FactorHeld G dr b fr .view run
 
-def WaaStreamWinner (dr : G.DoorReading) (b : G.Being)
+def WaaStreamWinner (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) : Prop :=
-  G.FactorReleased dr b fr .rites ∧ G.FactorReleased dr b fr .view
+  FactorReleased G dr b fr .rites ∧ FactorReleased G dr b fr .view
 
-def WaaOnceReturner (dr : G.DoorReading) (b : G.Being)
+def WaaOnceReturner (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) (run : List G.Weld) : Prop :=
-  G.WaaStreamWinner dr b fr ∧ G.FactorHeld dr b fr .resolve run
+  WaaStreamWinner G dr b fr ∧ FactorHeld G dr b fr .resolve run
 
-def WaaNonReturner (dr : G.DoorReading) (b : G.Being)
+def WaaNonReturner (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) : Prop :=
-  G.WaaStreamWinner dr b fr ∧ G.FactorReleased dr b fr .resolve
+  WaaStreamWinner G dr b fr ∧ FactorReleased G dr b fr .resolve
 
 theorem waaStreamWinner_iff_streamEntry_cutClasses
-    (dr : G.DoorReading) (b : G.Being) (fr : G.FetterReading) :
-    G.WaaStreamWinner dr b fr ↔
+    (dr : G.DoorReading) (b : Designatum) (fr : G.FetterReading) :
+    WaaStreamWinner G dr b fr ↔
       QuietOn G b (Path.cutClasses fr .streamEntry) := by
   constructor
   · rintro ⟨hrites, hview⟩ w hactual hagent hclass
-    rcases (G.ritesView_union_covers_streamEntry_fetters dr fr w).mpr hclass with
+    rcases (ritesView_union_covers_streamEntry_fetters G dr fr w).mpr hclass with
       hritesClass | hviewClass
     · exact hrites w hactual hagent hritesClass
     · exact hview w hactual hagent hviewClass
   · intro hcut
     constructor
     · exact quietOn_mono
-        (fun w hc => (G.ritesView_union_covers_streamEntry_fetters dr fr w).mp
+        (fun w hc => (ritesView_union_covers_streamEntry_fetters G dr fr w).mp
           (Or.inl hc)) hcut
     · exact quietOn_mono
-        (fun w hc => (G.ritesView_union_covers_streamEntry_fetters dr fr w).mp
+        (fun w hc => (ritesView_union_covers_streamEntry_fetters G dr fr w).mp
           (Or.inr hc)) hcut
 
 theorem waaNonReturner_iff_nonReturn_cut
-    (dr : G.DoorReading) (b : G.Being) (fr : G.FetterReading) :
-    G.WaaNonReturner dr b fr ↔ QuietOn G b (Path.cutClasses fr .nonReturn) := by
+    (dr : G.DoorReading) (b : Designatum) (fr : G.FetterReading) :
+    WaaNonReturner G dr b fr ↔ QuietOn G b (Path.cutClasses fr .nonReturn) := by
   constructor
   · rintro ⟨hstream, hresolve⟩ w hactual hagent hclass
-    rcases (G.lower_fetters_covered_by_rites_view_resolve dr fr w).mpr hclass with
+    rcases (lower_fetters_covered_by_rites_view_resolve G dr fr w).mpr hclass with
       hrites | hview | hresolveClass
     · exact hstream.left w hactual hagent hrites
     · exact hstream.right w hactual hagent hview
@@ -198,46 +198,46 @@ theorem waaNonReturner_iff_nonReturn_cut
   · intro hcut
     refine ⟨⟨?_, ?_⟩, ?_⟩
     · exact quietOn_mono
-        (fun w hc => (G.lower_fetters_covered_by_rites_view_resolve dr fr w).mp
+        (fun w hc => (lower_fetters_covered_by_rites_view_resolve G dr fr w).mp
           (Or.inl hc)) hcut
     · exact quietOn_mono
-        (fun w hc => (G.lower_fetters_covered_by_rites_view_resolve dr fr w).mp
+        (fun w hc => (lower_fetters_covered_by_rites_view_resolve G dr fr w).mp
           (Or.inr (Or.inl hc))) hcut
     · exact quietOn_mono
-        (fun w hc => (G.lower_fetters_covered_by_rites_view_resolve dr fr w).mp
+        (fun w hc => (lower_fetters_covered_by_rites_view_resolve G dr fr w).mp
           (Or.inr (Or.inr hc))) hcut
 
 theorem waaNonReturner_of_quietOn_univ
-    (dr : G.DoorReading) (b : G.Being) (fr : G.FetterReading)
+    (dr : G.DoorReading) (b : Designatum) (fr : G.FetterReading)
     (h : QuietOn G b (fun _ => True)) :
-    G.WaaNonReturner dr b fr :=
-  (G.waaNonReturner_iff_nonReturn_cut dr b fr).mpr (quietOn_univ h)
+    WaaNonReturner G dr b fr :=
+  (waaNonReturner_iff_nonReturn_cut G dr b fr).mpr (quietOn_univ h)
 
 theorem waaStreamWinner_of_waaNonReturner
-    {dr : G.DoorReading} {b : G.Being} {fr : G.FetterReading}
-    (h : G.WaaNonReturner dr b fr) : G.WaaStreamWinner dr b fr :=
+    {dr : G.DoorReading} {b : Designatum} {fr : G.FetterReading}
+    (h : WaaNonReturner G dr b fr) : WaaStreamWinner G dr b fr :=
   h.left
 
 theorem not_waaStreamEnterer_of_waaStreamWinner
-    {dr : G.DoorReading} {b : G.Being} {fr : G.FetterReading}
-    {run : List G.Weld} (h : G.WaaStreamWinner dr b fr) :
-    ¬ G.WaaStreamEnterer dr b fr run := by
+    {dr : G.DoorReading} {b : Designatum} {fr : G.FetterReading}
+    {run : List G.Weld} (h : WaaStreamWinner G dr b fr) :
+    ¬ WaaStreamEnterer G dr b fr run := by
   intro henterer
-  exact (G.not_factorHeld_of_factorReleased h.right) henterer.right
+  exact (not_factorHeld_of_factorReleased G h.right) henterer.right
 
 /-- When view-factor release uses the supplied owner-claim/mind-door
     factoring, a stream winner has no defiled identity-view voicing. -/
 theorem streamWinner_no_identityView_voicing
     {L : ClaimLanguage G} (sr : SpeechReading G L) (vr : ViewReading G L)
-    (b : G.Being) (fr : G.FetterReading)
+    (b : Designatum) (fr : G.FetterReading)
     (hfactor : ∀ w : G.Weld,
       fr.provocationClass Fetter.identityView w ↔
         sr.door w = .mind ∧
           ∃ content, sr.voices w = some content ∧ vr.ownerClaim content)
-    (h : G.WaaStreamWinner sr.toDoorReading b fr) :
+    (h : WaaStreamWinner G sr.toDoorReading b fr) :
     NoDefiledVoicing sr b vr.ownerClaim .mind :=
   (G.identityView_cut_iff_noDefiledVoicing sr vr b fr hfactor).mp
-    ((G.factorReleased_view_iff sr.toDoorReading b fr).mp h.right).left
+    ((factorReleased_view_iff G sr.toDoorReading b fr).mp h.right).left
 
 /- Once-return attenuation remains a finite share-drop display, now over a
    weld-class rather than a call-class. -/
@@ -249,15 +249,15 @@ def ShareDropRunOn (before : Config Contrib) (ws : G.Weld → Prop)
 def ShareDropRunOnFactor (dr : G.DoorReading) (fr : G.FetterReading)
     (factor : PathFactor) (run : List G.Weld) : Prop :=
   ∃ before : Config Contrib,
-    G.ShareDropRunOn before (PathFactor.blockerClass dr fr factor) run
+    ShareDropRunOn G before (PathFactor.blockerClass dr fr factor) run
 
-def WaaResolveAttenuation (dr : G.DoorReading) (_b : G.Being)
+def WaaResolveAttenuation (dr : G.DoorReading) (_b : Designatum)
     (fr : G.FetterReading) (run : List G.Weld) : Prop :=
   ∃ (before : Config Contrib) (received : G.Weld) (rest : List G.Weld),
     run = received :: rest ∧
-      G.ShareDropRunOn before (PathFactor.blockerClass dr fr .resolve) run ∧
+      ShareDropRunOn G before (PathFactor.blockerClass dr fr .resolve) run ∧
       ¬ AtBot before.tendency ∧
-      ¬ AtBot ((G.rePitchRun before run).tendency)
+      ¬ AtBot ((Grid.rePitchRun G before run).tendency)
 
 def registerFactorDoorReading : registerClockGrid.DoorReading where
   door _ := .body
@@ -266,21 +266,20 @@ def registerResolveFactorReading : registerClockGrid.FetterReading where
   provocationClass f _ := match f with | .sensualDesire => True | _ => False
 
 def registerResolveWeld : registerClockGrid.Weld :=
-  ⟨(show registerClockGrid.Being from (2 : Nat)), (),
-    (show registerClockGrid.Response from (3 : Nat))⟩
+  registerWeld 2
 def registerResolveRun : List registerClockGrid.Weld := [registerResolveWeld]
 
 theorem registerResolve_streamWinner :
-    registerClockGrid.WaaStreamWinner registerFactorDoorReading
-      (show registerClockGrid.Being from (2 : Nat))
+    WaaStreamWinner registerClockGrid registerFactorDoorReading
+      (RegisterCase.register 2)
       registerResolveFactorReading := by
   constructor <;> intro w _hactual _hagent hclass
   · cases hclass
   · rcases hclass with h | h <;> cases h
 
 theorem registerResolve_held :
-    registerClockGrid.FactorHeld registerFactorDoorReading
-      (show registerClockGrid.Being from (2 : Nat))
+    FactorHeld registerClockGrid registerFactorDoorReading
+      (RegisterCase.register 2)
       registerResolveFactorReading .resolve registerResolveRun := by
   refine ⟨registerResolveWeld, by simp [registerResolveRun], rfl, rfl,
     Or.inl True.intro, ?_⟩
@@ -290,8 +289,8 @@ theorem registerResolve_held :
   decide
 
 theorem registerResolve_attenuation :
-    registerClockGrid.WaaResolveAttenuation registerFactorDoorReading
-      (show registerClockGrid.Being from (2 : Nat))
+    WaaResolveAttenuation registerClockGrid registerFactorDoorReading
+      (RegisterCase.register 2)
       registerResolveFactorReading registerResolveRun := by
   refine ⟨{ tendency := 5 }, registerResolveWeld, [], rfl, ?_, ?_, ?_⟩
   · constructor
@@ -316,8 +315,8 @@ theorem registerResolve_attenuation :
     decide
 
 theorem registerResolve_not_released :
-    ¬ registerClockGrid.FactorReleased registerFactorDoorReading
-      (show registerClockGrid.Being from (2 : Nat))
+    ¬ FactorReleased registerClockGrid registerFactorDoorReading
+      (RegisterCase.register 2)
       registerResolveFactorReading .resolve := by
   intro hrelease
   have hbot := hrelease registerResolveWeld rfl rfl (Or.inl True.intro)
@@ -326,14 +325,14 @@ theorem registerResolve_not_released :
   exact Nat.not_succ_le_zero 1 hbot
 
 theorem waaOnceReturner_attenuation_witness :
-    registerClockGrid.WaaOnceReturner registerFactorDoorReading
-        (show registerClockGrid.Being from (2 : Nat))
+    WaaOnceReturner registerClockGrid registerFactorDoorReading
+        (RegisterCase.register 2)
         registerResolveFactorReading registerResolveRun ∧
-      registerClockGrid.WaaResolveAttenuation registerFactorDoorReading
-        (show registerClockGrid.Being from (2 : Nat))
+      WaaResolveAttenuation registerClockGrid registerFactorDoorReading
+        (RegisterCase.register 2)
         registerResolveFactorReading registerResolveRun ∧
-      ¬ registerClockGrid.FactorReleased registerFactorDoorReading
-        (show registerClockGrid.Being from (2 : Nat))
+      ¬ FactorReleased registerClockGrid registerFactorDoorReading
+        (RegisterCase.register 2)
         registerResolveFactorReading .resolve :=
   ⟨⟨registerResolve_streamWinner, registerResolve_held⟩,
     registerResolve_attenuation, registerResolve_not_released⟩
@@ -342,40 +341,70 @@ def RunsExhibitFactorOrder (dr : G.DoorReading) (fr : G.FetterReading)
     (runs : List (List G.Weld)) : Prop :=
   ∃ ritesRun viewRun resolveRun : List G.Weld,
     runs = [ritesRun, viewRun, resolveRun] ∧
-      G.ShareDropRunOnFactor dr fr .rites ritesRun ∧
-      G.ShareDropRunOnFactor dr fr .view viewRun ∧
-      G.ShareDropRunOnFactor dr fr .resolve resolveRun
+      ShareDropRunOnFactor G dr fr .rites ritesRun ∧
+      ShareDropRunOnFactor G dr fr .view viewRun ∧
+      ShareDropRunOnFactor G dr fr .resolve resolveRun
 
-def WaaSerialFactorRegime (dr : G.DoorReading) (b : G.Being)
+def WaaSerialFactorRegime (dr : G.DoorReading) (b : Designatum)
     (fr : G.FetterReading) (runs : List (List G.Weld)) : Prop :=
-  G.RunsExhibitFactorOrder dr fr runs →
-    (∀ run ∈ runs, G.WaaStreamEnterer dr b fr run →
-      G.WaaStreamWinner dr b fr) ∧
-    (∀ run ∈ runs, G.WaaOnceReturner dr b fr run →
-      G.WaaNonReturner dr b fr)
+  RunsExhibitFactorOrder G dr fr runs →
+    (∀ run ∈ runs, WaaStreamEnterer G dr b fr run →
+      WaaStreamWinner G dr b fr) ∧
+    (∀ run ∈ runs, WaaOnceReturner G dr b fr run →
+      WaaNonReturner G dr b fr)
 
 theorem waaSerialFactorRegime_conditional
-    {dr : G.DoorReading} {b : G.Being} {fr : G.FetterReading}
+    {dr : G.DoorReading} {b : Designatum} {fr : G.FetterReading}
     {runs : List (List G.Weld)}
-    (hregime : G.WaaSerialFactorRegime dr b fr runs)
-    (horder : G.RunsExhibitFactorOrder dr fr runs) :
-    (∀ run ∈ runs, G.WaaStreamEnterer dr b fr run →
-      G.WaaStreamWinner dr b fr) ∧
-    (∀ run ∈ runs, G.WaaOnceReturner dr b fr run →
-      G.WaaNonReturner dr b fr) :=
+    (hregime : WaaSerialFactorRegime G dr b fr runs)
+    (horder : RunsExhibitFactorOrder G dr fr runs) :
+    (∀ run ∈ runs, WaaStreamEnterer G dr b fr run →
+      WaaStreamWinner G dr b fr) ∧
+    (∀ run ∈ runs, WaaOnceReturner G dr b fr run →
+      WaaNonReturner G dr b fr) :=
   hregime horder
 
 theorem waaSuddenArrival_consistent_with_factorScheme
     {before : Config Contrib} {received : G.Weld}
     (dr : G.DoorReading) (fr : G.FetterReading)
-    (hsudden : G.WaaSuddenArrival before received)
+    (hsudden : Grid.WaaSuddenArrival G before received)
     (hquiet : QuietOn G received.agent (fun _ => True)) :
-    G.WaaSuddenArrival before received ∧
-      G.WaaStreamWinner dr received.agent fr ∧
-        G.WaaNonReturner dr received.agent fr := by
-  have hnon := G.waaNonReturner_of_quietOn_univ dr received.agent fr hquiet
+    Grid.WaaSuddenArrival G before received ∧
+      WaaStreamWinner G dr received.agent fr ∧
+        WaaNonReturner G dr received.agent fr := by
+  have hnon := waaNonReturner_of_quietOn_univ
+    G dr received.agent fr hquiet
   exact ⟨hsudden, hnon.left, hnon⟩
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev FactorHeld (G : CoreReadings Designatum Contrib) :=
+  Grid.FactorHeld G
+abbrev FactorReleased (G : CoreReadings Designatum Contrib) :=
+  Grid.FactorReleased G
+abbrev WaaStreamEnterer (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaStreamEnterer G
+abbrev WaaStreamWinner (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaStreamWinner G
+abbrev WaaOnceReturner (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaOnceReturner G
+abbrev WaaNonReturner (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaNonReturner G
+abbrev ShareDropRunOn (G : CoreReadings Designatum Contrib) :=
+  Grid.ShareDropRunOn G
+abbrev ShareDropRunOnFactor (G : CoreReadings Designatum Contrib) :=
+  Grid.ShareDropRunOnFactor G
+abbrev WaaResolveAttenuation (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaResolveAttenuation G
+abbrev RunsExhibitFactorOrder (G : CoreReadings Designatum Contrib) :=
+  Grid.RunsExhibitFactorOrder G
+abbrev WaaSerialFactorRegime (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaSerialFactorRegime G
+
+end CoreReadings
 
 end WAA

@@ -10,9 +10,10 @@ Reading and motivation: Identification/Commentary.lean, C.3.
 import WeldAndArrow.Meta.Invariance
 
 namespace WAA
-/- ==============================================================================
-   Negative example: equality-at-bottom does not transport
-============================================================================== -/
+
+/- ==========================================================================
+   Equality with a chosen bottom token does not transport
+============================================================================ -/
 
 namespace InvarianceNegative
 
@@ -21,143 +22,186 @@ inductive TwoBottom
   | other
 
 instance : PreorderBot TwoBottom where
-  le       := fun _ _ => True
-  le_refl  := fun _ => True.intro
+  le := fun _ _ => True
+  le_refl := fun _ => True.intro
   le_trans := fun _ _ => True.intro
-  bot      := TwoBottom.chosen
-  bot_le   := fun _ => True.intro
+  bot := .chosen
+  bot_le := fun _ => True.intro
 
 instance : PreorderBot Unit where
-  le       := fun _ _ => True
-  le_refl  := fun _ => True.intro
+  le := fun _ _ => True
+  le_refl := fun _ => True.intro
   le_trans := fun _ _ => True.intro
-  bot      := ()
-  bot_le   := fun _ => True.intro
+  bot := ()
+  bot_le := fun _ => True.intro
 
 def mergeToUnit : DisplayReparam TwoBottom Unit where
   toFun _ := ()
   le_iff _ _ := ⟨fun _ => True.intro, fun _ => True.intro⟩
   atBot_bot := True.intro
 
-def twoBottomGrid : Grid TwoBottom where
-  Being      := Unit
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := TwoBottom.other
-  conditions _ _ := False
+def unitOccurrence : OccurrenceReading Unit where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent := id
+  call := id
+  response := id
 
-/-- The old, equality-token version of terminus, kept only for this
-    counterexample. It is not the system predicate. -/
-def OldEqTerminus {Contrib : Type} [PreorderBot Contrib]
-    (G : Grid Contrib) (b : G.Being) : Prop :=
-  ∀ c r, G.respondsTo b c = some r → G.grade b c r = shareBot
+def twoBottomGrid : CoreReadings Unit TwoBottom where
+  occurrence := unitOccurrence
+  response := { respondsTo := fun _ _ => some () }
+  placement := { grade := fun _ => .other }
+  conditioning := { conditions := fun _ _ => False }
 
-theorem twoBottomGrid_terminus : twoBottomGrid.Terminus () :=
-  fun _ _ _ => True.intro
+def twoBottomWeld : twoBottomGrid.Weld :=
+  ⟨(), True.intro⟩
 
-theorem not_oldEqTerminus_twoBottomGrid : ¬ OldEqTerminus twoBottomGrid () := by
+/-- The retired equality-token terminus, retained only as a counterexample.
+    The system predicate uses the pole-class `AtBot`. -/
+def OldEqTerminus {Designatum Contrib : Type} [PreorderBot Contrib]
+    (G : CoreReadings Designatum Contrib) (b : Designatum) : Prop :=
+  ∀ w : G.Weld, G.Actual w → w.agent = b → G.share w = shareBot
+
+theorem twoBottomGrid_terminus : twoBottomGrid.Terminus () := by
+  intro _w _hactual _hagent
+  exact True.intro
+
+theorem not_oldEqTerminus_twoBottomGrid :
+    ¬ OldEqTerminus twoBottomGrid () := by
   intro h
-  have hbad : TwoBottom.other = TwoBottom.chosen := h () () rfl
+  have hbad : TwoBottom.other = TwoBottom.chosen :=
+    h twoBottomWeld rfl rfl
   cases hbad
 
-theorem oldEqTerminus_map_mergeToUnit : OldEqTerminus (twoBottomGrid.map mergeToUnit) () :=
-  fun _ _ _ => rfl
+theorem oldEqTerminus_map_mergeToUnit :
+    OldEqTerminus (twoBottomGrid.map mergeToUnit) () := by
+  intro _w _hactual _hagent
+  rfl
 
-/-- The new predicate transports across the merge, while the old equality-token
-    predicate would hold after the merge and fail before it. -/
+/-- Pole-class terminus transports, whereas equality with one selected bottom
+    representative does not. -/
 theorem oldEqTerminus_not_invariant :
-    ((twoBottomGrid.map mergeToUnit).Terminus () ↔ twoBottomGrid.Terminus ()) ∧
+    ((twoBottomGrid.map mergeToUnit).Terminus () ↔
+        twoBottomGrid.Terminus ()) ∧
       OldEqTerminus (twoBottomGrid.map mergeToUnit) () ∧
       ¬ OldEqTerminus twoBottomGrid () :=
-  ⟨twoBottomGrid.map_terminus_iff mergeToUnit (),
-    fun _ _ _ => rfl,
-    by
-      intro h
-      have hbad : TwoBottom.other = TwoBottom.chosen := h () () rfl
-      cases hbad⟩
+  ⟨Grid.map_terminus_iff twoBottomGrid mergeToUnit (),
+    oldEqTerminus_map_mergeToUnit,
+    not_oldEqTerminus_twoBottomGrid⟩
 
 end InvarianceNegative
 
-/- ==============================================================================
+/- ==========================================================================
    Configuration leak witnesses: honest limits of non-storage
-============================================================================== -/
+============================================================================ -/
 
 namespace ConfigLeakWitness
 
-/-- The blanket noninterference reading of "nothing indexed is stored" is
-    false: in the register clock, the re-pitched tendency extensionally
-    recovers the received weld's agent tag. This is deliberate — grading may
-    depend on the agent — and is why the checked non-storage claim is typing
-    plus equivariance, never information flow. -/
+/-- In the register clock, re-pitching exposes the received occurrence's
+    register number. This is a model-specific information-flow fact, not a
+    typed agent field stored in `Config`. -/
 theorem registerClock_config_recovers_agent :
-    ∀ (before : Config Nat) (w : registerClockGrid.Weld),
-      (registerClockGrid.rePitch before w).tendency = w.agent := by
-  intro _ _
+    ∀ (before : Config Nat) (n : Nat),
+      (registerClockGrid.rePitch before (registerWeld n)).tendency = n := by
+  intro _before _n
   rfl
 
-/-- Under a share collision, no function from configurations correctly
-    recovers the acting agent for every actual weld: the two receptions
-    re-pitch to the same configuration. -/
+/-- A share collision prevents uniform recovery of the acting designatum from
+    the re-pitched configuration, even when recovery is requested only for
+    actual occurrence-generated welds. -/
 theorem no_agent_recovery_from_config_of_share_collision :
-    ¬ ∃ recover : Config Nat → shareCollisionGrid.Being,
+    ¬ ∃ recover : Config Nat → ShareCollisionCase,
         ∀ (before : Config Nat) (w : shareCollisionGrid.Weld),
           shareCollisionGrid.Actual w →
             recover (shareCollisionGrid.rePitch before w) = w.agent := by
   rintro ⟨recover, correct⟩
   let before : Config Nat := { tendency := 0 }
-  let leftWeld : shareCollisionGrid.Weld :=
-    ⟨ShareCollisionBeing.left, (), ()⟩
-  let rightWeld : shareCollisionGrid.Weld :=
-    ⟨ShareCollisionBeing.right, (), ()⟩
-  have hleft := correct before leftWeld (by rfl)
-  have hright := correct before rightWeld (by rfl)
-  have hagents : ShareCollisionBeing.left = ShareCollisionBeing.right := by
-    exact hleft.symm.trans hright
+  have hleft := correct before shareCollisionLeft (by rfl)
+  have hright := correct before shareCollisionRight (by rfl)
+  have hcfg :
+      shareCollisionGrid.rePitch before shareCollisionLeft =
+        shareCollisionGrid.rePitch before shareCollisionRight := by
+    rfl
+  rw [hcfg] at hleft
+  have hagents : ShareCollisionCase.left = ShareCollisionCase.right :=
+    hleft.symm.trans hright
   cases hagents
 
 end ConfigLeakWitness
 
-/- Reading and motivation: Identification/Commentary.lean, C.3. -/
+/- ==========================================================================
+   Direction is not recoverable from symmetric conditioning
+============================================================================ -/
 
 namespace DirectionNegative
 
-/-- One being, two calls, one response: a small carrier with two orientations. -/
-abbrev W := RawWeld Unit Bool Unit
+inductive DirectionCase
+  | agent
+  | callFalse
+  | callTrue
+  | response
+  | occurrenceFalse
+  | occurrenceTrue
+  deriving DecidableEq
 
-/-- The weld at the `false` call. -/
-def wFalse : W := ⟨(), false, ()⟩
+def directionOccurrence : OccurrenceReading DirectionCase where
+  occurrence
+    | .occurrenceFalse | .occurrenceTrue => True
+    | _ => False
+  isBeing d := d = .agent
+  isCall d := d = .callFalse ∨ d = .callTrue
+  isResponse d := d = .response
+  agent
+    | .occurrenceFalse | .occurrenceTrue => .agent
+    | d => d
+  call
+    | .occurrenceFalse => .callFalse
+    | .occurrenceTrue => .callTrue
+    | d => d
+  response
+    | .occurrenceFalse | .occurrenceTrue => .response
+    | d => d
 
-/-- The weld at the `true` call. -/
-def wTrue : W := ⟨(), true, ()⟩
+abbrev W := directionOccurrence.Weld
 
-/-- The web read one way: the `false`-weld conditions the `true`-weld. -/
-def forwardGrid : Grid Nat where
-  Being      := Unit
-  Call       := Bool
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions w₁ w₂ := w₁.call = false ∧ w₂.call = true
+def wFalse : W := ⟨.occurrenceFalse, True.intro⟩
+def wTrue : W := ⟨.occurrenceTrue, True.intro⟩
 
-/-- The same web read the other way: only `conditions` is reversed. -/
-def backwardGrid : Grid Nat where
-  Being      := Unit
-  Call       := Bool
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions w₁ w₂ := w₁.call = true ∧ w₂.call = false
+def forwardGrid : CoreReadings DirectionCase Nat where
+  occurrence := directionOccurrence
+  response := {
+    respondsTo := fun b c =>
+      if b = .agent ∧ (c = .callFalse ∨ c = .callTrue)
+      then some .response
+      else none
+  }
+  placement := { grade := fun _ => 0 }
+  conditioning := {
+    conditions := fun d₁ d₂ =>
+      d₁ = .occurrenceFalse ∧ d₂ = .occurrenceTrue
+  }
 
-/-- The two orientations agree on the symmetric closure at every pair. -/
+def backwardGrid : CoreReadings DirectionCase Nat where
+  occurrence := directionOccurrence
+  response := forwardGrid.response
+  placement := forwardGrid.placement
+  conditioning := {
+    conditions := fun d₁ d₂ =>
+      d₁ = .occurrenceTrue ∧ d₂ = .occurrenceFalse
+  }
+
 theorem conditionsEither_agrees (w₁ w₂ : W) :
-    forwardGrid.ConditionsEither w₁ w₂ ↔ backwardGrid.ConditionsEither w₁ w₂ :=
-  ⟨fun h => h.elim (fun ⟨h1, h2⟩ => Or.inr ⟨h2, h1⟩)
-                   (fun ⟨h1, h2⟩ => Or.inl ⟨h2, h1⟩),
-   fun h => h.elim (fun ⟨h1, h2⟩ => Or.inr ⟨h2, h1⟩)
-                   (fun ⟨h1, h2⟩ => Or.inl ⟨h2, h1⟩)⟩
+    forwardGrid.ConditionsEither w₁ w₂ ↔
+      backwardGrid.ConditionsEither w₁ w₂ :=
+  ⟨fun h => h.elim
+      (fun ⟨h₁, h₂⟩ => Or.inr ⟨h₂, h₁⟩)
+      (fun ⟨h₁, h₂⟩ => Or.inl ⟨h₂, h₁⟩),
+   fun h => h.elim
+      (fun ⟨h₁, h₂⟩ => Or.inr ⟨h₂, h₁⟩)
+      (fun ⟨h₁, h₂⟩ => Or.inl ⟨h₂, h₁⟩)⟩
 
-/-- They disagree on `conditions` at the witness pair. -/
 theorem conditions_disagree :
     forwardGrid.conditions wFalse wTrue ∧
       ¬ backwardGrid.conditions wFalse wTrue := by
@@ -166,373 +210,338 @@ theorem conditions_disagree :
   · intro h
     cases h.left
 
-/- Reading and motivation: Identification/Commentary.lean, C.3. -/
 theorem no_direction_recovery_from_conditionsEither :
     ¬ ∃ recover : (W → W → Prop) → (W → W → Prop),
         recover forwardGrid.ConditionsEither = forwardGrid.conditions ∧
         recover backwardGrid.ConditionsEither = backwardGrid.conditions := by
   rintro ⟨recover, hf, hb⟩
-  have hsame : forwardGrid.ConditionsEither = backwardGrid.ConditionsEither := by
+  have hsame :
+      forwardGrid.ConditionsEither = backwardGrid.ConditionsEither := by
     funext w₁ w₂
     exact propext (conditionsEither_agrees w₁ w₂)
   have hcond : forwardGrid.conditions = backwardGrid.conditions := by
     rw [← hf, hsame, hb]
   exact conditions_disagree.right (hcond ▸ conditions_disagree.left)
 
-/-- The equilibrium-pole face, on the existing negative carrier: where
-    everything is order-equivalent, nothing is strict. -/
-theorem not_strict_twoBottom (a b : InvarianceNegative.TwoBottom) : ¬ Strict a b :=
-  no_strict_of_all_orderEq (fun _ _ => ⟨True.intro, True.intro⟩) a b
+theorem not_strict_twoBottom
+    (a b : InvarianceNegative.TwoBottom) : ¬ Strict a b :=
+  no_strict_of_all_orderEq
+    (fun _ _ => ⟨True.intro, True.intro⟩) a b
 
 end DirectionNegative
 
-/- ==============================================================================
-   Direction-coarsening witnesses
-============================================================================== -/
-
 namespace DirectionCoarseningWitness
 
-open Grid.DirectedConvention
-open Grid.DirectedConvention.DirectionCoarsening
-
-/-- The raw register-clock read through a one-tick delivery clock. -/
-def registerClockUnitTick : DirectionCoarsening registerClockGrid Unit where
-  tick _ := ()
-
-def registerClockLow : registerClockGrid.Weld :=
-  ⟨(0 : Nat), (), (1 : Nat)⟩
-
-def registerClockHigh : registerClockGrid.Weld :=
-  ⟨(1 : Nat), (), (2 : Nat)⟩
-
-/-- Honest snag: the raw `Nat` register display is injective on registers, so a
-    universal tick cannot be resolution-bounded. -/
-theorem registerClock_unitTick_not_resolutionBounded :
-    ¬ registerClockUnitTick.ResolutionBounded := by
-  intro h
-  have hEq : OrderEq (registerClockGrid.share registerClockLow)
-      (registerClockGrid.share registerClockHigh) :=
-    h registerClockLow registerClockHigh rfl
-  have hle : (1 : Nat) ≼ 0 := by
-    simpa [Grid.share, registerClockGrid, registerClockLow, registerClockHigh] using hEq.right
-  change (1 : Nat) ≤ 0 at hle
-  cases hle
-
-/-- A fully coarse display of the same register-clock response and delivery
-    shape. The carrier is already one-point, so this is the slow-clock limit
-    after display choice, not a collapse of the raw `Nat` order. -/
-def fullyCoarseRegisterClockGrid : Grid Unit where
-  Being      := Nat
-  Call       := Unit
-  Response   := Nat
-  respondsTo n _ := some (n + 1)
-  grade _ _ _ := ()
-  conditions deed reception := reception.agent = deed.response
-
-def fullyCoarseRegisterClockUnitTick :
-    DirectionCoarsening fullyCoarseRegisterClockGrid Unit where
-  tick _ := ()
-
-/-- The fully coarse display is resolution-bounded by construction. -/
-theorem fullyCoarseRegisterClock_resolutionBounded :
-    fullyCoarseRegisterClockUnitTick.ResolutionBounded := by
-  intro _w₁ _w₂ _hsame
-  exact ⟨True.intro, True.intro⟩
-
-/-- The target one-point carrier is direction-void, obtained through the
-    existing legal display collapse from the all-equivalent `TwoBottom`
-    carrier. -/
+/-- The one-point carrier is direction-void. The proof deliberately uses the
+    legal display collapse retained by the positive transport API. -/
 theorem unit_directionVoid_via_mergeToUnit : DirectionVoid Unit :=
-  DisplayReparam.directionVoid_of_surjective InvarianceNegative.mergeToUnit
+  DisplayReparam.directionVoid_of_surjective
+    InvarianceNegative.mergeToUnit
     (fun b => ⟨InvarianceNegative.TwoBottom.chosen, by cases b; rfl⟩)
-    (fun a b => DirectionNegative.not_strict_twoBottom a b)
+    DirectionNegative.not_strict_twoBottom
 
-/-- In the fully coarse register-clock display, no pair of weld-shares carries
-    strict time-direction. -/
-theorem fullyCoarseRegisterClock_no_timeDirection
-    (w₁ w₂ : fullyCoarseRegisterClockGrid.Weld) :
-    ¬ TimeDirection (fullyCoarseRegisterClockGrid.share w₁)
-        (fullyCoarseRegisterClockGrid.share w₂) :=
-  fullyCoarseRegisterClockUnitTick.no_timeDirection_of_resolutionBounded_subsingleton
-    fullyCoarseRegisterClock_resolutionBounded (fun _ _ => rfl) w₁ w₂
+/-- Two occurrence events are enough for a resolution witness; their
+    agent/call/response readings are immaterial to the clock claim. -/
+inductive ResolutionEvent
+  | low
+  | high
+  deriving DecidableEq
 
-/-- Actual-inhabitation and internal-delivery witnesses for the macro register clock do
-    not consume direction-coarsening or resolution-boundedness hypotheses. -/
-theorem registerClock_directionCoarsening_independence :
-    (∀ {Tick : Type} (_ρ : DirectionCoarsening registerClockGrid Tick),
-        registerClockCoarsening.ActualFiberInhabited () ∧
-          registerClockCoarsening.SelfConditioningTag ()) ∧
-      (∀ {Tick : Type} (ρ : DirectionCoarsening registerClockGrid Tick),
-        ρ.ResolutionBounded ->
-          registerClockCoarsening.ActualFiberInhabited () ∧
-            registerClockCoarsening.SelfConditioningTag ()) := by
-  constructor
-  · intro _Tick _ρ
-    exact ⟨registerClock_macro_actualFiberInhabited,
-      registerClock_macro_selfConditioning⟩
-  · intro _Tick _ρ _hbounded
-    exact ⟨registerClock_macro_actualFiberInhabited,
-      registerClock_macro_selfConditioning⟩
+def resolutionOccurrence : OccurrenceReading ResolutionEvent where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent := id
+  call := id
+  response := id
+
+def resolutionGrid : CoreReadings ResolutionEvent Nat where
+  occurrence := resolutionOccurrence
+  response := { respondsTo := fun b _ => some b }
+  placement := {
+    grade
+      | .low => 0
+      | .high => 1
+  }
+  conditioning := { conditions := fun _ _ => False }
+
+def resolutionLow : resolutionGrid.Weld :=
+  ⟨.low, True.intro⟩
+
+def resolutionHigh : resolutionGrid.Weld :=
+  ⟨.high, True.intro⟩
+
+def oneTick : Grid.DirectedConvention.DirectionCoarsening resolutionGrid Unit where
+  tick _ := ()
+
+def eventTick :
+    Grid.DirectedConvention.DirectionCoarsening resolutionGrid ResolutionEvent where
+  tick w := w.1
+
+theorem oneTick_not_resolutionBounded :
+    ¬ oneTick.ResolutionBounded := by
+  intro h
+  have heq := h resolutionLow resolutionHigh rfl
+  change OrderEq (0 : Nat) 1 at heq
+  exact Nat.not_succ_le_zero 0 heq.right
+
+theorem eventTick_resolutionBounded :
+    eventTick.ResolutionBounded := by
+  intro w₁ w₂ hsame
+  have hweld : w₁ = w₂ := Subtype.ext hsame
+  subst w₂
+  exact orderEq_refl _
+
+/-- Resolution-boundedness belongs to the supplied clock: the same two-event
+    grid supports both a lawful resolving clock and a lawful over-coarse clock
+    that fails the bound. -/
+theorem twoResolution_directionCoarsening_independence :
+    eventTick.ResolutionBounded ∧ ¬ oneTick.ResolutionBounded :=
+  ⟨eventTick_resolutionBounded, oneTick_not_resolutionBounded⟩
 
 end DirectionCoarseningWitness
 
-/- ==============================================================================
+/- ==========================================================================
    Content-row countermodels
-============================================================================== -/
+============================================================================ -/
 
 namespace ContentNegative
 
+open Grid
 open Grid.DirectedConvention.BeingConvention.GridConvention
 
-def noActualGrid : Grid InvarianceNegative.TwoBottom where
-  Being      := Unit
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := none
-  grade _ _ _ := InvarianceNegative.TwoBottom.chosen
-  conditions _ _ := False
+/- --------------------------------------------------------------------------
+   A selected but unrealized occurrence
+-------------------------------------------------------------------------- -/
 
-def noActualWeld : noActualGrid.Weld :=
-  ⟨(), (), ()⟩
+inductive HypotheticalCase
+  | agent
+  | call
+  | response
+  | hypothetical
+  deriving DecidableEq
 
-theorem noActualGrid_no_actual :
-    ¬ ∃ w : noActualGrid.Weld, noActualGrid.Actual w := by
-  rintro ⟨w, hactual⟩
-  cases w with
-  | mk agent call response =>
-      cases agent
-      cases call
-      cases response
-      cases hactual
+def hypotheticalOccurrence : OccurrenceReading HypotheticalCase where
+  occurrence d := d = .hypothetical
+  isBeing d := d = .agent
+  isCall d := d = .call
+  isResponse d := d = .response
+  agent
+    | .hypothetical => .agent
+    | d => d
+  call
+    | .hypothetical => .call
+    | d => d
+  response
+    | .hypothetical => .response
+    | d => d
 
-theorem noActualGrid_no_liveTier (t : Grid.Tier noActualGrid) :
-    ¬ Grid.Tier.hasLiveShare noActualGrid t := by
+def hypotheticalGrid : CoreReadings HypotheticalCase Nat where
+  occurrence := hypotheticalOccurrence
+  response := { respondsTo := fun _ _ => none }
+  placement := { grade := fun _ => 0 }
+  conditioning := { conditions := fun _ _ => False }
+
+def hypotheticalWeld : hypotheticalGrid.Weld :=
+  ⟨.hypothetical, rfl⟩
+
+theorem hypotheticalGrid_no_actual :
+    ¬ ∃ w : hypotheticalGrid.Weld, hypotheticalGrid.Actual w := by
+  rintro ⟨⟨d, hd⟩, hactual⟩
+  change d = HypotheticalCase.hypothetical at hd
+  subst d
+  change (none : Option HypotheticalCase) = some .response at hactual
+  cases hactual
+
+theorem hypotheticalGrid_no_liveTier
+    (t : Grid.Tier hypotheticalGrid) :
+    ¬ Grid.Tier.hasLiveShare hypotheticalGrid t := by
   cases t with
   | floor =>
       intro h
       exact h
-  | actTime _ =>
-      intro hidx
-      exact hidx True.intro
+  | actTime _w =>
+      intro hlive
+      exact hlive (Nat.le_refl 0)
 
-theorem noActualWeld_no_live_share :
-    ¬ Grid.Tier.hasLiveShare noActualGrid (Grid.Tier.actTime noActualWeld) :=
-  noActualGrid_no_liveTier (Grid.Tier.actTime noActualWeld)
+theorem hypotheticalWeld_not_live :
+    ¬ hypotheticalGrid.HasSelfPoleIndex hypotheticalWeld :=
+  hypotheticalGrid_no_liveTier (.actTime hypotheticalWeld)
 
-theorem contentBeingsRow_not_fused_noActual :
-    ¬ (contentBeingsRow noActualGrid).Fused (Grid.Tier.actTime noActualWeld) := by
-  intro hfused
-  have hiff := hfused noActualWeld_no_live_share
-  have hdenial :
-      (contentLayerLanguage noActualGrid).TrueAt
-        (Grid.Tier.actTime noActualWeld) (.layerDenied .beings) := by
-    dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
-    exact noActualGrid_no_actual
-  exact noActualWeld_no_live_share (hiff.mpr hdenial)
-
-theorem contentBeingsRow_not_obeys_noActual :
-    ¬ (contentBeingsRow noActualGrid).ObeysSeparateFuse := by
-  intro h
-  exact contentBeingsRow_not_fused_noActual
-    (noActualGrid.fused_of_obeysSeparateFuse h (Grid.Tier.actTime noActualWeld))
-
-theorem contentGridLensRow_not_fused_noLive :
-    ¬ (contentGridLensRow noActualGrid).Fused (Grid.Tier.actTime noActualWeld) := by
-  intro hfused
-  have hiff := hfused noActualWeld_no_live_share
-  have hdenial :
-      (contentLayerLanguage noActualGrid).TrueAt
-        (Grid.Tier.actTime noActualWeld) (.layerDenied .gridLens) := by
-    dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
-    exact noActualGrid_no_liveTier
-  exact noActualWeld_no_live_share (hiff.mpr hdenial)
-
-theorem contentGridLensRow_not_obeys_noLive :
-    ¬ (contentGridLensRow noActualGrid).ObeysSeparateFuse := by
-  intro h
-  exact contentGridLensRow_not_fused_noLive
-    (noActualGrid.fused_of_obeysSeparateFuse h (Grid.Tier.actTime noActualWeld))
-
-def emptyBeingGrid : Grid InvarianceNegative.TwoBottom where
-  Being      := Empty
-  Call       := Unit
-  Response   := Unit
-  respondsTo b _ := Empty.elim b
-  grade b _ _ := Empty.elim b
-  conditions _ _ := False
-
-theorem emptyBeingGrid_no_actual :
-    ¬ ∃ w : emptyBeingGrid.Weld, emptyBeingGrid.Actual w := by
-  rintro ⟨w, _hactual⟩
-  cases w.agent
-
-theorem emptyBeingGrid_no_liveTier (t : Grid.Tier emptyBeingGrid) :
-    ¬ Grid.Tier.hasLiveShare emptyBeingGrid t := by
-  cases t with
-  | floor =>
-      intro h
-      exact h
-  | actTime w =>
-      cases w.agent
-
-theorem emptyBeingGrid_contentBeings_denial
-    (w : emptyBeingGrid.Weld) :
-    (contentLayerLanguage emptyBeingGrid).TrueAt (.actTime w)
-      (.layerDenied .beings) := by
+/-- An unrealized occurrence makes the beings-denial true at a non-live
+    act-time, so the content-bearing beings row cannot obey fusion there. -/
+theorem contentBeingsRow_not_obeys_hypothetical :
+    ¬ (contentBeingsRow hypotheticalGrid).ObeysSeparateFuse := by
+  apply contentLayerRow_not_obeys_of_nonlive_denial
+    (G := hypotheticalGrid) .beings hypotheticalWeld hypotheticalWeld_not_live
   dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
-  exact emptyBeingGrid_no_actual
+  exact hypotheticalGrid_no_actual
 
-theorem contentBeingsRow_fused_emptyBeing (t : Grid.Tier emptyBeingGrid) :
-    (contentBeingsRow emptyBeingGrid).Fused t := by
-  intro _hnot
-  cases t with
-  | floor =>
-      exact Iff.rfl
-  | actTime w =>
-      cases w.agent
+/-- The same unrealized occurrence supplies an act-time while the model has no
+    live tier anywhere, exposing the grid-lens row's required hypothesis. -/
+theorem contentGridLensRow_not_obeys_hypothetical :
+    ¬ (contentGridLensRow hypotheticalGrid).ObeysSeparateFuse := by
+  apply contentLayerRow_not_obeys_of_nonlive_denial
+    (G := hypotheticalGrid) .gridLens hypotheticalWeld hypotheticalWeld_not_live
+  dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
+  exact hypotheticalGrid_no_liveTier
 
-theorem contentBeingsRow_obeys_emptyBeing :
-    (contentBeingsRow emptyBeingGrid).ObeysSeparateFuse := by
-  constructor
-  · intro t hlive
-    exact False.elim (emptyBeingGrid_no_liveTier t hlive)
-  · intro t hnot
-    exact contentBeingsRow_fused_emptyBeing t hnot
+/-- Weld-grain content needs actuality just as beings content does. -/
+theorem contentWeldRow_not_obeys_hypothetical :
+    ¬ (contentWeldRow hypotheticalGrid).ObeysSeparateFuse := by
+  apply contentLayerRow_not_obeys_of_nonlive_denial
+    (G := hypotheticalGrid) .weldGrain hypotheticalWeld hypotheticalWeld_not_live
+  dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
+  exact hypotheticalGrid_no_actual
 
-def twoBottomWeld : InvarianceNegative.twoBottomGrid.Weld :=
-  ⟨(), (), ()⟩
+/- --------------------------------------------------------------------------
+   Actual but fixed response across two distinct calls
+-------------------------------------------------------------------------- -/
 
-theorem twoBottomGrid_directionVoid :
-    DirectionVoid InvarianceNegative.TwoBottom :=
-  DirectionNegative.not_strict_twoBottom
+inductive FixedResponseCase
+  | agent
+  | firstCall
+  | secondCall
+  | response
+  | firstOccurrence
+  | secondOccurrence
+  deriving DecidableEq
 
-theorem twoBottomWeld_no_live_share :
-    ¬ Grid.Tier.hasLiveShare InvarianceNegative.twoBottomGrid
-        (Grid.Tier.actTime twoBottomWeld) := by
-  intro hidx
-  exact hidx True.intro
+def fixedResponseOccurrence : OccurrenceReading FixedResponseCase where
+  occurrence d := d = .firstOccurrence ∨ d = .secondOccurrence
+  isBeing d := d = .agent
+  isCall d := d = .firstCall ∨ d = .secondCall
+  isResponse d := d = .response
+  agent
+    | .firstOccurrence | .secondOccurrence => .agent
+    | d => d
+  call
+    | .firstOccurrence => .firstCall
+    | .secondOccurrence => .secondCall
+    | d => d
+  response
+    | .firstOccurrence | .secondOccurrence => .response
+    | d => d
 
-theorem contentBeforeAfterRow_not_fused_twoBottom :
-    ¬ (contentBeforeAfterRow InvarianceNegative.twoBottomGrid).Fused
-        (Grid.Tier.actTime twoBottomWeld) := by
-  intro hfused
-  have hiff := hfused twoBottomWeld_no_live_share
-  have hdenial :
-      (contentLayerLanguage InvarianceNegative.twoBottomGrid).TrueAt
-        (Grid.Tier.actTime twoBottomWeld) (.layerDenied .directedTime) := by
-    dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
-    exact twoBottomGrid_directionVoid
-  exact twoBottomWeld_no_live_share (hiff.mpr hdenial)
+def fixedResponseReading : RespondsToReading FixedResponseCase where
+  respondsTo
+    | .agent, .firstCall => some .response
+    | .agent, .secondCall => some .response
+    | _, _ => none
+
+def fixedResponseGrid : CoreReadings FixedResponseCase Nat where
+  occurrence := fixedResponseOccurrence
+  response := fixedResponseReading
+  placement := { grade := fun _ => 0 }
+  conditioning := { conditions := fun _ _ => False }
+
+def fixedResponseFirst : fixedResponseGrid.Weld :=
+  ⟨.firstOccurrence, Or.inl rfl⟩
+
+def fixedResponseSecond : fixedResponseGrid.Weld :=
+  ⟨.secondOccurrence, Or.inr rfl⟩
+
+theorem fixedResponseFirst_actual :
+    fixedResponseGrid.Actual fixedResponseFirst :=
+  rfl
+
+theorem fixedResponseSecond_actual :
+    fixedResponseGrid.Actual fixedResponseSecond :=
+  rfl
+
+theorem fixedResponse_eq_of_some
+    {b c r : FixedResponseCase}
+    (h : fixedResponseReading.respondsTo b c = some r) :
+    r = .response := by
+  cases b <;> cases c <;>
+    simp [fixedResponseReading] at h ⊢ <;>
+    exact h.symm
+
+/-- Response invariance is substantive here: two distinct calls are mounted,
+    and both return the same response. -/
+theorem fixedResponseGrid_no_variation :
+    ∀ b : FixedResponseCase,
+      ¬ fixedResponseGrid.ResponseVariesWithCall b := by
+  intro b
+  rintro ⟨c₁, c₂, r₁, r₂, h₁, h₂, hne⟩
+  have hr₁ := fixedResponse_eq_of_some h₁
+  have hr₂ := fixedResponse_eq_of_some h₂
+  exact hne (hr₁.trans hr₂.symm)
+
+theorem fixedResponseFirst_not_live :
+    ¬ fixedResponseGrid.HasSelfPoleIndex fixedResponseFirst := by
+  intro hlive
+  exact hlive (Nat.le_refl 0)
+
+theorem contentIntraWeldArrowRow_not_obeys_fixedResponse :
+    ¬ (contentIntraWeldArrowRow fixedResponseGrid).ObeysSeparateFuse := by
+  apply contentLayerRow_not_obeys_of_nonlive_denial
+    (G := fixedResponseGrid) .intraWeldArrow fixedResponseFirst
+      fixedResponseFirst_not_live
+  dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
+  exact fixedResponseGrid_no_variation
+
+/- --------------------------------------------------------------------------
+   Direction denial at a non-live occurrence
+-------------------------------------------------------------------------- -/
 
 theorem contentBeforeAfterRow_not_obeys_twoBottom :
     ¬ (contentBeforeAfterRow InvarianceNegative.twoBottomGrid).ObeysSeparateFuse := by
-  intro h
-  exact contentBeforeAfterRow_not_fused_twoBottom
-    (InvarianceNegative.twoBottomGrid.fused_of_obeysSeparateFuse h
-      (Grid.Tier.actTime twoBottomWeld))
-
-def constantResponseGrid : Grid InvarianceNegative.TwoBottom where
-  Being      := Unit
-  Call       := Bool
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := InvarianceNegative.TwoBottom.chosen
-  conditions _ _ := False
-
-def constantResponseWeld : constantResponseGrid.Weld :=
-  ⟨(), false, ()⟩
-
-theorem constantResponseGrid_no_variation :
-    ∀ b : constantResponseGrid.Being,
-      ¬ constantResponseGrid.ResponseVariesWithCall b := by
-  intro _b h
-  rcases h with ⟨_c₁, _c₂, r₁, r₂, _h₁, _h₂, hne⟩
-  cases r₁
-  cases r₂
-  exact hne rfl
-
-theorem constantResponseWeld_no_live_share :
-    ¬ Grid.Tier.hasLiveShare constantResponseGrid
-        (Grid.Tier.actTime constantResponseWeld) := by
-  intro hidx
-  exact hidx True.intro
-
-theorem contentIntraWeldArrowRow_not_fused_constantResponse :
-    ¬ (contentIntraWeldArrowRow constantResponseGrid).Fused
-        (Grid.Tier.actTime constantResponseWeld) := by
-  intro hfused
-  have hiff := hfused constantResponseWeld_no_live_share
-  have hdenial :
-      (contentLayerLanguage constantResponseGrid).TrueAt
-        (Grid.Tier.actTime constantResponseWeld)
-        (.layerDenied .intraWeldArrow) := by
-    dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
-    exact constantResponseGrid_no_variation
-  exact constantResponseWeld_no_live_share (hiff.mpr hdenial)
-
-theorem contentIntraWeldArrowRow_not_obeys_constantResponse :
-    ¬ (contentIntraWeldArrowRow constantResponseGrid).ObeysSeparateFuse := by
-  intro h
-  exact contentIntraWeldArrowRow_not_fused_constantResponse
-    (constantResponseGrid.fused_of_obeysSeparateFuse h
-      (Grid.Tier.actTime constantResponseWeld))
+  apply contentLayerRow_not_obeys_of_nonlive_denial
+    (G := InvarianceNegative.twoBottomGrid) .directedTime
+      InvarianceNegative.twoBottomWeld
+  · intro hlive
+    exact hlive True.intro
+  · dsimp [contentLayerLanguage, Grid.ClaimLanguage.TrueAt]
+    exact DirectionNegative.not_strict_twoBottom
 
 end ContentNegative
 
-/- ==============================================================================
-   §N  Being-boundary freedom: designation is not grid-carried
-
-   The witness is parallel in scope to `DirectionNegative`. A single grid has
-   two fact-identical fine tags and supports both a merge and a split coarsening.
-   They disagree on the fiber boundary at a concrete pair. This certifies
-   freedom, not failure: naming suffices, while holding one partition as floor
-   furniture claims a fact the grid's data does not carry.
-============================================================================== -/
+/- ==========================================================================
+   Being-boundary freedom: a coarsening is a supplied reading
+============================================================================ -/
 
 namespace BeingNegative
 
 open Grid.DirectedConvention.BeingConvention
 
-/-- Two fine tags with the same response, same grade, and symmetric delivery. -/
-def twoBeingGrid : Grid Nat where
-  Being      := Bool
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions _ _ := True
+def twoBeingOccurrence : OccurrenceReading Bool where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent := id
+  call := id
+  response := id
 
-/-- Merge coarsening: both fine tags are one macro tag. -/
+def twoBeingGrid : CoreReadings Bool Nat where
+  occurrence := twoBeingOccurrence
+  response := { respondsTo := fun b _ => some b }
+  placement := { grade := fun _ => 0 }
+  conditioning := { conditions := fun _ _ => True }
+
 def κmerge : BeingCoarsening twoBeingGrid Unit where
   proj _ := ()
 
-/-- Split coarsening: each fine tag remains its own macro tag. -/
 def κsplit : BeingCoarsening twoBeingGrid Bool where
   proj := id
 
-theorem merge_same_fiber : κmerge.SameFiber false true :=
+theorem merge_same_fiber :
+    BeingCoarsening.SameFiber κmerge false true :=
   rfl
 
-theorem split_not_same_fiber : ¬ κsplit.SameFiber false true := by
+theorem split_not_same_fiber :
+    ¬ BeingCoarsening.SameFiber κsplit false true := by
   intro h
   cases h
 
-/-- The grid data visible to a would-be partition-recovery function. -/
-abbrev W := RawWeld Bool Unit Unit
+abbrev GridData := CoreReadings Bool Nat
 
-abbrev GridData : Type :=
-  (Bool → Unit → Option Unit) × (Bool → Unit → Unit → Nat) × (W → W → Prop)
-
-def gridData : GridData :=
-  (twoBeingGrid.respondsTo, twoBeingGrid.grade, twoBeingGrid.conditions)
-
+def gridData : GridData := twoBeingGrid
 def mergeBoundary (_p _q : Bool) : Prop := True
-
 def splitBoundary (p q : Bool) : Prop := p = q
 
-/-- No function of this grid's data recovers a unique partition: the same data
-    supports both the merge and the split coarsenings, which disagree at
-    `false` and `true`. -/
 theorem no_partition_recovery :
     ¬ ∃ recover : GridData → Bool → Bool → Prop,
         recover gridData = mergeBoundary ∧
@@ -549,17 +558,9 @@ theorem no_partition_recovery :
 
 end BeingNegative
 
-/- ==============================================================================
+/- ==========================================================================
    Coverage countermodels
-
-   Reading and motivation: Identification/Commentary.lean, C.3.
-
-   The same strict pair `(0, 1)` does double duty here: it refutes
-   carrier-wide direction-voidness after mapping, and it supplies the live
-   tendency that the source carrier never quantified over. The
-   `WaaEffectiveTerminus` witness also gates the coverage-carrying corollaries
-   `map_waaEffectiveTerminus_iff` and `map_effectiveTerminus_eq`.
-============================================================================== -/
+============================================================================ -/
 
 namespace CoverageNegative
 
@@ -584,141 +585,169 @@ theorem strict_zero_one : Strict (0 : Nat) 1 :=
 theorem not_directionVoid_nat : ¬ DirectionVoid Nat :=
   fun h => h 0 1 strict_zero_one
 
-/-- Packaged in the `oldEqTerminus_not_invariant` style: the
-    reparameterization exists, coverage fails at `1`, the source is
-    direction-void, and the target is not. -/
 theorem directionVoid_needs_coverage :
     (∀ u : Unit, embedIntoNat.toFun u ≠ 1) ∧
       DirectionVoid Unit ∧ ¬ DirectionVoid Nat :=
   ⟨embedIntoNat_not_surjective, directionVoid_unit, not_directionVoid_nat⟩
 
-def phantomGrid : Grid Unit where
-  Being      := Unit
-  Call       := Unit
-  Response   := Bool
-  respondsTo _ _ := some true
-  grade _ _ _ := ()
-  conditions _deed reception := reception.response = false
+inductive PhantomCase
+  | agent
+  | call
+  | responseTrue
+  | responseFalse
+  | deed
+  | reception
+  deriving DecidableEq
 
-def phantomDeed : phantomGrid.Weld := ⟨(), (), true⟩
+def phantomOccurrence : OccurrenceReading PhantomCase where
+  occurrence
+    | .deed | .reception => True
+    | _ => False
+  isBeing d := d = .agent
+  isCall d := d = .call
+  isResponse d := d = .responseTrue ∨ d = .responseFalse
+  agent
+    | .deed | .reception => .agent
+    | d => d
+  call
+    | .deed | .reception => .call
+    | d => d
+  response
+    | .deed => .responseTrue
+    | .reception => .responseFalse
+    | d => d
 
-def phantomReception : phantomGrid.Weld := ⟨(), (), false⟩
+def phantomGrid : CoreReadings PhantomCase Unit where
+  occurrence := phantomOccurrence
+  response := {
+    respondsTo := fun b c =>
+      if b = .agent ∧ c = .call then some .responseTrue else none
+  }
+  placement := { grade := fun _ => () }
+  conditioning := {
+    conditions := fun d₁ d₂ =>
+      d₁ = .deed ∧ d₂ = .reception
+  }
+
+def phantomDeed : phantomGrid.Weld :=
+  ⟨.deed, True.intro⟩
+
+def phantomReception : phantomGrid.Weld :=
+  ⟨.reception, True.intro⟩
+
+theorem phantom_responsiveTerminus :
+    phantomGrid.ResponsiveTerminus .agent := by
+  constructor
+  · intro c hcall
+    have hc : c = PhantomCase.call := hcall
+    subst c
+    exact ⟨.responseTrue, rfl⟩
+  · intro _w _hactual _hagent
+    exact True.intro
 
 theorem phantom_waaEffectiveTerminus :
-    WaaEffectiveTerminus phantomGrid () := by
-  refine ⟨?_, ?_⟩
-  · exact ⟨fun _ => ⟨true, rfl⟩, fun _ _ _ => True.intro⟩
-  · intro before _deed _reception _hdeed hlive _hdel
+    WaaEffectiveTerminus phantomGrid .agent := by
+  constructor
+  · exact phantom_responsiveTerminus
+  · intro before _deed _reception _hdeed hlive
     exact False.elim (hlive True.intro)
 
 theorem not_waaEffectiveTerminus_map :
-    ¬ WaaEffectiveTerminus (phantomGrid.map embedIntoNat) () := by
+    ¬ WaaEffectiveTerminus (phantomGrid.map embedIntoNat)
+      .agent := by
   intro h
-  let liveBefore : Config Nat := ⟨1⟩
+  let liveBefore : Config Nat := { tendency := 1 }
   have hlive : ¬ AtBot liveBefore.tendency := by
     intro hbot
     exact Nat.not_succ_le_zero 0 hbot
   have hdel :
-      DeliveredTo (phantomGrid.map embedIntoNat) phantomDeed phantomReception := rfl
+      Grid.DirectedConvention.DeliveredTo
+        (phantomGrid.map embedIntoNat)
+        phantomDeed phantomReception := by
+    exact ⟨rfl, rfl⟩
   have hlanding :
-      HasShareDropLanding (phantomGrid.map embedIntoNat) liveBefore phantomDeed :=
+      Grid.DirectedConvention.HasShareDropLanding
+        (phantomGrid.map embedIntoNat)
+        liveBefore phantomDeed :=
     h.right liveBefore phantomDeed phantomReception rfl hlive hdel
-  rcases hlanding with ⟨reception, hland⟩
-  have hlands :
-      LandsAt (phantomGrid.map embedIntoNat) phantomDeed reception :=
-    hland.left
-  have hdelivered : reception.response = false := hlands.left
-  have hactual :
-      (phantomGrid.map embedIntoNat).respondsTo reception.agent reception.call =
-        some reception.response :=
-    hlands.right
-  cases reception with
-  | mk agent call response =>
-      cases agent
-      cases call
-      cases response
-      · cases hactual
-      · cases hdelivered
+  rcases hlanding with
+    ⟨reception, ⟨⟨hcondition, hactual⟩, _hdrop⟩⟩
+  have hreception : reception.1 = PhantomCase.reception :=
+    hcondition.right
+  rcases reception with ⟨d, hd⟩
+  change d = PhantomCase.reception at hreception
+  subst d
+  change some PhantomCase.responseTrue =
+    some PhantomCase.responseFalse at hactual
+  cases hactual
 
 theorem waaEffectiveTerminus_needs_coverage :
-    WaaEffectiveTerminus phantomGrid () ∧
-      ¬ WaaEffectiveTerminus (phantomGrid.map embedIntoNat) () :=
+    WaaEffectiveTerminus phantomGrid .agent ∧
+      ¬ WaaEffectiveTerminus (phantomGrid.map embedIntoNat)
+        .agent :=
   ⟨phantom_waaEffectiveTerminus, not_waaEffectiveTerminus_map⟩
 
 end CoverageNegative
 
-/- ==============================================================================
-   §O  Weld-boundary freedom: pairing is not grid-carried
-
-   This is one level below the being-boundary witness. `no_partition_recovery`
-   freed the who; this frees what counts as one act. The same field data support
-   both a merged reading of the call-response pairings and a split reading by
-   weld-grain. Holding one weld-grain as floor furniture claims a fact the
-   grid's data does not carry.
-============================================================================== -/
+/- ==========================================================================
+   Weld-boundary freedom: occurrence segmentation is supplied
+============================================================================ -/
 
 namespace WeldNegative
 
-/-- A diagnosis-time segmentation of welds into macro pairings. Kept local to
-    the witness so weld individuation remains a reading rather than a field of
-    `Grid`. -/
-structure WeldSegmentation (G : Grid Nat) (Macro : Type) where
+structure WeldSegmentation
+    (G : CoreReadings Bool Nat) (Macro : Type) where
   proj : G.Weld → Macro
 
 namespace WeldSegmentation
 
-variable {G : Grid Nat} {Macro : Type} (σ : WeldSegmentation G Macro)
+variable {G : CoreReadings Bool Nat} {Macro : Type}
+variable (σ : WeldSegmentation G Macro)
 
 def SamePairing (p q : G.Weld) : Prop := σ.proj p = σ.proj q
 
 end WeldSegmentation
 
-/-- Two fact-identical fine exchanges over a symmetric field. -/
-def twoWeldGrid : Grid Nat where
-  Being      := Unit
-  Call       := Bool
-  Response   := Bool
-  respondsTo _ c := some c
-  grade _ _ _ := 0
-  conditions _ _ := True
+def twoWeldOccurrence : OccurrenceReading Bool where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent _ := false
+  call := id
+  response := id
 
-def wFalse : twoWeldGrid.Weld := ⟨(), false, false⟩
+def twoWeldGrid : CoreReadings Bool Nat where
+  occurrence := twoWeldOccurrence
+  response := { respondsTo := fun _ c => some c }
+  placement := { grade := fun _ => 0 }
+  conditioning := { conditions := fun _ _ => True }
 
-def wTrue : twoWeldGrid.Weld := ⟨(), true, true⟩
+def wFalse : twoWeldGrid.Weld := ⟨false, True.intro⟩
+def wTrue : twoWeldGrid.Weld := ⟨true, True.intro⟩
 
-/-- Merged reading: both fine welds are one macro act. -/
 def σmerge : WeldSegmentation twoWeldGrid Unit where
   proj _ := ()
 
-/-- Split reading: each fine weld remains its own act-grain. -/
 def σsplit : WeldSegmentation twoWeldGrid Bool where
   proj w := w.call
 
-theorem merge_same_pairing : σmerge.SamePairing wFalse wTrue :=
+theorem merge_same_pairing :
+    WeldSegmentation.SamePairing σmerge wFalse wTrue :=
   rfl
 
-theorem split_not_same_pairing : ¬ σsplit.SamePairing wFalse wTrue := by
+theorem split_not_same_pairing :
+    ¬ WeldSegmentation.SamePairing σsplit wFalse wTrue := by
   intro h
   cases h
 
-/-- The grid data visible to a would-be weld-boundary recovery function. -/
-abbrev W := RawWeld Unit Bool Bool
+abbrev W := twoWeldGrid.Weld
+abbrev GridData := CoreReadings Bool Nat
 
-abbrev GridData : Type :=
-  (Unit → Bool → Option Bool) ×
-    (Unit → Bool → Bool → Nat) × (W → W → Prop)
-
-def gridData : GridData :=
-  (twoWeldGrid.respondsTo, twoWeldGrid.grade, twoWeldGrid.conditions)
-
+def gridData : GridData := twoWeldGrid
 def mergedPairing (_p _q : W) : Prop := True
-
 def splitPairing (p q : W) : Prop := p.call = q.call
 
-/-- The weld's individuation is a segmentation convention over the
-    correlational field, never recoverable from it. The same grid data support
-    both merge and split readings, which disagree on the concrete false/true
-    pair. -/
 theorem no_weld_boundary_recovery :
     ¬ ∃ recover : GridData → W → W → Prop,
         recover gridData = mergedPairing ∧
@@ -735,53 +764,37 @@ theorem no_weld_boundary_recovery :
 
 end WeldNegative
 
-/- ==============================================================================
-   §P  Doer/deed priority freedom: priority is not grid-carried
-
-   MMK 8 anchor: kāraka proceeds dependent on karman; neither side is prior
-   or independently based. The witness keeps priority as a reading over visible
-   grid data rather than adding a priority primitive to `Grid`.
-============================================================================== -/
+/- ==========================================================================
+   Doer/deed priority freedom: priority is a supplied reading
+============================================================================ -/
 
 namespace DoerDeedNegative
 
-/-- Reuse the small two-call grid shape: one visible doer tag and two visible
-    deeds, with no priority field in the data. -/
-abbrev W := RawWeld Unit Bool Bool
+abbrev W := WeldNegative.W
+abbrev GridData := WeldNegative.GridData
 
-abbrev GridData : Type :=
-  (Unit → Bool → Option Bool) ×
-    (Unit → Bool → Bool → Nat) × (W → W → Prop)
-
-def gridData : GridData :=
-  (WeldNegative.twoWeldGrid.respondsTo,
-    WeldNegative.twoWeldGrid.grade,
-    WeldNegative.twoWeldGrid.conditions)
-
-/-- Priority reading: the visible being is read as standing prior to its deed. -/
-def beingPriorReading (_b : Unit) (_deed : W) : Prop := True
-
-/-- Mutual-dependence reading: the same visible data are read with no prior
-    doer standing behind the deed. -/
-def mutualReading (_b : Unit) (_deed : W) : Prop := False
+def gridData : GridData := WeldNegative.gridData
+def beingPriorReading (_b : Bool) (_deed : W) : Prop := True
+def mutualReading (_b : Bool) (_deed : W) : Prop := False
 
 theorem priority_readings_disagree :
-    beingPriorReading () WeldNegative.wFalse ∧
-      ¬ mutualReading () WeldNegative.wFalse := by
+    beingPriorReading false WeldNegative.wFalse ∧
+      ¬ mutualReading false WeldNegative.wFalse := by
   constructor
   · exact True.intro
   · intro h
     exact h
 
 theorem no_priority_recovery :
-    ¬ ∃ recover : GridData → Unit → W → Prop,
+    ¬ ∃ recover : GridData → Bool → W → Prop,
         recover gridData = beingPriorReading ∧
         recover gridData = mutualReading := by
   rintro ⟨recover, hprior, hmutual⟩
-  have hPrior : recover gridData () WeldNegative.wFalse := by
+  have hPrior : recover gridData false WeldNegative.wFalse := by
     rw [hprior]
     exact priority_readings_disagree.left
-  have hMutualNot : ¬ recover gridData () WeldNegative.wFalse := by
+  have hMutualNot :
+      ¬ recover gridData false WeldNegative.wFalse := by
     rw [hmutual]
     exact priority_readings_disagree.right
   exact hMutualNot hPrior

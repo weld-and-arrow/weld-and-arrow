@@ -14,18 +14,18 @@ namespace WAA
 namespace Grid
 namespace DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
 /-- A diagnosis-time projection on the delivery axis. Finite clock speed is
     represented by the supplied tick carrier; the projection is not a field of
     `Grid`. -/
-structure DirectionCoarsening (G : Grid Contrib) (Tick : Type) where
+structure DirectionCoarsening (G : CoreReadings Designatum Contrib) (Tick : Type) where
   tick : G.Weld -> Tick
 
 namespace DirectionCoarsening
 
-variable {G : Grid Contrib} {Tick : Type} (ρ : DirectionCoarsening G Tick)
+variable {G : CoreReadings Designatum Contrib} {Tick : Type} (ρ : DirectionCoarsening G Tick)
 
 /- Reading and motivation: Identification/Commentary.lean, C.1. -/
 /-- Two welds lie inside the same clock tick. This is direction-neutral. -/

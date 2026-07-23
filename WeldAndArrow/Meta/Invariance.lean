@@ -1,11 +1,11 @@
 /-
 ================================================================================
   WeldAndArrow.Meta.Invariance
-  Display reparameterization, agent relabelling, and transport lemmas
+  Display reparameterization, carrier relabelling, and transport lemmas
 ================================================================================
 
 This module transports grid predicates across display reparameterizations and
-agent relabellings, and keeps transport lemmas centralized so missing
+whole-carrier relabellings, and keeps transport lemmas centralized so missing
 invariance facts are conspicuous.
 
 Reading and motivation: Identification/Commentary.lean, C.3.
@@ -128,38 +128,68 @@ theorem exists_strict_map (f : DisplayReparam Contrib Contrib')
 
 end DisplayReparam
 
-/-- An agent relabelling: a bijection of the fine-tag carrier. The
-    equivariance theorems below are the formal content of "nothing uniform in
-    the signature reads an agent out of a configuration". -/
-structure AgentReparam (Being Being' : Type) where
-  toFun     : Being → Being'
-  invFun    : Being' → Being
-  left_inv  : ∀ b, invFun (toFun b) = b
-  right_inv : ∀ b', toFun (invFun b') = b'
+/-- A small, dependency-free equivalence type for carrier transport. -/
+structure Equiv (α β : Type) where
+  toFun : α → β
+  invFun : β → α
+  left_inv : ∀ a, invFun (toFun a) = a
+  right_inv : ∀ b, toFun (invFun b) = b
+
+namespace Equiv
+
+instance {α β : Type} : CoeFun (Equiv α β) (fun _ => α → β) :=
+  ⟨Equiv.toFun⟩
+
+abbrev symm {α β : Type} (σ : Equiv α β) : β → α :=
+  σ.invFun
+
+@[simp]
+theorem apply_symm_apply {α β : Type} (σ : Equiv α β) (b : β) :
+    σ (σ.symm b) = b :=
+  σ.right_inv b
+
+@[simp]
+theorem symm_apply_apply {α β : Type} (σ : Equiv α β) (a : α) :
+    σ.symm (σ a) = a :=
+  σ.left_inv a
+
+theorem injective {α β : Type} (σ : Equiv α β)
+    {a b : α} (h : σ a = σ b) : a = b := by
+  rw [← σ.left_inv a, ← σ.left_inv b, h]
+
+end Equiv
+
+/-- Backwards-compatible name for a bijection of the whole designatum
+    carrier.  Relabelling is no longer agent-only surgery: every role reading
+    is transported through the same equivalence. -/
+abbrev AgentReparam (Designatum Designatum' : Type) :=
+  Equiv Designatum Designatum'
 
 namespace AgentReparam
 
-variable {Being Being' : Type} (σ : AgentReparam Being Being')
+variable {Designatum Designatum' : Type}
+variable (σ : AgentReparam Designatum Designatum')
 
-theorem toFun_injective {a b : Being} (h : σ.toFun a = σ.toFun b) : a = b := by
-  rw [← σ.left_inv a, ← σ.left_inv b, h]
+theorem toFun_injective {a b : Designatum}
+    (h : σ.toFun a = σ.toFun b) : a = b :=
+  σ.injective h
 
 end AgentReparam
 
 namespace Config
 
-variable {Contrib : Type}
+variable {Designatum Contrib : Type}
 
 /-- Agent relabelling acts trivially on a configuration because `Config`
     contains no `Being`-typed material. -/
-def relabel {Being Being' : Type} (cfg : Config Contrib)
-    (_σ : AgentReparam Being Being') : Config Contrib :=
+def relabel {Designatum Designatum' : Type} (cfg : Config Contrib)
+    (_σ : Equiv Designatum Designatum') : Config Contrib :=
   cfg
 
 /-- `Config` never mentions `Being`, so its agent-relabelling action is fixed.
     The definitional triviality is the point. -/
-theorem relabel_fixed {Being Being' : Type} (cfg : Config Contrib)
-    (σ : AgentReparam Being Being') : cfg.relabel σ = cfg :=
+theorem relabel_fixed {Designatum Designatum' : Type} (cfg : Config Contrib)
+    (σ : Equiv Designatum Designatum') : cfg.relabel σ = cfg :=
   rfl
 
 variable {Contrib' : Type} [PreorderBot Contrib] [PreorderBot Contrib']
@@ -179,92 +209,179 @@ end Config
 
 namespace Grid
 
+variable {Designatum Designatum' : Type}
 variable {Contrib Contrib' : Type} [PreorderBot Contrib] [PreorderBot Contrib']
 
-/-- Relabel only the fine agent carrier, transporting every agent-sensitive
-    signature field through the inverse bijection. -/
-def relabel (G : Grid Contrib) {Being' : Type}
-    (σ : AgentReparam G.Being Being') : Grid Contrib where
-  Being      := Being'
-  Call       := G.Call
-  Response   := G.Response
-  respondsTo := fun b' c => G.respondsTo (σ.invFun b') c
-  grade      := fun b' c r => G.grade (σ.invFun b') c r
-  conditions := fun w₁ w₂ =>
-    G.conditions (w₁.mapAgent σ.invFun) (w₂.mapAgent σ.invFun)
+/-- Relabel the whole designatum carrier through an equivalence. Occurrence,
+    role, response, placement, and conditioning readings all co-vary. -/
+def relabel (G : CoreReadings Designatum Contrib)
+    (σ : Equiv Designatum Designatum') :
+    CoreReadings Designatum' Contrib where
+  occurrence := {
+    occurrence := fun d => G.occurrence.occurrence (σ.symm d)
+    isBeing := fun d => G.occurrence.isBeing (σ.symm d)
+    isCall := fun d => G.occurrence.isCall (σ.symm d)
+    isResponse := fun d => G.occurrence.isResponse (σ.symm d)
+    agent := fun d => σ (G.occurrence.agent (σ.symm d))
+    call := fun d => σ (G.occurrence.call (σ.symm d))
+    response := fun d => σ (G.occurrence.response (σ.symm d))
+  }
+  response := {
+    respondsTo := fun b c =>
+      Option.map σ (G.respondsTo (σ.symm b) (σ.symm c))
+  }
+  placement := {
+    grade := fun d => G.grade (σ.symm d)
+  }
+  conditioning := {
+    conditions := fun deed reception =>
+      G.conditioning.conditions (σ.symm deed) (σ.symm reception)
+  }
 
-variable (G : Grid Contrib) {Being' : Type}
-variable (σ : AgentReparam G.Being Being')
+end Grid
+
+namespace CoreReadings
+
+/-- Field-notation bridge for whole-carrier relabelling. -/
+abbrev relabel {Designatum Designatum' Contrib : Type}
+    [PreorderBot Contrib] (G : CoreReadings Designatum Contrib)
+    (σ : Equiv Designatum Designatum') :
+    CoreReadings Designatum' Contrib :=
+  Grid.relabel G σ
+
+end CoreReadings
+
+namespace Grid
+
+variable {Designatum Designatum' : Type}
+variable {Contrib Contrib' : Type} [PreorderBot Contrib] [PreorderBot Contrib']
+
+def relabelWeld (G : CoreReadings Designatum Contrib)
+    (σ : Equiv Designatum Designatum') (w : G.Weld) :
+    (G.relabel σ).Weld :=
+  ⟨σ w.1, by simpa [relabel] using w.2⟩
+
+@[simp]
+theorem relabelWeld_agent (G : CoreReadings Designatum Contrib)
+    (σ : Equiv Designatum Designatum') (w : G.Weld) :
+    (relabelWeld G σ w).agent = σ w.agent := by
+  change σ (G.occurrence.agent (σ.symm (σ w.1))) =
+    σ (G.occurrence.agent w.1)
+  rw [Equiv.symm_apply_apply σ w.1]
+
+@[simp]
+theorem relabelWeld_call (G : CoreReadings Designatum Contrib)
+    (σ : Equiv Designatum Designatum') (w : G.Weld) :
+    (relabelWeld G σ w).call = σ w.call := by
+  change σ (G.occurrence.call (σ.symm (σ w.1))) =
+    σ (G.occurrence.call w.1)
+  rw [Equiv.symm_apply_apply σ w.1]
+
+@[simp]
+theorem relabelWeld_response (G : CoreReadings Designatum Contrib)
+    (σ : Equiv Designatum Designatum') (w : G.Weld) :
+    (relabelWeld G σ w).response = σ w.response := by
+  change σ (G.occurrence.response (σ.symm (σ w.1))) =
+    σ (G.occurrence.response w.1)
+  rw [Equiv.symm_apply_apply σ w.1]
+
+variable (G : CoreReadings Designatum Contrib)
+variable (σ : Equiv Designatum Designatum')
 
 theorem relabel_actual_iff (w : G.Weld) :
-    (G.relabel σ).Actual (w.mapAgent σ.toFun) ↔ G.Actual w := by
-  simp [Grid.Actual, Grid.relabel, σ.left_inv]
+    (G.relabel σ).Actual (relabelWeld G σ w) ↔ G.Actual w := by
+  change (G.relabel σ).respondsTo (relabelWeld G σ w).agent
+      (relabelWeld G σ w).call =
+        some (relabelWeld G σ w).response ↔
+    G.respondsTo w.agent w.call = some w.response
+  simp only [relabelWeld_agent, relabelWeld_call, relabelWeld_response]
+  simp only [CoreReadings.relabel, Grid.relabel, CoreReadings.respondsTo,
+    Grid.respondsTo, Equiv.symm_apply_apply]
+  change Option.map σ (G.respondsTo w.agent w.call) =
+      some (σ w.response) ↔
+    G.respondsTo w.agent w.call = some w.response
+  cases hresponse : G.respondsTo w.agent w.call with
+  | none => simp
+  | some response =>
+      simp only [Option.map_some, Option.some.injEq]
+      exact ⟨σ.injective, congrArg σ⟩
 
 theorem relabel_share (w : G.Weld) :
-    (G.relabel σ).share (w.mapAgent σ.toFun) = G.share w := by
-  change G.grade (σ.invFun (σ.toFun w.agent)) w.call w.response =
-    G.grade w.agent w.call w.response
-  rw [σ.left_inv]
+    (G.relabel σ).share (relabelWeld G σ w) = G.share w := by
+  change G.grade (σ.symm (σ w.1)) = G.grade w.1
+  rw [Equiv.symm_apply_apply σ w.1]
 
 theorem relabel_hasSelfPoleIndex_iff (w : G.Weld) :
-    (G.relabel σ).HasSelfPoleIndex (w.mapAgent σ.toFun) ↔
+    (G.relabel σ).HasSelfPoleIndex (relabelWeld G σ w) ↔
       G.HasSelfPoleIndex w := by
-  unfold Grid.HasSelfPoleIndex
-  rw [G.relabel_share σ w]
+  change (¬ AtBot ((G.relabel σ).share (relabelWeld G σ w))) ↔
+    ¬ AtBot (G.share w)
+  rw [relabel_share G σ w]
 
 theorem relabel_deliveredTo_iff (deed reception : G.Weld) :
     DirectedConvention.DeliveredTo (G.relabel σ)
-        (deed.mapAgent σ.toFun) (reception.mapAgent σ.toFun) ↔
+        (relabelWeld G σ deed) (relabelWeld G σ reception) ↔
       DirectedConvention.DeliveredTo G deed reception := by
-  have hdeed : (deed.mapAgent σ.toFun).mapAgent σ.invFun = deed := by
-    apply RawWeld.ext <;> simp [σ.left_inv]
-  have hreception :
-      (reception.mapAgent σ.toFun).mapAgent σ.invFun = reception := by
-    apply RawWeld.ext <;> simp [σ.left_inv]
-  change G.conditions ((deed.mapAgent σ.toFun).mapAgent σ.invFun)
-      ((reception.mapAgent σ.toFun).mapAgent σ.invFun) ↔
-    G.conditions deed reception
-  rw [hdeed, hreception]
+  unfold DirectedConvention.DeliveredTo WAA.DeliveredTo
+  change G.conditioning.conditions (σ.symm (σ deed.1))
+      (σ.symm (σ reception.1)) ↔
+    G.conditioning.conditions deed.1 reception.1
+  simp
 
 /-- Same-agent delivery is agent-sensitive but relabelling-invariant: it
     depends on the equality pattern of tags, not on which tags name it. -/
 theorem relabel_sameAgentDelivery_iff (deed reception : G.Weld) :
     DirectedConvention.SameAgentDelivery (G.relabel σ)
-        (deed.mapAgent σ.toFun) (reception.mapAgent σ.toFun) ↔
+        (relabelWeld G σ deed) (relabelWeld G σ reception) ↔
       DirectedConvention.SameAgentDelivery G deed reception := by
   constructor
   · rintro ⟨hdelivered, hagent⟩
-    exact ⟨(G.relabel_deliveredTo_iff σ deed reception).mp hdelivered,
-      σ.toFun_injective hagent⟩
+    simp only [relabelWeld_agent] at hagent
+    exact ⟨(relabel_deliveredTo_iff G σ deed reception).mp hdelivered,
+      AgentReparam.toFun_injective σ hagent⟩
   · rintro ⟨hdelivered, hagent⟩
-    exact ⟨(G.relabel_deliveredTo_iff σ deed reception).mpr hdelivered,
-      congrArg σ.toFun hagent⟩
+    exact ⟨(relabel_deliveredTo_iff G σ deed reception).mpr hdelivered,
+      by simpa only [relabelWeld_agent] using congrArg σ hagent⟩
 
 /-- The weld register co-varies with the relabelling; unlike `Config`, its
     index is not fixed. -/
 theorem relabel_index (w : G.Weld) :
-    (G.relabel σ).index (w.mapAgent σ.toFun) = σ.toFun (G.index w) :=
-  rfl
+    (G.relabel σ).index (relabelWeld G σ w) = σ (G.index w) :=
+  relabelWeld_agent G σ w
 
-/-- Re-pitching commutes with agent relabelling: the configuration handed
+/-- Re-pitching commutes with carrier relabelling: the configuration handed
     forward is identical whether the run uses the original or relabelled fine
     tags. The definitional triviality is the point: `Config` offers no agent
     material on which relabelling could act. -/
 theorem relabel_rePitch (before : Config Contrib) (w : G.Weld) :
-    (G.relabel σ).rePitch before (w.mapAgent σ.toFun) = G.rePitch before w := by
+    (G.relabel σ).rePitch before (relabelWeld G σ w) =
+      G.rePitch before w := by
   apply Config.ext
-  exact G.relabel_share σ w
+  exact relabel_share G σ w
 
 namespace AgentRelabellingWitness
 
 /-- A symmetric two-agent grid used only to refute natural recovery. -/
-def symmetricGrid : Grid Contrib where
-  Being      := Bool
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := shareBot
-  conditions _ _ := True
+def symmetricOccurrence : OccurrenceReading Bool where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent := id
+  call := id
+  response := id
+
+def symmetricGrid : CoreReadings Bool Contrib where
+  occurrence := symmetricOccurrence
+  response := {
+    respondsTo := fun b _ => some b
+  }
+  placement := {
+    grade := fun _ => shareBot
+  }
+  conditioning := {
+    conditions := fun _ _ => True
+  }
 
 /-- The fixed-point-free swap of the symmetric grid's two fine tags. -/
 def swap : AgentReparam Bool Bool where
@@ -283,34 +400,60 @@ end AgentRelabellingWitness
     particular model's stored value may extensionally coincide with an agent
     tag, as `ConfigLeakWitness` records in `Meta/InvarianceNegative.lean`. -/
 theorem no_natural_agent_recovery_from_config :
-    ¬ ∃ recover : (G : Grid Contrib) → Config Contrib → G.Being,
-        ∀ (G : Grid Contrib) {Being' : Type}
-          (σ : AgentReparam G.Being Being') (cfg : Config Contrib),
-            recover (G.relabel σ) cfg = σ.toFun (recover G cfg) := by
+    ¬ ∃ recover : CoreReadings Bool Contrib → Config Contrib → Bool,
+        ∀ (G : CoreReadings Bool Contrib) (σ : Equiv Bool Bool)
+          (cfg : Config Contrib),
+            recover (G.relabel σ) cfg = σ (recover G cfg) := by
   rintro ⟨recover, natural⟩
   let cfg : Config Contrib := { tendency := shareBot }
   have h := natural AgentRelabellingWitness.symmetricGrid
     AgentRelabellingWitness.swap cfg
+  have hgrid :
+      (AgentRelabellingWitness.symmetricGrid
+          (Contrib := Contrib)).relabel
+          AgentRelabellingWitness.swap =
+        AgentRelabellingWitness.symmetricGrid (Contrib := Contrib) := by
+    ext d <;> cases d <;> rfl
+  rw [hgrid] at h
   change recover AgentRelabellingWitness.symmetricGrid cfg =
     Bool.not (recover AgentRelabellingWitness.symmetricGrid cfg) at h
   exact AgentRelabellingWitness.ne_not_self
     (recover AgentRelabellingWitness.symmetricGrid cfg) h
 
 /-- Transport a grid by reparameterizing only its Row-2 display carrier. -/
-def map (G : Grid Contrib) (f : DisplayReparam Contrib Contrib') :
-    Grid Contrib' where
-  Being      := G.Being
-  Call       := G.Call
-  Response   := G.Response
-  respondsTo := G.respondsTo
-  grade      := fun b c r => f.toFun (G.grade b c r)
-  conditions := G.conditions
+def map (G : CoreReadings Designatum Contrib) (f : DisplayReparam Contrib Contrib') :
+    CoreReadings Designatum Contrib' where
+  occurrence := G.occurrence
+  response := G.response
+  placement := {
+    grade := fun d => f.toFun (G.grade d)
+  }
+  conditioning := G.conditioning
 
-variable (G : Grid Contrib) (f : DisplayReparam Contrib Contrib')
+end Grid
+
+namespace CoreReadings
+
+/-- Field-notation bridge for contribution-display transport. -/
+abbrev map {Designatum Contrib Contrib' : Type}
+    [PreorderBot Contrib] [PreorderBot Contrib']
+    (G : CoreReadings Designatum Contrib)
+    (f : DisplayReparam Contrib Contrib') :
+    CoreReadings Designatum Contrib' :=
+  Grid.map G f
+
+end CoreReadings
+
+namespace Grid
+
+variable {Designatum Designatum' : Type}
+variable {Contrib Contrib' : Type} [PreorderBot Contrib] [PreorderBot Contrib']
+
+variable (G : CoreReadings Designatum Contrib) (f : DisplayReparam Contrib Contrib')
 
 @[simp]
-theorem map_grade (b : G.Being) (c : G.Call) (r : G.Response) :
-    (G.map f).grade b c r = f.toFun (G.grade b c r) :=
+theorem map_grade (d : Designatum) :
+    (G.map f).grade d = f.toFun (G.grade d) :=
   rfl
 
 @[simp]
@@ -333,20 +476,20 @@ theorem map_exists_actual_iff :
       ∃ w : G.Weld, G.Actual w := by
   constructor
   · rintro ⟨w, hactual⟩
-    exact ⟨w, (G.map_actual_iff f w).mp hactual⟩
+    exact ⟨w, (map_actual_iff G f w).mp hactual⟩
   · rintro ⟨w, hactual⟩
-    exact ⟨w, (G.map_actual_iff f w).mpr hactual⟩
+    exact ⟨w, (map_actual_iff G f w).mpr hactual⟩
 
 namespace ActualWeld
 
 /-- Transport an actual weld along a display reparameterization. The weld is the
     same occurrence; only the contribution display has moved. -/
-def map {G : Grid Contrib} (f : DisplayReparam Contrib Contrib') :
+def map {G : CoreReadings Designatum Contrib} (f : DisplayReparam Contrib Contrib') :
     ActualWeld G -> ActualWeld (G.map f)
-  | ⟨w, h⟩ => ⟨w, (G.map_actual_iff f w).mpr h⟩
+  | ⟨w, h⟩ => ⟨w, (map_actual_iff G f w).mpr h⟩
 
 @[simp]
-theorem map_weld {G : Grid Contrib} (f : DisplayReparam Contrib Contrib')
+theorem map_weld {G : CoreReadings Designatum Contrib} (f : DisplayReparam Contrib Contrib')
     (aw : ActualWeld G) : (aw.map f).weld = aw.weld :=
   rfl
 
@@ -356,38 +499,38 @@ namespace SentienceReading
 
 /-- A supplied sentience reading transports unchanged across a share-display
     reparameterization because the weld carrier is unchanged. -/
-def displayMap {G : Grid Contrib} (S : SentienceReading G)
+def displayMap {G : CoreReadings Designatum Contrib} (S : SentienceReading G)
     (f : DisplayReparam Contrib Contrib') :
     SentienceReading (G.map f) where
   sentient := S.sentient
 
 @[simp]
-theorem displayMap_sentient {G : Grid Contrib} (S : SentienceReading G)
+theorem displayMap_sentient {G : CoreReadings Designatum Contrib} (S : SentienceReading G)
     (f : DisplayReparam Contrib Contrib') (w : G.Weld) :
     (S.displayMap f).sentient w ↔ S.sentient w :=
   Iff.rfl
 
 end SentienceReading
 
-theorem map_mountsAt_iff (b : G.Being) (c : G.Call) :
+theorem map_mountsAt_iff (b : Designatum) (c : Designatum) :
     (G.map f).MountsAt b c ↔ G.MountsAt b c :=
   Iff.rfl
 
-theorem map_respondsToEveryCall_iff (b : G.Being) :
+theorem map_respondsToEveryCall_iff (b : Designatum) :
     (G.map f).RespondsToEveryCall b ↔ G.RespondsToEveryCall b :=
   Iff.rfl
 
-theorem map_responseVariesWithCall_iff (b : G.Being) :
+theorem map_responseVariesWithCall_iff (b : Designatum) :
     (G.map f).ResponseVariesWithCall b ↔ G.ResponseVariesWithCall b :=
   Iff.rfl
 
-theorem map_actualAgentInhabited_iff (b : G.Being) :
+theorem map_actualAgentInhabited_iff (b : Designatum) :
     (G.map f).ActualAgentInhabited b ↔ G.ActualAgentInhabited b := by
   constructor
   · rintro ⟨w, hactual, hagent⟩
-    exact ⟨w, (G.map_actual_iff f w).mp hactual, hagent⟩
+    exact ⟨w, (map_actual_iff G f w).mp hactual, hagent⟩
   · rintro ⟨w, hactual, hagent⟩
-    exact ⟨w, (G.map_actual_iff f w).mpr hactual, hagent⟩
+    exact ⟨w, (map_actual_iff G f w).mpr hactual, hagent⟩
 
 namespace DirectedConvention
 
@@ -400,13 +543,13 @@ theorem map_landsAt_iff (deed reception : G.Weld) :
   Iff.rfl
 
 theorem map_environsLine_iff
-    (b : G.Being) (deed reception : G.Weld) :
+    (b : Designatum) (deed reception : G.Weld) :
     EnvironsLine (G.map f) b deed reception ↔ EnvironsLine G b deed reception :=
   Iff.rfl
 
 namespace DirectionCoarsening
 
-variable {G : Grid Contrib} {Tick : Type}
+variable {G : CoreReadings Designatum Contrib} {Tick : Type}
 
 /-- Direction-coarsening transported across a display reparameterization.
     Ticks are display-side data over unchanged welds. -/
@@ -449,37 +592,40 @@ end DirectionCoarsening
 
 end DirectedConvention
 
-theorem map_terminus_iff (b : G.Being) :
+theorem map_terminus_iff (b : Designatum) :
     (G.map f).Terminus b ↔ G.Terminus b := by
   constructor
-  · intro h c r hresp
-    exact (f.atBot_iff (G.grade b c r)).mp (h c r hresp)
-  · intro h c r hresp
-    exact (f.atBot_iff (G.grade b c r)).mpr (h c r hresp)
+  · intro h w hactual hagent
+    exact (f.atBot_iff (G.share w)).mp
+      (by simpa [Grid.map_share] using
+        (h w ((map_actual_iff G f w).mpr hactual) hagent))
+  · intro h w hactual hagent
+    exact (f.atBot_iff (G.share w)).mpr
+      (h w ((map_actual_iff G f w).mp hactual) hagent)
 
-theorem map_liveTerminus_iff (b : G.Being) :
+theorem map_liveTerminus_iff (b : Designatum) :
     (G.map f).LiveTerminus b ↔ G.LiveTerminus b := by
   constructor
   · intro h
-    exact ⟨(G.map_actualAgentInhabited_iff f b).mp h.left,
-      (G.map_terminus_iff f b).mp h.right⟩
+    exact ⟨(map_actualAgentInhabited_iff G f b).mp h.left,
+      (map_terminus_iff G f b).mp h.right⟩
   · intro h
-    exact ⟨(G.map_actualAgentInhabited_iff f b).mpr h.left,
-      (G.map_terminus_iff f b).mpr h.right⟩
+    exact ⟨(map_actualAgentInhabited_iff G f b).mpr h.left,
+      (map_terminus_iff G f b).mpr h.right⟩
 
-theorem map_responsiveTerminus_iff (b : G.Being) :
+theorem map_responsiveTerminus_iff (b : Designatum) :
     (G.map f).ResponsiveTerminus b ↔ G.ResponsiveTerminus b := by
   constructor
   · intro h
-    exact ⟨(G.map_respondsToEveryCall_iff f b).mp h.left,
-      (G.map_terminus_iff f b).mp h.right⟩
+    exact ⟨(map_respondsToEveryCall_iff G f b).mp h.left,
+      (map_terminus_iff G f b).mp h.right⟩
   · intro h
-    exact ⟨(G.map_respondsToEveryCall_iff f b).mpr h.left,
-      (G.map_terminus_iff f b).mpr h.right⟩
+    exact ⟨(map_respondsToEveryCall_iff G f b).mpr h.left,
+      (map_terminus_iff G f b).mpr h.right⟩
 
-theorem map_atPoleClass_iff (b : G.Being) :
+theorem map_atPoleClass_iff (b : Designatum) :
     (G.map f).AtPoleClass b ↔ G.AtPoleClass b :=
-  G.map_terminus_iff f b
+  map_terminus_iff G f b
 
 theorem map_hasSelfPoleIndex_iff (w : G.Weld) :
     (G.map f).HasSelfPoleIndex w ↔ G.HasSelfPoleIndex w := by
@@ -498,47 +644,54 @@ theorem map_clenchMismatch_iff (w : G.Weld) :
     (G.map f).ClenchMismatch w ↔ G.ClenchMismatch w := by
   constructor
   · intro h
-    exact ⟨(G.map_actual_iff f w).mp h.left,
-      (G.map_hasSelfPoleIndex_iff f w).mp h.right⟩
+    exact ⟨(map_actual_iff G f w).mp h.left,
+      (map_hasSelfPoleIndex_iff G f w).mp h.right⟩
   · intro h
-    exact ⟨(G.map_actual_iff f w).mpr h.left,
-      (G.map_hasSelfPoleIndex_iff f w).mpr h.right⟩
+    exact ⟨(map_actual_iff G f w).mpr h.left,
+      (map_hasSelfPoleIndex_iff G f w).mpr h.right⟩
 
 theorem map_waaDukkha_iff (S : SentienceReading G) (w : G.Weld) :
     (G.map f).WaaDukkha (S.displayMap f) w ↔ G.WaaDukkha S w := by
   constructor
   · intro h
-    exact ⟨h.left, (G.map_clenchMismatch_iff f w).mp h.right⟩
+    exact ⟨h.left, (map_clenchMismatch_iff G f w).mp h.right⟩
   · intro h
-    exact ⟨h.left, (G.map_clenchMismatch_iff f w).mpr h.right⟩
+    exact ⟨h.left, (map_clenchMismatch_iff G f w).mpr h.right⟩
 
-theorem map_probeConstant_iff (b : G.Being) (cs : G.Call → Prop) :
+theorem map_probeConstant_iff (b : Designatum) (cs : Designatum → Prop) :
     (G.map f).ProbeConstant b cs ↔ G.ProbeConstant b cs := by
   constructor
-  · intro h c₁ c₂ hc₁ hc₂ r₁ r₂ hr₁ hr₂
-    exact (f.orderEq_iff (G.grade b c₁ r₁) (G.grade b c₂ r₂)).mp
-      (h c₁ c₂ hc₁ hc₂ r₁ r₂ hr₁ hr₂)
-  · intro h c₁ c₂ hc₁ hc₂ r₁ r₂ hr₁ hr₂
-    exact (f.orderEq_iff (G.grade b c₁ r₁) (G.grade b c₂ r₂)).mpr
-      (h c₁ c₂ hc₁ hc₂ r₁ r₂ hr₁ hr₂)
+  · intro h w₁ w₂ hactual₁ hactual₂ hagent₁ hagent₂ hcall₁ hcall₂
+    exact (f.orderEq_iff (G.share w₁) (G.share w₂)).mp
+      (by simpa [Grid.map_share] using
+        (h w₁ w₂
+          ((map_actual_iff G f w₁).mpr hactual₁)
+          ((map_actual_iff G f w₂).mpr hactual₂)
+          hagent₁ hagent₂ hcall₁ hcall₂))
+  · intro h w₁ w₂ hactual₁ hactual₂ hagent₁ hagent₂ hcall₁ hcall₂
+    exact (f.orderEq_iff (G.share w₁) (G.share w₂)).mpr
+      (h w₁ w₂
+        ((map_actual_iff G f w₁).mp hactual₁)
+        ((map_actual_iff G f w₂).mp hactual₂)
+        hagent₁ hagent₂ hcall₁ hcall₂)
 
-theorem map_waaBullSeven_iff (b : G.Being) :
+theorem map_waaBullSeven_iff (b : Designatum) :
     (G.map f).WaaBullSeven b ↔ G.WaaBullSeven b := by
   constructor
   · rintro ⟨hprobe, w, hactual, hagent, hidx⟩
-    exact ⟨(G.map_probeConstant_iff f b (fun _ => True)).mp hprobe,
-      ⟨w, (G.map_actual_iff f w).mp hactual, hagent,
-        (G.map_hasSelfPoleIndex_iff f w).mp hidx⟩⟩
+    exact ⟨(map_probeConstant_iff G f b (fun _ => True)).mp hprobe,
+      ⟨w, (map_actual_iff G f w).mp hactual, hagent,
+        (map_hasSelfPoleIndex_iff G f w).mp hidx⟩⟩
   · rintro ⟨hprobe, w, hactual, hagent, hidx⟩
-    exact ⟨(G.map_probeConstant_iff f b (fun _ => True)).mpr hprobe,
-      ⟨w, (G.map_actual_iff f w).mpr hactual, hagent,
-        (G.map_hasSelfPoleIndex_iff f w).mpr hidx⟩⟩
+    exact ⟨(map_probeConstant_iff G f b (fun _ => True)).mpr hprobe,
+      ⟨w, (map_actual_iff G f w).mpr hactual, hagent,
+        (map_hasSelfPoleIndex_iff G f w).mpr hidx⟩⟩
 
 namespace DirectedConvention
 namespace BeingConvention
 namespace BeingCoarsening
 
-variable {G : Grid Contrib} {Macro : Type}
+variable {G : CoreReadings Designatum Contrib} {Macro : Type}
 
 /-- Transport a diagnosis-time being coarsening across a display
     reparameterization. The fine tags are unchanged; only Row-2 display
@@ -555,7 +708,7 @@ theorem map_inFiber_iff (κ : BeingCoarsening G Macro)
 
 theorem map_sameFiber_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (p q : G.Being) :
+    (p q : Designatum) :
     (displayMap κ f).SameFiber p q ↔ κ.SameFiber p q :=
   Iff.rfl
 
@@ -571,9 +724,9 @@ theorem map_actualFiberInhabited_iff
     (displayMap κ f).ActualFiberInhabited b ↔ κ.ActualFiberInhabited b := by
   constructor
   · rintro ⟨w, hactual, hfiber⟩
-    exact ⟨w, (G.map_actual_iff f w).mp hactual, hfiber⟩
+    exact ⟨w, (map_actual_iff G f w).mp hactual, hfiber⟩
   · rintro ⟨w, hactual, hfiber⟩
-    exact ⟨w, (G.map_actual_iff f w).mpr hactual, hfiber⟩
+    exact ⟨w, (map_actual_iff G f w).mpr hactual, hfiber⟩
 
 theorem map_sentientTag_iff
     (κ : BeingCoarsening G Macro) (S : SentienceReading G)
@@ -583,10 +736,10 @@ theorem map_sentientTag_iff
       κ.SentientTag S b := by
   constructor
   · rintro ⟨w, hsentient, hfiber⟩
-    exact ⟨w, ⟨(G.map_actual_iff f w).mp hsentient.left,
+    exact ⟨w, ⟨(map_actual_iff G f w).mp hsentient.left,
       hsentient.right⟩, hfiber⟩
   · rintro ⟨w, hsentient, hfiber⟩
-    exact ⟨w, ⟨(G.map_actual_iff f w).mpr hsentient.left,
+    exact ⟨w, ⟨(map_actual_iff G f w).mpr hsentient.left,
       hsentient.right⟩, hfiber⟩
 
 theorem map_fiberAtPole_iff
@@ -597,82 +750,82 @@ theorem map_fiberAtPole_iff
   · intro h w hactual hfiber
     have hmapped : AtBot (f.toFun (G.share w)) := by
       simpa [Grid.map_share] using
-        h w ((G.map_actual_iff f w).mpr hactual) hfiber
+        h w ((map_actual_iff G f w).mpr hactual) hfiber
     exact (f.atBot_iff (G.share w)).mp hmapped
   · intro h w hactual hfiber
     have horig : AtBot (G.share w) :=
-      h w ((G.map_actual_iff f w).mp hactual) hfiber
+      h w ((map_actual_iff G f w).mp hactual) hfiber
     have hmapped : AtBot (f.toFun (G.share w)) :=
       (f.atBot_iff (G.share w)).mpr horig
     simpa [Grid.map_share] using hmapped
 
 theorem map_actualFiberInhabitedOn_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (cs : G.Call → Prop) :
+    (b : Macro) (cs : Designatum → Prop) :
     (displayMap κ f).ActualFiberInhabitedOn b cs ↔
       κ.ActualFiberInhabitedOn b cs := by
   constructor
   · rintro ⟨w, hactual, hfiber, hclass⟩
-    exact ⟨w, (G.map_actual_iff f w).mp hactual, hfiber, hclass⟩
+    exact ⟨w, (map_actual_iff G f w).mp hactual, hfiber, hclass⟩
   · rintro ⟨w, hactual, hfiber, hclass⟩
-    exact ⟨w, (G.map_actual_iff f w).mpr hactual, hfiber, hclass⟩
+    exact ⟨w, (map_actual_iff G f w).mpr hactual, hfiber, hclass⟩
 
 theorem map_actualFiberInhabitedWithin_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (ts : G.Being → Prop) :
+    (b : Macro) (ts : Designatum → Prop) :
     (displayMap κ f).ActualFiberInhabitedWithin b ts ↔
       κ.ActualFiberInhabitedWithin b ts := by
   constructor
   · rintro ⟨w, hactual, hfiber, htag⟩
-    exact ⟨w, (G.map_actual_iff f w).mp hactual, hfiber, htag⟩
+    exact ⟨w, (map_actual_iff G f w).mp hactual, hfiber, htag⟩
   · rintro ⟨w, hactual, hfiber, htag⟩
-    exact ⟨w, (G.map_actual_iff f w).mpr hactual, hfiber, htag⟩
+    exact ⟨w, (map_actual_iff G f w).mpr hactual, hfiber, htag⟩
 
 theorem map_fiberAtPoleOn_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (cs : G.Call → Prop) :
+    (b : Macro) (cs : Designatum → Prop) :
     (displayMap κ f).FiberAtPoleOn b cs ↔ κ.FiberAtPoleOn b cs := by
   constructor
   · intro h w hactual hfiber hclass
     have hmapped : AtBot (f.toFun (G.share w)) := by
       simpa [Grid.map_share] using
-        h w ((G.map_actual_iff f w).mpr hactual) hfiber hclass
+        h w ((map_actual_iff G f w).mpr hactual) hfiber hclass
     exact (f.atBot_iff (G.share w)).mp hmapped
   · intro h w hactual hfiber hclass
     have horig : AtBot (G.share w) :=
-      h w ((G.map_actual_iff f w).mp hactual) hfiber hclass
+      h w ((map_actual_iff G f w).mp hactual) hfiber hclass
     have hmapped : AtBot (f.toFun (G.share w)) :=
       (f.atBot_iff (G.share w)).mpr horig
     simpa [Grid.map_share] using hmapped
 
 theorem map_fiberAtPoleOnWithin_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (cs : G.Call → Prop) (ts : G.Being → Prop) :
+    (b : Macro) (cs : Designatum → Prop) (ts : Designatum → Prop) :
     (displayMap κ f).FiberAtPoleOnWithin b cs ts ↔
       κ.FiberAtPoleOnWithin b cs ts := by
   constructor
   · intro h w hactual hfiber hclass htag
     have hmapped : AtBot (f.toFun (G.share w)) := by
       simpa [Grid.map_share] using
-        h w ((G.map_actual_iff f w).mpr hactual) hfiber hclass htag
+        h w ((map_actual_iff G f w).mpr hactual) hfiber hclass htag
     exact (f.atBot_iff (G.share w)).mp hmapped
   · intro h w hactual hfiber hclass htag
     have horig : AtBot (G.share w) :=
-      h w ((G.map_actual_iff f w).mp hactual) hfiber hclass htag
+      h w ((map_actual_iff G f w).mp hactual) hfiber hclass htag
     have hmapped : AtBot (f.toFun (G.share w)) :=
       (f.atBot_iff (G.share w)).mpr horig
     simpa [Grid.map_share] using hmapped
 
 theorem map_fiberAtPoleWithin_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (ts : G.Being → Prop) :
+    (b : Macro) (ts : Designatum → Prop) :
     (displayMap κ f).FiberAtPoleWithin b ts ↔
       κ.FiberAtPoleWithin b ts :=
   map_fiberAtPoleOnWithin_iff κ f b (fun _ => True) ts
 
 theorem map_liveFiberAtPoleOn_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (cs : G.Call → Prop) :
+    (b : Macro) (cs : Designatum → Prop) :
     (displayMap κ f).LiveFiberAtPoleOn b cs ↔
       κ.LiveFiberAtPoleOn b cs := by
   constructor
@@ -685,7 +838,7 @@ theorem map_liveFiberAtPoleOn_iff
 
 theorem map_liveFiberAtPoleWithin_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (ts : G.Being → Prop) :
+    (b : Macro) (ts : Designatum → Prop) :
     (displayMap κ f).LiveFiberAtPoleWithin b ts ↔
       κ.LiveFiberAtPoleWithin b ts := by
   constructor
@@ -715,27 +868,27 @@ theorem map_selfAptTag_iff
   constructor
   · intro h w hactual hfiber
     have hidx : (G.map f).HasSelfPoleIndex w :=
-      h w ((G.map_actual_iff f w).mpr hactual) hfiber
-    exact (G.map_hasSelfPoleIndex_iff f w).mp hidx
+      h w ((map_actual_iff G f w).mpr hactual) hfiber
+    exact (map_hasSelfPoleIndex_iff G f w).mp hidx
   · intro h w hactual hfiber
     have hidx : G.HasSelfPoleIndex w :=
-      h w ((G.map_actual_iff f w).mp hactual) hfiber
-    exact (G.map_hasSelfPoleIndex_iff f w).mpr hidx
+      h w ((map_actual_iff G f w).mp hactual) hfiber
+    exact (map_hasSelfPoleIndex_iff G f w).mpr hidx
 
 theorem map_selfAptTagWithin_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
-    (b : Macro) (ts : G.Being → Prop) :
+    (b : Macro) (ts : Designatum → Prop) :
     (displayMap κ f).SelfAptTagWithin b ts ↔
       κ.SelfAptTagWithin b ts := by
   constructor
   · intro h w hactual hfiber htag
     have hidx : (G.map f).HasSelfPoleIndex w :=
-      h w ((G.map_actual_iff f w).mpr hactual) hfiber htag
-    exact (G.map_hasSelfPoleIndex_iff f w).mp hidx
+      h w ((map_actual_iff G f w).mpr hactual) hfiber htag
+    exact (map_hasSelfPoleIndex_iff G f w).mp hidx
   · intro h w hactual hfiber htag
     have hidx : G.HasSelfPoleIndex w :=
-      h w ((G.map_actual_iff f w).mp hactual) hfiber htag
-    exact (G.map_hasSelfPoleIndex_iff f w).mpr hidx
+      h w ((map_actual_iff G f w).mp hactual) hfiber htag
+    exact (map_hasSelfPoleIndex_iff G f w).mpr hidx
 
 theorem map_liveSelfAptTag_iff
     (κ : BeingCoarsening G Macro) (f : DisplayReparam Contrib Contrib')
@@ -772,11 +925,11 @@ theorem map_selfConditioningTag_iff
   constructor
   · rintro ⟨deed, reception, hdeed, hreception, hactual, hdel⟩
     exact ⟨deed, reception, hdeed, hreception,
-      (G.map_actual_iff f reception).mp hactual,
+      (map_actual_iff G f reception).mp hactual,
       (DirectedConvention.map_deliveredTo_iff G f deed reception).mp hdel⟩
   · rintro ⟨deed, reception, hdeed, hreception, hactual, hdel⟩
     exact ⟨deed, reception, hdeed, hreception,
-      (G.map_actual_iff f reception).mpr hactual,
+      (map_actual_iff G f reception).mpr hactual,
       (DirectedConvention.map_deliveredTo_iff G f deed reception).mpr hdel⟩
 
 theorem map_strongSelfConditioningTag_iff
@@ -785,12 +938,12 @@ theorem map_strongSelfConditioningTag_iff
     (displayMap κ f).StrongSelfConditioningTag b ↔ κ.StrongSelfConditioningTag b := by
   constructor
   · intro h reception hfiber hactual
-    rcases h reception hfiber ((G.map_actual_iff f reception).mpr hactual) with
+    rcases h reception hfiber ((map_actual_iff G f reception).mpr hactual) with
       ⟨deed, hdeed, hdel⟩
     exact ⟨deed, hdeed,
       (DirectedConvention.map_deliveredTo_iff G f deed reception).mp hdel⟩
   · intro h reception hfiber hactual
-    rcases h reception hfiber ((G.map_actual_iff f reception).mp hactual) with
+    rcases h reception hfiber ((map_actual_iff G f reception).mp hactual) with
       ⟨deed, hdeed, hdel⟩
     exact ⟨deed, hdeed,
       (DirectedConvention.map_deliveredTo_iff G f deed reception).mpr hdel⟩
@@ -802,18 +955,18 @@ end DirectedConvention
 theorem map_waaBullTen_iff {Macro : Type}
     (S : SentienceReading G)
     (κ : DirectedConvention.BeingConvention.BeingCoarsening G Macro)
-    (b : G.Being) :
+    (b : Designatum) :
     (G.map f).WaaBullTen (S.displayMap f) (κ.displayMap f) b ↔
       G.WaaBullTen S κ b := by
   constructor
   · intro h
-    refine ⟨(G.map_responsiveTerminus_iff f b).mp h.left, ?_⟩
+    refine ⟨(map_responsiveTerminus_iff G f b).mp h.left, ?_⟩
     rcases h.right with
       ⟨deed, reception, hdeed, hactual, hnotSame, hsentient, hdel⟩
     exact ⟨deed, reception,
       (DirectedConvention.BeingConvention.BeingCoarsening.map_inFiber_iff
         κ f (κ.proj b) deed).mp hdeed,
-      (G.map_actual_iff f reception).mp hactual,
+      (map_actual_iff G f reception).mp hactual,
       (fun hsame =>
         hnotSame
           ((DirectedConvention.BeingConvention.BeingCoarsening.map_sameFiber_iff
@@ -822,13 +975,13 @@ theorem map_waaBullTen_iff {Macro : Type}
         κ S f (κ.proj reception.agent)).mp hsentient,
       (DirectedConvention.map_deliveredTo_iff G f deed reception).mp hdel⟩
   · intro h
-    refine ⟨(G.map_responsiveTerminus_iff f b).mpr h.left, ?_⟩
+    refine ⟨(map_responsiveTerminus_iff G f b).mpr h.left, ?_⟩
     rcases h.right with
       ⟨deed, reception, hdeed, hactual, hnotSame, hsentient, hdel⟩
     exact ⟨deed, reception,
       (DirectedConvention.BeingConvention.BeingCoarsening.map_inFiber_iff
         κ f (κ.proj b) deed).mpr hdeed,
-      (G.map_actual_iff f reception).mpr hactual,
+      (map_actual_iff G f reception).mpr hactual,
       (fun hsame =>
         hnotSame
           ((DirectedConvention.BeingConvention.BeingCoarsening.map_sameFiber_iff
@@ -838,17 +991,17 @@ theorem map_waaBullTen_iff {Macro : Type}
       (DirectedConvention.map_deliveredTo_iff G f deed reception).mpr hdel⟩
 
 theorem map_stateToolFits_iff (w : G.Weld) :
-    (G.map f).StateToolFits w ↔ G.StateToolFits w := by
+    StateToolFits (G.map f) w ↔ StateToolFits G w := by
   constructor
   · intro h hidx
-    exact h ((G.map_hasSelfPoleIndex_iff f w).mpr hidx)
+    exact h ((map_hasSelfPoleIndex_iff G f w).mpr hidx)
   · intro h hidx
-    exact h ((G.map_hasSelfPoleIndex_iff f w).mp hidx)
+    exact h ((map_hasSelfPoleIndex_iff G f w).mp hidx)
 
 namespace Tier
 
 /-- Transport a diagnostic tier along a grid reparameterization. -/
-def map {G : Grid Contrib} (f : DisplayReparam Contrib Contrib') :
+def map {G : CoreReadings Designatum Contrib} (f : DisplayReparam Contrib Contrib') :
     Tier G → Tier (G.map f)
   | .floor => .floor
   | .actTime w => .actTime w
@@ -860,7 +1013,7 @@ theorem map_tier_hasLiveShare_iff :
       Tier.hasLiveShare (G.map f) (Tier.map f t) ↔
         Tier.hasLiveShare G t
   | .floor => Iff.rfl
-  | .actTime w => G.map_hasSelfPoleIndex_iff f w
+  | .actTime w => map_hasSelfPoleIndex_iff G f w
 
 theorem map_exists_liveTier_iff :
     (∃ t : Tier (G.map f), Tier.hasLiveShare (G.map f) t) ↔
@@ -871,9 +1024,9 @@ theorem map_exists_liveTier_iff :
     | floor =>
         cases ht
     | actTime w =>
-        exact ⟨Tier.actTime w, (G.map_hasSelfPoleIndex_iff f w).mp ht⟩
+        exact ⟨Tier.actTime w, (map_hasSelfPoleIndex_iff G f w).mp ht⟩
   · rintro ⟨t, ht⟩
-    exact ⟨Tier.map f t, (G.map_tier_hasLiveShare_iff f t).mpr ht⟩
+    exact ⟨Tier.map f t, (map_tier_hasLiveShare_iff G f t).mpr ht⟩
 
 theorem map_rePitch (before : Config Contrib) (received : G.Weld) :
     (G.map f).rePitch (before.map f) received =
@@ -901,16 +1054,16 @@ theorem map_shareDropRun
       exact ShareDropRun.nil (before.map f)
   | cons hactual hdrop _hrest ih =>
       exact ShareDropRun.cons
-        ((G.map_actual_iff f _).mpr hactual)
-        ((G.map_isShareDrop_iff f _ _).mpr hdrop)
+        ((map_actual_iff G f _).mpr hactual)
+        ((map_isShareDrop_iff G f _ _).mpr hdrop)
         (by simpa [Grid.map_rePitch] using ih)
 
 /-- Transport a Bull-ascent run across a display reparameterization. -/
-def map_bullAscent (a : G.BullAscent) :
-    (G.map f).BullAscent where
+def map_bullAscent (a : BullAscent G) :
+    BullAscent (G.map f) where
   before := a.before.map f
   run    := a.run
-  drops  := G.map_shareDropRun f a.drops
+  drops  := map_shareDropRun G f a.drops
 
 namespace ConsequentialistConvention
 
@@ -947,12 +1100,12 @@ theorem map_dropCount
       by_cases hdrop : G.IsShareDrop before aw.weld
       · have hmapped :
             (G.map f).IsShareDrop (before.map f) aw.weld := by
-          simpa using (G.map_isShareDrop_iff f before aw.weld).mpr hdrop
+          simpa using (map_isShareDrop_iff G f before aw.weld).mpr hdrop
         simp [hmapped, hdrop, Grid.map_rePitch, ih]
       · have hmapped :
             ¬ (G.map f).IsShareDrop (before.map f) aw.weld := by
           intro h
-          exact hdrop ((G.map_isShareDrop_iff f before aw.weld).mp h)
+          exact hdrop ((map_isShareDrop_iff G f before aw.weld).mp h)
         simp [hmapped, hdrop, Grid.map_rePitch, ih]
 
 /-- Fiber-restricted drop-counting is invariant under display
@@ -982,12 +1135,12 @@ theorem map_dropCountInFiber
         by_cases hdrop : G.IsShareDrop before aw.weld
         · have hmappedDrop :
               (G.map f).IsShareDrop (before.map f) aw.weld := by
-            simpa using (G.map_isShareDrop_iff f before aw.weld).mpr hdrop
+            simpa using (map_isShareDrop_iff G f before aw.weld).mpr hdrop
           simp [hmappedFiber, hfiber, hmappedDrop, hdrop, Grid.map_rePitch, ih]
         · have hmappedDrop :
               ¬ (G.map f).IsShareDrop (before.map f) aw.weld := by
             intro h
-            exact hdrop ((G.map_isShareDrop_iff f before aw.weld).mp h)
+            exact hdrop ((map_isShareDrop_iff G f before aw.weld).mp h)
           simp [hmappedFiber, hfiber, hmappedDrop, hdrop, Grid.map_rePitch, ih]
       · have hmappedFiber :
             ¬ (κ.displayMap f).InFiber b aw.weld := by
@@ -1051,10 +1204,10 @@ theorem map_landsWithShareDrop_iff
   constructor
   · intro h
     exact ⟨(map_landsAt_iff G f deed reception).mp h.left,
-      (G.map_isShareDrop_iff f before reception).mp h.right⟩
+      (map_isShareDrop_iff G f before reception).mp h.right⟩
   · intro h
     exact ⟨(map_landsAt_iff G f deed reception).mpr h.left,
-      (G.map_isShareDrop_iff f before reception).mpr h.right⟩
+      (map_isShareDrop_iff G f before reception).mpr h.right⟩
 
 theorem map_hasShareDropLanding_iff
     (before : Config Contrib) (deed : G.Weld) :
@@ -1067,16 +1220,16 @@ theorem map_hasShareDropLanding_iff
     exact ⟨reception, (map_landsWithShareDrop_iff G f before deed reception).mpr hland⟩
 
 theorem map_shareDropLine_iff
-    (before : Config Contrib) (b : G.Being) (deed reception : G.Weld) :
+    (before : Config Contrib) (b : Designatum) (deed reception : G.Weld) :
     ShareDropLine (G.map f) (before.map f) b deed reception ↔
       ShareDropLine G before b deed reception := by
   constructor
   · intro h
     exact ⟨(map_environsLine_iff G f b deed reception).mp h.left,
-      (G.map_isShareDrop_iff f before reception).mp h.right⟩
+      (map_isShareDrop_iff G f before reception).mp h.right⟩
   · intro h
     exact ⟨(map_environsLine_iff G f b deed reception).mpr h.left,
-      (G.map_isShareDrop_iff f before reception).mpr h.right⟩
+      (map_isShareDrop_iff G f before reception).mpr h.right⟩
 
 theorem map_shortfallClosedAt_iff
     (before : Config Contrib) (deed reception : G.Weld) :
@@ -1099,10 +1252,10 @@ theorem map_shortfallClosedAt_iff
     exact (map_hasShareDropLanding_iff G f before deed).mpr hlanding
 
 theorem map_waaEffectiveTerminus_reflect
-    {b : G.Being} (h : WaaEffectiveTerminus (G.map f) b) :
+    {b : Designatum} (h : WaaEffectiveTerminus (G.map f) b) :
     WaaEffectiveTerminus G b := by
   constructor
-  · exact (G.map_responsiveTerminus_iff f b).mp h.left
+  · exact (map_responsiveTerminus_iff G f b).mp h.left
   · intro before deed reception hdeed
     exact (map_shortfallClosedAt_iff G f before deed reception).mp
       (h.right (before.map f) deed reception hdeed)
@@ -1113,10 +1266,10 @@ theorem map_waaEffectiveTerminus_reflect
     is needed. -/
 theorem map_waaEffectiveTerminus_of_surjective
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
-    {b : G.Being} (h : WaaEffectiveTerminus G b) :
+    {b : Designatum} (h : WaaEffectiveTerminus G b) :
     WaaEffectiveTerminus (G.map f) b := by
   constructor
-  · exact (G.map_responsiveTerminus_iff f b).mpr h.left
+  · exact (map_responsiveTerminus_iff G f b).mpr h.left
   · intro before' deed reception hdeed
     cases before' with
     | mk tendency =>
@@ -1162,7 +1315,7 @@ theorem map_waaPathClaim_holds_iff
     outright. -/
 theorem map_waaEffectiveTerminus_iff
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
-    (b : G.Being) :
+    (b : Designatum) :
     WaaEffectiveTerminus (G.map f) b ↔ WaaEffectiveTerminus G b :=
   ⟨fun h => map_waaEffectiveTerminus_reflect G f h,
     fun h => map_waaEffectiveTerminus_of_surjective G f hsurj h⟩
@@ -1171,7 +1324,7 @@ theorem map_waaEffectiveTerminus_iff
     propositionally the same object. -/
 theorem map_effectiveTerminus_eq
     (hsurj : ∀ b' : Contrib', ∃ a : Contrib, f.toFun a = b')
-    (Faith : Prop → Prop) (b : G.Being) :
+    (Faith : Prop → Prop) (b : Designatum) :
     Faith (WaaEffectiveTerminus (G.map f) b) =
       Faith (WaaEffectiveTerminus G b) := by
   rw [propext (map_waaEffectiveTerminus_iff G f hsurj b)]
@@ -1187,14 +1340,14 @@ theorem map_waaAversionContext_iff
         clenchMismatch := ?_ }
     · intro hbot
       exact h.liveBefore ((f.atBot_iff before.tendency).mpr hbot)
-    · exact (G.map_clenchMismatch_iff f reception).mp h.clenchMismatch
+    · exact (map_clenchMismatch_iff G f reception).mp h.clenchMismatch
   · intro h
     refine
       { liveBefore := ?_
         clenchMismatch := ?_ }
     · intro hbot
       exact h.liveBefore ((f.atBot_iff before.tendency).mp hbot)
-    · exact (G.map_clenchMismatch_iff f reception).mpr h.clenchMismatch
+    · exact (map_clenchMismatch_iff G f reception).mpr h.clenchMismatch
 
 end DirectedConvention
 
@@ -1235,30 +1388,30 @@ theorem map_contentBeforeAfterRow_obeys_of_direction
   contentBeforeAfterRow_obeys_of_direction (G.map f) (f.exists_strict_map h)
 
 theorem map_contentIntraWeldArrowRow_obeys_of_variation
-    (h : ∃ b : G.Being, G.ResponseVariesWithCall b) :
+    (h : ∃ b : Designatum, G.ResponseVariesWithCall b) :
     (contentIntraWeldArrowRow (G.map f)).ObeysSeparateFuse := by
   apply contentIntraWeldArrowRow_obeys_of_variation
   rcases h with ⟨b, hvaries⟩
-  exact ⟨b, (G.map_responseVariesWithCall_iff f b).mpr hvaries⟩
+  exact ⟨b, (map_responseVariesWithCall_iff G f b).mpr hvaries⟩
 
 theorem map_contentBeingsRow_obeys_of_being
     (h : ∃ w : G.Weld, G.Actual w) :
     (contentBeingsRow (G.map f)).ObeysSeparateFuse := by
   apply contentBeingsRow_obeys_of_being
   rcases h with ⟨w, hactual⟩
-  exact ⟨w, (G.map_actual_iff f w).mpr hactual⟩
+  exact ⟨w, (map_actual_iff G f w).mpr hactual⟩
 
 theorem map_contentGridLensRow_obeys_of_liveTier
     (h : ∃ t : Tier G, Tier.hasLiveShare G t) :
     (contentGridLensRow (G.map f)).ObeysSeparateFuse :=
   contentGridLensRow_obeys_of_liveTier (G.map f)
-    ((G.map_exists_liveTier_iff f).mpr h)
+    ((map_exists_liveTier_iff G f).mpr h)
 
 theorem map_contentWeldRow_obeys_of_actual
     (h : ∃ w : G.Weld, G.Actual w) :
     (contentWeldRow (G.map f)).ObeysSeparateFuse :=
   contentWeldRow_obeys_of_actual (G.map f)
-    ((G.map_exists_actual_iff f).mpr h)
+    ((map_exists_actual_iff G f).mpr h)
 
 theorem map_beingsLadder_obeys
     [∀ w : (G.map f).Weld, Decidable (AtBot ((G.map f).share w))] :

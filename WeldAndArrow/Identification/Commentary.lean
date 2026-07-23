@@ -59,10 +59,12 @@ symmetrized field fact, while `Grid.DirectedConvention` names the reading layer
 that consumes ordered roles. The thermodynamic/arrow-of-time gloss motivates the
 reading but is never a premise of a theorem.
 
-`RawWeld`, `Grid.index`, and `Grid.share` encode the MMK 8 point that there is no
-separate prior act or performer inside the formal signature: the index and share
-are projections from a completed weld. `no_agent_recovery_of_field_collision`
-is the internal recovery obstruction corresponding to that gloss.
+`OccurrenceReading.Weld`, `Grid.index`, and `Grid.share` encode the MMK 8 point
+that there is no separate prior act or performer inside the formal signature:
+a weld is an occurrence designatum, while its index, call, response, and share
+are readings of that completed occurrence.
+`Grid.no_agent_recovery_of_field_collision` is the internal recovery
+obstruction corresponding to that gloss.
 
 `SelfLineWitness` records that self-lines are permitted by the signature and
 can satisfy the ownership-face vocabulary when the model supplies reflexive
@@ -197,13 +199,13 @@ merge into one thing.
 The generator-discipline check is the same one that motivated `weldRow`: a
 generated row should name the convention whose collapse/freeze it diagnoses.
 `intraWeldArrow` names the face-order convention; `doerDeed` names the
-doer/deed ordering, with the `RawWeld` being component as its concrete anchor
-but without promoting priority to a field. The labels "coming-from" and
+doer/deed ordering, with the weld's supplied agent reading as its concrete
+anchor but without promoting priority to a field. The labels "coming-from" and
 "going-to" are display names for transposed readings of the two weld faces,
 not new tier names.
 
-`ReflexivityWitness.ladderRungGrid` is deliberately only one legal grid: it
-instantiates `Being` with `Nat` read as rung labels and then reruns the beings
+`ReflexivityWitness.ladderRungGrid` is deliberately only one legal package of
+readings: it uses `Nat` designata as rung labels and then reruns the beings
 ladder. This does not define beings as rungs, and it leaves
 `BeingNegative.no_partition_recovery` untouched.
 
@@ -333,21 +335,30 @@ retyped": two grids agree on `ConditionsEither` and disagree on `conditions`, so
 the symmetric field structure does not recover direction. The physics and
 thermodynamics language motivates the reading, but no theorem depends on it.
 
-`InteriorDirectionNegative` is the same demotion one grain down. `RawWeld`
-keeps its named `call` and `response` fields because those names are useful
-display labels, just as `index` remains a useful projection after the
-self-pole demotion. `RawWeld.transposeCR` is only a smuggling detector on
-same-carrier call/response examples: unordered pair-content cannot recover
-which face is call, so the intra-weld arrow is not before-and-after furniture
-inside the weld.
+`InteriorDirectionNegative` is the same demotion one grain down. An
+`OccurrenceReading` keeps named `call` and `response` role projections because
+those names are useful display labels, just as `index` remains useful after
+the self-pole demotion. `OccurrenceReading.transposeCR` is only a smuggling
+detector on same-carrier call/response examples: unordered pair-content cannot
+recover which role is call, so the intra-weld arrow is not before-and-after
+furniture inside the weld.
 
-`DirectionCoarseningWitness` adds the finite-resolution check. The raw
-register clock cannot be given a universal tick with `ResolutionBounded` over
-the injective `Nat` display; a lawful fully coarse display uses the one-point
-carrier, whose `DirectionVoid` is obtained through the existing legal
-all-equivalent display collapse. The independence witness keeps the register
-clock's macro actual-inhabitation and self-conditioning separate from any
-direction coarsening or resolution-bound hypothesis.
+`DirectionCoarseningWitness.unit_directionVoid_via_mergeToUnit` checks the
+lawful one-point slow-clock limit.
+`twoResolution_directionCoarsening_independence` uses the same two occurrence
+events under a resolving clock and an over-coarse clock, showing that the
+resolution bound belongs to the supplied clock. The positive transport theorem
+`mapDir_resolutionBounded_iff` keeps resolution-relative claims stable under a
+display change, while `CoverageNegative.directionVoid_needs_coverage` records
+why carrier-wide direction-voidness needs target coverage.
+
+`ContentNegative` separates two boundary cases. `HypotheticalCase` selects a
+weld but supplies no actual response, so a non-live act-time exists at which
+the beings, grid-lens, and weld-grain denials expose missing non-vacuity
+hypotheses. `FixedResponseCase` mounts two distinct calls with one shared
+response, so the lack of variation is substantive. If the occurrence reading
+selects nothing at all, `contentLayerRow_obeys_of_no_occurrences` records the
+different, genuinely vacuous result.
 
 `BeingNegative` is the parallel countermodel for designation: one fine grid
 allows both merge and split macro readings, so a unique being-boundary is not
@@ -356,25 +367,17 @@ recoverable from the grid data alone.
 `WeldNegative` lowers the same freedom witness from who-counts-as-one-being to
 what-counts-as-one-act. Its `WeldSegmentation` is deliberately local to the
 negative witness: segmentation is a diagnosis-time reading over completed
-welds, not a new `RawWeld` field and not a new `Grid` parameter. The layer
-route for `weldRow` follows from that choice. The weld-grain is a convention
-the lens can diagnose exactly like directed time, beings, and the grid-lens;
-a bare `RowTag` would have named a row without naming the convention whose
-freeze and collapse the row is supposed to catch.
-
-`ContentNegative` supplies the countermodels for the aptness hypotheses on
-content rows: a no-actual-weld/no-live grid and the two-bottom direction-void
-carrier make the relevant denials true at non-live act-time, so fusion fails
-there. The empty-domain witnesses separate additional vacuities:
-`emptyBeingGrid_no_liveTier` and
-`contentBeingsRow_obeys_emptyBeing` show that no beings leave no act-time tier
-on which the content row can fail to fuse.
+welds, not a new occurrence-reading field and not a new `CoreReadings` field.
+The layer route for `weldRow` follows from that choice. The weld-grain is a
+convention the lens can diagnose exactly like directed time, beings, and the
+grid-lens; a bare `RowTag` would have named a row without naming the convention
+whose freeze and collapse the row is supposed to catch.
 
 `CoverageNegative` certifies the coverage hypotheses on
 `directionVoid_of_surjective` and `map_waaEffectiveTerminus_of_surjective`:
 strictness outside the image of a display reparameterization can make
 direction-voidness and faith-closure fail to preserve, parallel in duty to the
-aptness countermodels above.
+other freedom and coverage countermodels.
 
 C.3a Doctrines/Doors.lean and Doctrines/DoorsNegative.lean
 

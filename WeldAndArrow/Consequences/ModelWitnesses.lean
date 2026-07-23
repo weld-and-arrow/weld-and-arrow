@@ -18,7 +18,7 @@ theorem rung_not_pole_witness :
       registerClockGrid.Actual received ∧
         registerClockGrid.IsShareDrop before received ∧
         ¬ AtBot (registerClockGrid.share received) := by
-  refine ⟨{ tendency := 5 }, ⟨(2 : Nat), (), (3 : Nat)⟩, ?_, ?_, ?_⟩
+  refine ⟨{ tendency := 5 }, registerWeld 2, ?_, ?_, ?_⟩
   · rfl
   · dsimp [Grid.IsShareDrop, Grid.share, registerClockGrid]
     constructor
@@ -42,7 +42,7 @@ theorem backsliding_witness :
             later.agent = kensho.agent ∧
               backslideGrid.Actual later ∧
                 backslideGrid.HasSelfPoleIndex later := by
-  refine ⟨{ tendency := 5 }, ⟨(), Cue.gentle, ()⟩, ⟨(), Cue.harsh, ()⟩,
+  refine ⟨{ tendency := 5 }, backslideWeld .gentle, backslideWeld .harsh,
     ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rfl
   · dsimp [Grid.IsShareDrop, Grid.share, backslideGrid]
@@ -72,8 +72,8 @@ theorem backsliding_rePitchSequence_witness :
             ¬ AtBot
               ((Grid.ReceptionPair.rePitchSequence (G := backslideGrid) before p).snd.tendency) := by
   refine ⟨{ tendency := 5 },
-    { first := { weld := ⟨(), Cue.gentle, ()⟩, actual := rfl },
-      second := { weld := ⟨(), Cue.harsh, ()⟩, actual := rfl } },
+    { first := { weld := backslideWeld .gentle, actual := rfl },
+      second := { weld := backslideWeld .harsh, actual := rfl } },
     ?_, ?_, ?_, ?_⟩
   · exact True.intro
   · rfl
@@ -109,7 +109,7 @@ theorem cetana_live_share_without_object_standing_witness :
         (registerClockGrid.withConditions (fun _ _ => False)).HasSelfPoleIndex w ∧
           ¬ Grid.DirectedConvention.ObjectAxisStanding
             (registerClockGrid.withConditions (fun _ _ => False)) w := by
-  refine ⟨⟨(5 : Nat), (), (6 : Nat)⟩, ?_, ?_, ?_⟩
+  refine ⟨registerWeld 5, ?_, ?_, ?_⟩
   · rfl
   · dsimp [Grid.HasSelfPoleIndex, Grid.share, registerClockGrid,
       Grid.withConditions, AtBot, shareBot]
@@ -125,7 +125,7 @@ theorem standing_does_not_determine_dated :
     ∃ before : Config Nat, ∃ received : clockGrid.Weld,
       ¬ AtBot before.tendency ∧
         AtBot (clockGrid.rePitch before received).tendency := by
-  refine ⟨{ tendency := 5 }, ⟨Clock.adaptive, Listener.present, Chime.chime⟩,
+  refine ⟨{ tendency := 5 }, clockAdaptivePresent,
     ?_, ?_⟩
   · dsimp [AtBot, shareBot]
     show ¬ (5 : Nat) ≤ 0
@@ -141,7 +141,7 @@ theorem subitism_possibility_witness :
       ¬ AtBot before.tendency ∧
         clockGrid.IsShareDrop before received ∧
           AtBot (clockGrid.rePitch before received).tendency := by
-  refine ⟨{ tendency := 5 }, ⟨Clock.adaptive, Listener.present, Chime.chime⟩,
+  refine ⟨{ tendency := 5 }, clockAdaptivePresent,
     ?_, ?_, ?_⟩
   · dsimp [AtBot, shareBot]
     show ¬ (5 : Nat) ≤ 0

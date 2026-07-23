@@ -13,8 +13,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 namespace DirectedConvention
 namespace BeingConvention
@@ -69,7 +69,7 @@ inductive RowClaim
     truth. At act-time the conventional side holds; the denial side holds
     exactly at the pole-class, where it is earned as diagnosis (不昧). Nothing
     in this language affirms a positive truth predicate of the floor. -/
-def rowLanguage (G : Grid Contrib) : ClaimLanguage G where
+def rowLanguage (G : CoreReadings Designatum Contrib) : ClaimLanguage G where
   Claim := RowClaim
   Holds
     | .floor, _ => False
@@ -144,7 +144,7 @@ theorem not_misfits_of_fits
   rintro ⟨_w, _hoff, hnot⟩
   exact hnot hfit
 
-def rowOf (G : Grid Contrib) (r : RowTag) : Distinction G :=
+def rowOf (G : CoreReadings Designatum Contrib) (r : RowTag) : Distinction G :=
   { language := rowLanguage G
     sideA := .inForce r
     sideB := .denied r }
@@ -285,22 +285,22 @@ theorem denied_misfits_live_offer_as_error
       exact misfits_of_not_fits_actTime G u w hoff
         (denied_misfits_live_offer G r u hcontent hlive)
 
-abbrev layerRow (G : Grid Contrib) (l : ConventionLayer) : Distinction G :=
+abbrev layerRow (G : CoreReadings Designatum Contrib) (l : ConventionLayer) : Distinction G :=
   rowOf G (.layer l)
 
-abbrev beforeAfterRow (G : Grid Contrib) : Distinction G :=
+abbrev beforeAfterRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G (.layer .directedTime)
 
-abbrev beingsRow (G : Grid Contrib) : Distinction G :=
+abbrev beingsRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G (.layer .beings)
 
-abbrev gridLensRow (G : Grid Contrib) : Distinction G :=
+abbrev gridLensRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G (.layer .gridLens)
 
-abbrev weldRow (G : Grid Contrib) : Distinction G :=
+abbrev weldRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G (.layer .weldGrain)
 
-abbrev intraWeldArrowRow (G : Grid Contrib) : Distinction G :=
+abbrev intraWeldArrowRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G (.layer .intraWeldArrow)
 
 theorem layerRow_obeys
@@ -395,7 +395,7 @@ theorem no_order_collapse_self_refuting (t : Tier G) :
     ¬ (intraWeldArrowRow G).Collapse t :=
   rowOf_collapse_self_refuting G (.layer .intraWeldArrow) t
 
-abbrev rungPoleRow (G : Grid Contrib) : Distinction G :=
+abbrev rungPoleRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .rungPole
 
 theorem rungPoleRow_obeys
@@ -412,7 +412,7 @@ theorem kensho_as_genjo_collapse_self_refuting (t : Tier G) :
     ¬ (rungPoleRow G).Collapse t :=
   rowOf_collapse_self_refuting G .rungPole t
 
-abbrev foxWeldRow (G : Grid Contrib) : Distinction G :=
+abbrev foxWeldRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .foxWeld
 
 theorem foxWeldRow_obeys
@@ -438,7 +438,7 @@ theorem fox_utterance_misfits_live_offer
     ¬ RecordedUtterance.FitsOfferedTier u :=
   denied_misfits_live_offer G .foxWeld u hcontent hlive
 
-abbrev doerDeedRow (G : Grid Contrib) : Distinction G :=
+abbrev doerDeedRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .doerDeed
 
 theorem doerDeedRow_obeys
@@ -456,7 +456,7 @@ theorem no_prior_doer_collapse_self_refuting (t : Tier G) :
     ¬ (doerDeedRow G).Collapse t :=
   rowOf_collapse_self_refuting G .doerDeed t
 
-abbrev functionShareRow (G : Grid Contrib) : Distinction G :=
+abbrev functionShareRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .functionShare
 
 theorem functionShareRow_obeys
@@ -472,7 +472,7 @@ theorem function_share_cell_collapse_self_refuting (t : Tier G) :
     ¬ (functionShareRow G).Collapse t :=
   rowOf_collapse_self_refuting G .functionShare t
 
-abbrev karmaIngaRow (G : Grid Contrib) : Distinction G :=
+abbrev karmaIngaRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .karmaInga
 
 theorem karmaIngaRow_obeys
@@ -488,7 +488,7 @@ theorem misfeed_collapse_self_refuting (t : Tier G) :
     ¬ (karmaIngaRow G).Collapse t :=
   rowOf_collapse_self_refuting G .karmaInga t
 
-abbrev sowingReapingRow (G : Grid Contrib) : Distinction G :=
+abbrev sowingReapingRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .sowingReaping
 
 theorem sowingReapingRow_obeys
@@ -504,7 +504,7 @@ theorem series_ownership_collapse_self_refuting (t : Tier G) :
     ¬ (sowingReapingRow G).Collapse t :=
   rowOf_collapse_self_refuting G .sowingReaping t
 
-abbrev deliveryIndexRow (G : Grid Contrib) : Distinction G :=
+abbrev deliveryIndexRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .deliveryIndex
 
 theorem deliveryIndexRow_obeys
@@ -520,7 +520,7 @@ theorem misfed_register_collapse_self_refuting (t : Tier G) :
     ¬ (deliveryIndexRow G).Collapse t :=
   rowOf_collapse_self_refuting G .deliveryIndex t
 
-abbrev weldEventTypeRow (G : Grid Contrib) : Distinction G :=
+abbrev weldEventTypeRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .weldEventType
 
 theorem weldEventTypeRow_obeys
@@ -536,7 +536,7 @@ theorem eventType_grading_collapse_self_refuting (t : Tier G) :
     ¬ (weldEventTypeRow G).Collapse t :=
   rowOf_collapse_self_refuting G .weldEventType t
 
-abbrev standingDatedRow (G : Grid Contrib) : Distinction G :=
+abbrev standingDatedRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .standingDated
 
 theorem standingDatedRow_obeys
@@ -552,7 +552,7 @@ theorem prognosis_as_diagnosis_collapse_self_refuting (t : Tier G) :
     ¬ (standingDatedRow G).Collapse t :=
   rowOf_collapse_self_refuting G .standingDated t
 
-abbrev subjectObjectAxisRow (G : Grid Contrib) : Distinction G :=
+abbrev subjectObjectAxisRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .subjectObjectAxis
 
 theorem subjectObjectAxisRow_obeys
@@ -572,7 +572,7 @@ theorem object_axis_as_subject_collapse_self_refuting (t : Tier G) :
    standing nature freezes this distinction, while identifying it with
    grid-visible function collapses the two sides. The generic row machinery
    checks the taxonomy shape without pretending to recover the supplied mark. -/
-abbrev standingSentienceRow (G : Grid Contrib) : Distinction G :=
+abbrev standingSentienceRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .standingSentience
 
 theorem standingSentienceRow_obeys
@@ -588,7 +588,7 @@ theorem sentience_from_function_collapse_self_refuting (t : Tier G) :
     ¬ (standingSentienceRow G).Collapse t :=
   rowOf_collapse_self_refuting G .standingSentience t
 
-abbrev perCallGlobalRow (G : Grid Contrib) : Distinction G :=
+abbrev perCallGlobalRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .perCallGlobal
 
 theorem perCallGlobalRow_obeys
@@ -604,7 +604,7 @@ theorem perCallGlobal_collapse_self_refuting (t : Tier G) :
     ¬ (perCallGlobalRow G).Collapse t :=
   rowOf_collapse_self_refuting G .perCallGlobal t
 
-abbrev terminusExitRow (G : Grid Contrib) : Distinction G :=
+abbrev terminusExitRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .terminusExit
 
 theorem terminusExitRow_obeys
@@ -620,7 +620,7 @@ theorem exit_collapse_self_refuting (t : Tier G) :
     ¬ (terminusExitRow G).Collapse t :=
   rowOf_collapse_self_refuting G .terminusExit t
 
-abbrev selfPoleTransposedRow (G : Grid Contrib) : Distinction G :=
+abbrev selfPoleTransposedRow (G : CoreReadings Designatum Contrib) : Distinction G :=
   rowOf G .selfPoleTransposed
 
 theorem selfPoleTransposedRow_obeys
@@ -733,26 +733,22 @@ end Grid
 /-- A live terminus supplies an actual pole-share weld in its own agent fiber.
     This is mark-free: no sentience reading is needed to inhabit the tier. -/
 theorem poleTier_inhabited_of_liveTerminus
-    {Contrib : Type} [PreorderBot Contrib]
-    {G : Grid Contrib} {b : G.Being}
+    {Designatum Contrib : Type} [PreorderBot Contrib]
+    {G : CoreReadings Designatum Contrib} {b : Designatum}
     (h : G.LiveTerminus b) :
     ∃ w : G.Weld, G.Actual w ∧ w.agent = b ∧
       AtBot (G.share w) ∧ G.AtPoleClass w.agent := by
   rcases h.left with ⟨w, hactual, hagent⟩
   refine ⟨w, hactual, hagent, ?_, ?_⟩
-  · have hresponse :
-        G.respondsTo w.agent w.call = some w.response := hactual
-    rw [hagent] at hresponse
-    simpa [Grid.share, hagent] using
-      (h.right w.call w.response hresponse)
+  · exact h.right w hactual hagent
   · simpa [Grid.AtPoleClass, hagent] using h.right
 
 /-- `LiveTerminus` fixes the pole-share witness, while the supplied mark
     conditionally determines which row of the act square contains it.  The
     theorem remains constructive by making neither row choice itself. -/
 theorem poleTier_cell_of_liveTerminus
-    {Contrib : Type} [PreorderBot Contrib]
-    {G : Grid Contrib} {b : G.Being}
+    {Designatum Contrib : Type} [PreorderBot Contrib]
+    {G : CoreReadings Designatum Contrib} {b : Designatum}
     (S : G.SentienceReading) (h : G.LiveTerminus b) :
     ∃ w : G.Weld, w.agent = b ∧ AtBot (G.share w) ∧
       (S.sentient w → G.TerminusAct S w) ∧

@@ -14,8 +14,9 @@ The project is pinned to `leanprover/lean4:v4.31.0` in `lean-toolchain`.
 
 **Conventions.** A theorem proved by `rfl` or `Iff.rfl` is true by unfolding
 definitions. A theorem whose proof is a projection, contradiction, or witness
-assembly is described as such. A "weld" is always the triple `RawWeld` /
-`G.Weld`; "actual" always means the equation
+assembly is described as such. A "weld" is always the subtype
+`OccurrenceReading.Weld` / `G.Weld` of occurrence designata; "actual" always
+means the equation
 `respondsTo w.agent w.call = some w.response`.
 
 Identifiers beginning `Waa` mark system-POV readings: what the concept looks
@@ -155,7 +156,7 @@ uses the proof argument only for typing.
   both readings.
 
 **BeingConvention definitions.** `BeingCoarsening G Macro` is a diagnosis-time
-projection `G.Being → Macro`; it is not stored in the signature.
+projection `Designatum → Macro`; it is not stored in the signature.
 
 Under a coarsening `κ`:
 
@@ -1015,20 +1016,23 @@ reparameterizations, with `comp_toFun` as its definitional projection lemma.
 `Config.map` sends a tendency through `toFun`; `Config.map_tendency` is
 definitional.
 
-`AgentReparam Being Being'` supplies a fine-agent bijection through `toFun`,
-`invFun`, and their inverse laws. `RawWeld.mapAgent` transports the weld tag;
-`Grid.relabel` transports the agent-facing signature fields through the inverse.
-`Config.relabel_fixed` records the trivial action on configurations.
+`Equiv Designatum Designatum'` (also available through the compatibility name
+`AgentReparam`) supplies a bijection of the whole designatum carrier through
+`toFun`, `invFun`, and their inverse laws. `Grid.relabel` transports occurrence,
+role, response, placement, and conditioning readings together through that
+equivalence. `Config.relabel_fixed` records the trivial action on
+configurations.
 
-The Being-side transport facts are `relabel_actual_iff`, `relabel_share`,
+The carrier-transport facts are `relabel_actual_iff`, `relabel_share`,
 `relabel_hasSelfPoleIndex_iff`, `relabel_deliveredTo_iff`, and
 `relabel_sameAgentDelivery_iff`. `relabel_index` states deliberate co-variance
 of the weld register. `relabel_rePitch` states that re-pitching commutes with
-agent relabelling, and `no_natural_agent_recovery_from_config` rules out a
-relabelling-equivariant family that recovers an agent from a configuration.
+whole-carrier relabelling, and `no_natural_agent_recovery_from_config` rules
+out a relabelling-equivariant family that recovers a designatum from a
+configuration.
 
-`Grid.map` leaves `Being`, `Call`, `Response`, `respondsTo`, and `conditions`
-unchanged, and maps `grade` through `toFun`.
+`Grid.map` leaves the occurrence, role, response, and conditioning readings
+unchanged, and maps only the placement reading through `toFun`.
 
 Definitional transport facts:
 
@@ -1150,8 +1154,9 @@ direction is not carried by the correlational structure.
 `not_strict_twoBottom` records the carrier-wide strictness failure on the
 two-bottom negative carrier.
 
-**`InteriorDirectionNegative`.** `RawWeld.transposeCR` swaps the call and
-response faces when they share a carrier. `transposeCR_involutive`,
+**`InteriorDirectionNegative`.** `OccurrenceReading.transposeCR` swaps the
+call and response role readings on the same carrier.
+`transposeCR_involutive`,
 `unorderedCRContent_transpose_invariant`, and `transpose_swaps_readings` pin
 the transposition behavior: unordered content is unchanged while the display
 labels reverse. `no_interior_direction_recovery` uses the same collision shape
@@ -1159,34 +1164,12 @@ one grain down: unordered call/response content does not recover which face is
 call. This is the formal certificate that the intra-weld arrow is display, not
 a field-carried before/after.
 
-**`DirectionCoarseningWitness`.** `registerClockUnitTick` gives the raw
-register clock one universal tick. `registerClock_unitTick_not_resolutionBounded`
-proves this cannot be coherent over the injective `Nat` display: registers `0`
-and `1` share a tick but do not have order-equivalent shares.
-
-The positive slow-clock limit is modeled on a lawful one-point display:
-`fullyCoarseRegisterClockGrid` keeps the register-clock response and delivery
-shape while grading every weld in `Unit`. `unit_directionVoid_via_mergeToUnit`
-gets `DirectionVoid Unit` through the existing legal display collapse from the
-all-equivalent `TwoBottom` carrier, and
-`fullyCoarseRegisterClock_no_timeDirection` applies the one-tick
-resolution-bound theorem to the fully coarse grid. The theorem
-`registerClock_directionCoarsening_independence` is the soul-guard: macro
-actual-inhabitation and self-conditioning for the register clock do not
-consume either a direction coarsening or a resolution-bound hypothesis.
-
-**`ContentNegative`.** `noActualGrid` has no actual welds and therefore no live
-act-time tier. It proves `contentBeingsRow_not_obeys_noActual` and
-`contentGridLensRow_not_obeys_noLive`. The existing two-bottom carrier gives
-`twoBottomGrid_directionVoid`, and
-`contentBeforeAfterRow_not_obeys_twoBottom` shows the directed-time content row
-also needs its strict-direction aptness hypothesis. `emptyBeingGrid_no_actual`,
-`emptyBeingGrid_no_liveTier`, and `contentBeingsRow_obeys_emptyBeing` show that
-an empty being axis has no act-time counterexample and the beings row fuses
-vacuously. `constantResponseGrid_no_variation` and
-`contentIntraWeldArrowRow_not_obeys_constantResponse` are the intra-weld
-content countermodel: if every call gets the same response, the response-
-variation aptness hypothesis is load-bearing.
+**`DirectionCoarseningWitness`.**
+`unit_directionVoid_via_mergeToUnit` obtains `DirectionVoid Unit` through the
+lawful display collapse from the all-equivalent `TwoBottom` carrier. The
+positive theorem `mapDir_resolutionBounded_iff` transports
+resolution-boundedness across contribution-display reparameterization; the
+coverage witness below marks the limit of carrier-wide conclusions.
 
 **`CoverageNegative`.** `embedIntoNat` sends the one-point carrier to `0` in
 `Nat`, leaving all target strictness at and above `1` outside the image.
@@ -1230,6 +1213,17 @@ avyākata's natural-language questions is a modeling claim, argued in prose and
 owned as such. The third layer cannot be discharged in Lean, and the paper does
 not pretend otherwise; it is an aptness claim of the same standing as the
 content-row hypotheses beside `ContentNegative`.
+
+**`ContentNegative`.** `HypotheticalCase` selects an occurrence designatum but
+its response reading returns `none`, so an act-time exists without an actual
+or live occurrence. This witnesses failure of the beings, grid-lens, and
+weld-grain content rows when their non-vacuity hypotheses are absent.
+`FixedResponseCase` instead mounts two distinct calls as actual occurrences
+with one shared response; its lack of response variation is substantive rather
+than a singleton-call artifact. By contrast,
+`contentLayerRow_obeys_of_no_occurrences` records the genuinely vacuous
+boundary: without any occurrence there is no act-time at which fusion can
+fail.
 
 **`BeingNegative`.** The signature-level `BeingCoarsening.id` and
 `BeingCoarsening.total` already show that identity and universal merge
@@ -1309,10 +1303,10 @@ The audited declarations are:
 - `Grid.map_transpose`, `Grid.no_sentience_recovery`, and
   `sentience_share_square_inhabited`
 - `Grid.DirectedConvention.DirectionCoarsening.mapDir_resolutionBounded_iff`
-- `DirectionCoarseningWitness.registerClock_unitTick_not_resolutionBounded`
+- `DirectionCoarseningWitness.oneTick_not_resolutionBounded`
+- `DirectionCoarseningWitness.eventTick_resolutionBounded`
 - `DirectionCoarseningWitness.unit_directionVoid_via_mergeToUnit`
-- `DirectionCoarseningWitness.fullyCoarseRegisterClock_no_timeDirection`
-- `DirectionCoarseningWitness.registerClock_directionCoarsening_independence`
+- `DirectionCoarseningWitness.twoResolution_directionCoarsening_independence`
 - `Grid.DirectedConvention.map_landsWithShareDrop_iff`
 - `Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfConditioningTag_iff`
 - `Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_fiberAtPoleOn_iff`
@@ -1354,16 +1348,17 @@ The audited declarations are:
 - `misFeed_entries_carry_decomposition`
 - `OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus`
 - `Grid.respondsToEveryCall_of_no_call`,
-  `ContentNegative.noActualGrid_no_actual`, and
-  `ContentNegative.emptyBeingGrid_no_actual`
-- `ContentNegative.emptyBeingGrid_no_liveTier` and
-  `ContentNegative.contentBeingsRow_obeys_emptyBeing`
+  `ContentNegative.hypotheticalGrid_no_actual`, and
+  `ContentNegative.hypotheticalGrid_no_liveTier`
+- `Grid.DirectedConvention.BeingConvention.GridConvention.contentLayerRow_obeys_of_no_occurrences`,
+  `ContentNegative.contentBeingsRow_not_obeys_hypothetical`, and
+  `ContentNegative.contentGridLensRow_not_obeys_hypothetical`
 - The new intra-weld/doer-deed/reflexivity surface:
   `InteriorDirectionNegative.transposeCR_involutive`,
   `InteriorDirectionNegative.unorderedCRContent_transpose_invariant`,
   `InteriorDirectionNegative.transpose_swaps_readings`,
   `DoerDeedNegative.no_priority_recovery`,
-  `ContentNegative.contentIntraWeldArrowRow_not_obeys_constantResponse`,
+  `ContentNegative.contentIntraWeldArrowRow_not_obeys_fixedResponse`,
   `intraWeldArrowRow_*`, `doerDeedRow_*`,
   `contentIntraWeldArrowRow_obeys_of_variation`,
   `intraWeldArrowLadder_*`, `doerDeedLadder_*`,

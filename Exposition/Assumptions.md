@@ -8,17 +8,17 @@ Generated from `WeldAndArrow/Meta/AssumptionLedger.lean` by `lake exe exposition
 
 ### A.1 No prior agent
 
-A weld is the primitive occurrence. `Grid.index` and `Grid.share` are projections from a completed `RawWeld`, not fields recovered from a separate performer or act. `no_agent_recovery_of_field_collision` records the internal obstruction: the same call-response field residue can be produced by distinct actual agents.
+A weld is an occurrence designatum selected by an `OccurrenceReading`. Its agent, call, and response are role-readings of that occurrence; `Grid.index` and `Grid.share` are derived projections, not fields recovered from a separate performer or act. `Grid.no_agent_recovery_of_field_collision` records the internal obstruction: the same call-response field residue can be produced by distinct actual agents.
 
-**Checked anchors (Signature):** `WAA.RawWeld` (proof), `WAA.Grid.index` (proof), `WAA.Grid.share` (proof), `WAA.no_agent_recovery_of_field_collision` (witness)
+**Checked anchors (Signature):** `WAA.OccurrenceReading.Weld` (proof), `WAA.OccurrenceReading.Weld.agent` (proof), `WAA.OccurrenceReading.Weld.call` (proof), `WAA.OccurrenceReading.Weld.response` (proof), `WAA.Grid.index` (proof), `WAA.Grid.share` (proof), `WAA.Grid.no_agent_recovery_of_field_collision` (witness)
 
 ### A.2 Nothing self-indexed is stored
 
-`Config` stores only `tendency : Contrib`. It has no owner, being, weld, or field-residue slot. `rePitch` uses the received weld's share and ignores the prior configuration value. The checked claim is architectural and definability-level: the record has no `Being`-typed slot, relabelling agents acts trivially on configurations and commutes with `rePitch`, and no relabelling-equivariant recovery of an agent from a configuration exists. It is not an information-flow claim; see the declined entry below.
+`Config` stores only `tendency : Contrib`. It has no owner, designatum, weld, or field-residue slot. `rePitch` uses the received weld's share and ignores the prior configuration value. The checked claim is architectural and definability-level: whole-carrier relabelling acts trivially on configurations and commutes with `rePitch`, and no relabelling-equivariant recovery of a designatum from a configuration exists. It is not an information-flow claim; see the declined entry below.
 
-**Checked anchors (Signature):** `WAA.Config` (proof), `WAA.Config.tendency` (proof), `WAA.Grid.rePitch` (proof), `WAA.RawWeld.mapAgent` (proof)
+**Checked anchors (Signature):** `WAA.Config` (proof), `WAA.Config.tendency` (proof), `WAA.Grid.rePitch` (proof)
 
-**Downstream elaboration:** `WAA.Config.relabel_fixed` (proof), `WAA.Grid.relabel_rePitch` (proof), `WAA.Grid.no_natural_agent_recovery_from_config` (witness), `WAA.ConfigLeakWitness.no_agent_recovery_from_config_of_share_collision` (witness)
+**Downstream elaboration:** `WAA.Equiv` (proof), `WAA.Grid.relabel` (proof), `WAA.Config.relabel_fixed` (proof), `WAA.Grid.relabel_rePitch` (proof), `WAA.Grid.no_natural_agent_recovery_from_config` (witness), `WAA.ConfigLeakWitness.no_agent_recovery_from_config_of_share_collision` (witness)
 
 ### A.3 The self-pole index is just live share
 
@@ -62,7 +62,7 @@ The bare signature does not impose irreflexivity on `conditions`; a model may su
 
 The signature assumes no asymmetry, irreflexivity, or transitivity for `conditions`. `ConditionsEither` is the symmetric field fact; direction enters only in `Grid.DirectedConvention`. The downstream `DirectionNegative` witness elaborates this as non-recovery from symmetric closure.
 
-**Checked anchors (Signature):** `WAA.Grid.ConditionsEither` (proof), `WAA.Grid.conditionsEither_symm` (proof), `WAA.Grid.DirectedConvention.TimeDirection` (proof), `WAA.Grid.transpose` (witness), `WAA.Grid.transpose_conditionsEither_iff` (witness), `WAA.Grid.DirectedConvention.transpose_deliveredTo_iff` (witness), `WAA.RawWeld.transposeCR` (witness), `WAA.AssumptionLocalWitnesses.no_direction_recovery_from_conditionsEither` (witness), `WAA.InteriorDirectionNegative.no_interior_direction_recovery` (witness)
+**Checked anchors (Signature):** `WAA.Grid.ConditionsEither` (proof), `WAA.Grid.conditionsEither_symm` (proof), `WAA.Grid.DirectedConvention.TimeDirection` (proof), `WAA.Grid.transpose` (witness), `WAA.Grid.transpose_conditionsEither_iff` (witness), `WAA.Grid.DirectedConvention.transpose_deliveredTo_iff` (witness), `WAA.OccurrenceReading.transposeCR` (witness), `WAA.AssumptionLocalWitnesses.no_direction_recovery_from_conditionsEither` (witness), `WAA.InteriorDirectionNegative.no_interior_direction_recovery` (witness)
 
 **Downstream elaboration:** `WAA.DirectionNegative.no_direction_recovery_from_conditionsEither` (witness)
 
@@ -86,7 +86,7 @@ A clock's finite delivery-axis resolution is supplied by a diagnosis-time `Direc
 
 **Checked anchors (Signature):** `WAA.Grid.DirectedConvention.DirectionCoarsening` (proof), `WAA.Grid.DirectedConvention.DirectionCoarsening.SameTick` (proof), `WAA.Grid.DirectedConvention.DirectionCoarsening.ResolutionBounded` (proof), `WAA.Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_within_tick` (proof), `WAA.Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_of_resolutionBounded_subsingleton` (proof), `WAA.Grid.DirectedConvention.DirectionCoarsening.transpose_subTickDelivery` (witness)
 
-**Downstream elaboration:** `WAA.DirectionCoarseningWitness.registerClock_unitTick_not_resolutionBounded` (witness), `WAA.DirectionCoarseningWitness.unit_directionVoid_via_mergeToUnit` (witness), `WAA.DirectionCoarseningWitness.fullyCoarseRegisterClock_no_timeDirection` (witness), `WAA.DirectionCoarseningWitness.registerClock_directionCoarsening_independence` (witness)
+**Downstream elaboration:** `WAA.DirectionCoarseningWitness.unit_directionVoid_via_mergeToUnit` (witness), `WAA.DirectionCoarseningWitness.twoResolution_directionCoarsening_independence` (witness), `WAA.Grid.DirectedConvention.DirectionCoarsening.mapDir_resolutionBounded_iff` (proof), `WAA.CoverageNegative.directionVoid_needs_coverage` (witness)
 
 ### B.5 Contribution values are display, not operational tokens
 
@@ -148,6 +148,8 @@ Universal call/response ranges over actual occurrences; it does not assert that 
 
 **Checked anchors (Signature):** `WAA.Grid.respondsTo` (proof), `WAA.Grid.Actual` (proof), `WAA.Grid.DirectedConvention.EnvironsLine` (proof)
 
+**Downstream elaboration:** `WAA.ContentNegative.hypotheticalGrid_no_actual` (witness), `WAA.ContentNegative.contentBeingsRow_not_obeys_hypothetical` (witness), `WAA.ContentNegative.fixedResponseGrid_no_variation` (witness), `WAA.ContentNegative.contentIntraWeldArrowRow_not_obeys_fixedResponse` (witness)
+
 ### B.13 No aggregate sentience scalar
 
 Sentience is marked per weld. `Intermittent` records fibers containing both marked and unmarked actual acts, but the system assigns no degree of sentience to a tag.
@@ -198,31 +200,36 @@ The clock and register-clock models anchor possibility checks and mark-invarianc
 
 | Declaration | Allowed axioms |
 |---|---|
-| `WAA.no_agent_recovery_of_field_collision` | None |
+| `WAA.Grid.no_agent_recovery_of_field_collision` | None |
 | `WAA.Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_within_tick` | None |
 | `WAA.Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_of_resolutionBounded_subsingleton` | None |
 | `WAA.Grid.relabel_rePitch` | None |
-| `WAA.Grid.no_natural_agent_recovery_from_config` | None |
-| `WAA.ConfigLeakWitness.registerClock_config_recovers_agent` | None |
-| `WAA.ConfigLeakWitness.no_agent_recovery_from_config_of_share_collision` | None |
+| `WAA.Grid.no_natural_agent_recovery_from_config` | `propext`, `Quot.sound` |
+| `WAA.ConfigLeakWitness.registerClock_config_recovers_agent` | `propext` |
+| `WAA.ConfigLeakWitness.no_agent_recovery_from_config_of_share_collision` | `propext` |
 | `WAA.strict_asymm` | None |
 | `WAA.strict_trans` | None |
 | `WAA.Grid.transpose_transpose` | None |
 | `WAA.DirectionNegative.no_direction_recovery_from_conditionsEither` | `propext`, `Quot.sound` |
 | `WAA.CoverageNegative.directionVoid_needs_coverage` | None |
-| `WAA.CoverageNegative.waaEffectiveTerminus_needs_coverage` | None |
+| `WAA.CoverageNegative.waaEffectiveTerminus_needs_coverage` | `propext` |
 | `WAA.Grid.stateToolFits_iff_atBot` | None |
 | `WAA.Grid.map_actual_iff` | None |
 | `WAA.Grid.map_isShareDrop_iff` | None |
 | `WAA.Grid.map_transpose` | None |
 | `WAA.Grid.actual_weld_readings_split` | None |
 | `WAA.Grid.no_sentience_recovery` | None |
-| `WAA.sentience_share_square_inhabited` | None |
+| `WAA.sentience_share_square_inhabited` | `propext` |
 | `WAA.Grid.DirectedConvention.DirectionCoarsening.mapDir_resolutionBounded_iff` | None |
-| `WAA.DirectionCoarseningWitness.registerClock_unitTick_not_resolutionBounded` | None |
 | `WAA.DirectionCoarseningWitness.unit_directionVoid_via_mergeToUnit` | None |
-| `WAA.DirectionCoarseningWitness.fullyCoarseRegisterClock_no_timeDirection` | None |
-| `WAA.DirectionCoarseningWitness.registerClock_directionCoarsening_independence` | None |
+| `WAA.DirectionCoarseningWitness.twoResolution_directionCoarsening_independence` | None |
+| `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.contentLayerRow_not_obeys_of_nonlive_denial` | None |
+| `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.contentLayerRow_obeys_of_no_occurrences` | None |
+| `WAA.ContentNegative.contentBeingsRow_not_obeys_hypothetical` | `propext` |
+| `WAA.ContentNegative.contentGridLensRow_not_obeys_hypothetical` | `propext` |
+| `WAA.ContentNegative.contentWeldRow_not_obeys_hypothetical` | `propext` |
+| `WAA.ContentNegative.contentIntraWeldArrowRow_not_obeys_fixedResponse` | `propext` |
+| `WAA.ContentNegative.contentBeforeAfterRow_not_obeys_twoBottom` | None |
 | `WAA.Grid.DirectedConvention.map_landsWithShareDrop_iff` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_selfConditioningTag_iff` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.BeingCoarsening.map_fiberAtPoleOn_iff` | None |
@@ -232,8 +239,8 @@ The clock and register-clock models anchor possibility checks and mark-invarianc
 | `WAA.Grid.map_waaBullTen_iff` | None |
 | `WAA.Grid.bullSeven_not_bullEight` | None |
 | `WAA.Grid.bullTen_to_bullNine` | None |
-| `WAA.CorrelationsNegative.pratyekabuddha_countermodel` | None |
-| `WAA.CorrelationsNegative.no_stage_boundary_recovery` | None |
+| `WAA.CorrelationsNegative.pratyekabuddha_countermodel` | `propext` |
+| `WAA.CorrelationsNegative.no_stage_boundary_recovery` | `propext` |
 | `WAA.Grid.classQuiet_no_clench_in_class` | None |
 | `WAA.Fetter.kind_lower_iff_cut_by_nonReturn` | None |
 | `WAA.Grid.arhatPathQuiet_iff_quietOn_univ` | None |
@@ -248,7 +255,7 @@ The clock and register-clock models anchor possibility checks and mark-invarianc
 | `WAA.Grid.waaNonReturner_iff_nonReturn_cut` | None |
 | `WAA.Grid.waaSerialFactorRegime_conditional` | None |
 | `WAA.Grid.waaOnceReturner_attenuation_witness` | `propext` |
-| `WAA.FactorsNegative.no_hold_conceit_boundary_recovery` | None |
+| `WAA.FactorsNegative.no_hold_conceit_boundary_recovery` | `propext` |
 | `WAA.FactorsNegative.factor_order_underdetermined` | `propext` |
 | `WAA.FettersNegative.seen_run_underdetermines_fetterCut` | `propext` |
 | `WAA.Grid.DirectedConvention.waaPathOught_conditional` | None |
@@ -257,7 +264,7 @@ The clock and register-clock models anchor possibility checks and mark-invarianc
 | `WAA.Grid.DirectedConvention.noDelusion_of_noNescience_of_terminus` | None |
 | `WAA.Grid.DirectedConvention.waaFullyEnlightened_of_fullyEnlightenedEnacted` | None |
 | `WAA.FaithNegative.noNescience_strictly_stronger_witness` | `propext` |
-| `WAA.FaithNegative.aklishta_ajnana_witness` | None |
+| `WAA.FaithNegative.aklishta_ajnana_witness` | `propext` |
 | `WAA.FaithNegative.arhat_retains_nescience_witness` | `propext` |
 | `WAA.FaithNegative.Sealed.silent_buddha_models` | `propext` |
 | `WAA.Grid.DirectedConvention.no_waa_path_at_pole` | None |
@@ -266,41 +273,33 @@ The clock and register-clock models anchor possibility checks and mark-invarianc
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.denied_misfits_live_offer` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.rowOf_obeys_iff_errorFree` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.reEmptied_obeys_of_errorFree` | None |
-| `WAA.rung_not_pole_witness` | None |
-| `WAA.standing_does_not_determine_dated` | None |
+| `WAA.rung_not_pole_witness` | `propext` |
+| `WAA.standing_does_not_determine_dated` | `propext` |
 | `WAA.Grid.DirectedConvention.map_waaAversionContext_iff` | None |
-| `WAA.OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus` | None |
-| `WAA.MisFeedNegative.fence_and_gate` | None |
+| `WAA.OrthogonalityNegative.waaEffectiveTerminus_stronger_than_terminus` | `propext` |
+| `WAA.MisFeedNegative.fence_and_gate` | `propext` |
 | `WAA.misFeed_entries_carry_decomposition` | None |
 | `WAA.Grid.grade_independent_of_conditions` | None |
 | `WAA.Grid.rePitch_forgets` | None |
 | `WAA.Grid.respondsToEveryCall_of_no_call` | None |
-| `WAA.ContentNegative.noActualGrid_no_actual` | None |
-| `WAA.ContentNegative.emptyBeingGrid_no_actual` | None |
-| `WAA.ContentNegative.emptyBeingGrid_no_liveTier` | None |
-| `WAA.ContentNegative.contentBeingsRow_obeys_emptyBeing` | None |
-| `WAA.Grid.DirectedConvention.PrudentialPrivilegeNegative.prudentialPrivilege_failure_modes` | None |
+| `WAA.Grid.DirectedConvention.PrudentialPrivilegeNegative.prudentialPrivilege_failure_modes` | `propext` |
 | `WAA.Grid.ConsequentialistConvention.dropCountInFiber_le_dropCount` | `propext` |
 | `WAA.Grid.ConsequentialistConvention.dropCount_eq_sum_dropCountInFiber` | `propext` |
 | `WAA.Grid.ConsequentialistConvention.map_dropCountInFiberSum` | `propext` |
-| `WAA.ObjectiveNegative.split_dropCount_sum_eq_mergedDropCount` | None |
-| `WAA.ObjectiveNegative.no_grid_data_objective_for_my_drops` | None |
-| `WAA.TransferNegative.adaptive_track_record_underdetermines_new_effect` | None |
+| `WAA.ObjectiveNegative.split_dropCount_sum_eq_mergedDropCount` | `propext` |
+| `WAA.ObjectiveNegative.no_grid_data_objective_for_my_drops` | `propext` |
+| `WAA.TransferNegative.adaptive_track_record_underdetermines_new_effect` | `propext` |
 | `WAA.Grid.DirectedConvention.not_effectivenessEnacted_of_undelivered` | None |
-| `WAA.EffectiveTerminusNegative.no_effectiveTerminus_recovery_from_run` | None |
-| `WAA.DeliveryArrogationNegative.command_utterance_not_fits` | None |
+| `WAA.EffectiveTerminusNegative.no_effectiveTerminus_recovery_from_run` | `propext` |
+| `WAA.DeliveryArrogationNegative.command_utterance_not_fits` | `propext` |
 | `WAA.Grid.DirectedConvention.landing_call_in_modality` | None |
 | `WAA.LedgerCase.decree_engineers_calls_not_receptions` | `propext` |
 | `WAA.LedgerCase.official_actualAgentInhabited` | `propext` |
-| `WAA.InteriorDirectionNegative.transposeCR_involutive` | None |
+| `WAA.InteriorDirectionNegative.transposeCR_involutive` | `propext` |
 | `WAA.InteriorDirectionNegative.unorderedCRContent_transpose_invariant` | `propext` |
-| `WAA.InteriorDirectionNegative.transpose_swaps_readings` | None |
+| `WAA.InteriorDirectionNegative.transpose_swaps_readings` | `propext` |
 | `WAA.DoerDeedNegative.priority_readings_disagree` | None |
 | `WAA.DoerDeedNegative.no_priority_recovery` | None |
-| `WAA.ContentNegative.constantResponseGrid_no_variation` | None |
-| `WAA.ContentNegative.constantResponseWeld_no_live_share` | None |
-| `WAA.ContentNegative.contentIntraWeldArrowRow_not_fused_constantResponse` | None |
-| `WAA.ContentNegative.contentIntraWeldArrowRow_not_obeys_constantResponse` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.intraWeldArrowRow_obeys` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.intraWeldArrowRow_not_freeze` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.no_order_collapse_self_refuting` | None |
@@ -328,5 +327,5 @@ The clock and register-clock models anchor possibility checks and mark-invarianc
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.map_doerDeedLadder_obeys` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.map_doerDeedLadder_obeys_succ` | None |
 | `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.map_doerDeedLadder_no_level_final` | None |
-| `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.ladderRungGrid_beings_sunyata` | None |
-| `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.ladderRungGrid_no_level_final` | None |
+| `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.ladderRungGrid_beings_sunyata` | `propext` |
+| `WAA.Grid.DirectedConvention.BeingConvention.GridConvention.ladderRungGrid_no_level_final` | `propext` |

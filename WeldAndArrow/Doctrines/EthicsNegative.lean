@@ -51,7 +51,8 @@ def onlyFalseFidelity
     free-standing tier witness. -/
 theorem no_stance_over_false_speech
     (Faith : Prop → Prop) :
-    ¬ WaaEthicsStance grid falseSpeechReading onlyFalseFidelity Faith () := by
+    ¬ WaaEthicsStance grid falseSpeechReading onlyFalseFidelity Faith
+      CaseDesignatum.producer := by
   intro hstance
   have hfit := waa_stance_says_true grid hstance falseRecord rfl rfl
   exact falseContent_not_trueAt hfit
@@ -62,7 +63,8 @@ theorem no_stance_over_false_speech
 theorem no_ethics_bearing_at_pole
     (Fidelity : RecordedUtterance grid (waaPathClaimLanguage grid) → Prop)
     (Faith : Prop → Prop)
-    (_hstance : WaaEthicsStance grid reading Fidelity Faith ()) :
+    (_hstance : WaaEthicsStance grid reading Fidelity Faith
+      CaseDesignatum.producer) :
     ¬ WaaAversionContext grid poleBefore targetWeld ∧
       ¬ HasShareDropLanding grid poleBefore mindWeld :=
   ⟨no_waa_aversion_context_at_pole grid (Nat.le_refl 0) targetWeld,

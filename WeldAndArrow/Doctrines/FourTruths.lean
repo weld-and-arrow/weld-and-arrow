@@ -16,8 +16,8 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /- ==============================================================================
    Truths 1-3: mismatch as a display reading
@@ -30,14 +30,14 @@ def WaaMismatchGrade (w : G.Weld) : Contrib :=
 
 @[simp]
 theorem waaMismatchGrade_eq_share (w : G.Weld) :
-    G.WaaMismatchGrade w = G.share w :=
+    WaaMismatchGrade G w = G.share w :=
   rfl
 
 /-- Ordinal covariation: lowering share lowers mismatch grade in the same
     display order, because the two readings unfold to the same value. -/
 theorem waaMismatchGrade_le_of_share_le {w₁ w₂ : G.Weld}
     (h : G.share w₁ ≼ G.share w₂) :
-    G.WaaMismatchGrade w₁ ≼ G.WaaMismatchGrade w₂ :=
+    WaaMismatchGrade G w₁ ≼ WaaMismatchGrade G w₂ :=
   h
 
 /-- The structural content formerly carried by `WaaMismatchLive`: an actual
@@ -50,7 +50,7 @@ def ClenchMismatch (w : G.Weld) : Prop :=
     index condition. -/
 theorem clenchMismatch_iff_hasSelfPoleIndex
     {w : G.Weld} (hactual : G.Actual w) :
-    G.ClenchMismatch w ↔ G.HasSelfPoleIndex w := by
+    ClenchMismatch G w ↔ G.HasSelfPoleIndex w := by
   constructor
   · intro h
     exact h.right
@@ -60,15 +60,15 @@ theorem clenchMismatch_iff_hasSelfPoleIndex
 /-- Dukkha is the sentient reading of a structural clench mismatch.  The
     structure is derived; the suffering is supplied. -/
 def WaaDukkha (S : SentienceReading G) (w : G.Weld) : Prop :=
-  S.sentient w ∧ G.ClenchMismatch w
+  S.sentient w ∧ ClenchMismatch G w
 
 theorem clenchMismatch_of_waaDukkha
-    {S : SentienceReading G} {w : G.Weld} (h : G.WaaDukkha S w) :
-    G.ClenchMismatch w :=
+    {S : SentienceReading G} {w : G.Weld} (h : WaaDukkha G S w) :
+    ClenchMismatch G w :=
   h.right
 
 theorem sentientAct_of_waaDukkha
-    {S : SentienceReading G} {w : G.Weld} (h : G.WaaDukkha S w) :
+    {S : SentienceReading G} {w : G.Weld} (h : WaaDukkha G S w) :
     G.SentientAct S w :=
   ⟨h.right.left, h.left⟩
 
@@ -77,37 +77,54 @@ theorem sentientAct_of_waaDukkha
 theorem clenchMismatch_of_insentientAppropriation
     {S : SentienceReading G} {w : G.Weld}
     (h : G.InsentientAppropriation S w) :
-    G.ClenchMismatch w :=
+    ClenchMismatch G w :=
   ⟨h.left.left, h.right⟩
 
 theorem not_waaDukkha_of_insentientAct
     {S : SentienceReading G} {w : G.Weld}
     (h : G.InsentientAct S w) :
-    ¬ G.WaaDukkha S w :=
+    ¬ WaaDukkha G S w :=
   fun hdukkha => h.right hdukkha.left
 
 /-- A terminus response has mismatch grade at the pole-class. -/
 theorem waaMismatch_atBot_of_terminus_response
-    {b : G.Being} {c : G.Call} {r : G.Response}
-    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
-    AtBot (G.WaaMismatchGrade ⟨b, c, r⟩) :=
-  G.atBot_of_terminus_response hterm hresp
+    {w : G.Weld}
+    (hterm : G.Terminus w.agent) (hactual : G.Actual w) :
+    AtBot (WaaMismatchGrade G w) :=
+  G.atBot_of_terminus_response hterm hactual
 
 /-- A terminus response has no clench mismatch. -/
 theorem not_clenchMismatch_of_terminus_response
-    {b : G.Being} {c : G.Call} {r : G.Response}
-    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
-    ¬ G.ClenchMismatch ⟨b, c, r⟩ := by
+    {w : G.Weld}
+    (hterm : G.Terminus w.agent) (hactual : G.Actual w) :
+    ¬ ClenchMismatch G w := by
   intro h
-  exact h.right (G.waaMismatch_atBot_of_terminus_response hterm hresp)
+  exact h.right (waaMismatch_atBot_of_terminus_response G hterm hactual)
 
 theorem not_waaDukkha_of_terminus_response
     (S : SentienceReading G)
-    {b : G.Being} {c : G.Call} {r : G.Response}
-    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
-    ¬ G.WaaDukkha S ⟨b, c, r⟩ :=
-  fun h => G.not_clenchMismatch_of_terminus_response hterm hresp h.right
+    {w : G.Weld}
+    (hterm : G.Terminus w.agent) (hactual : G.Actual w) :
+    ¬ WaaDukkha G S w :=
+  fun h => not_clenchMismatch_of_terminus_response G hterm hactual h.right
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev WaaMismatchGrade (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaMismatchGrade G
+abbrev ClenchMismatch (G : CoreReadings Designatum Contrib) :=
+  Grid.ClenchMismatch G
+abbrev WaaDukkha (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaDukkha G
+abbrev not_clenchMismatch_of_terminus_response
+    (G : CoreReadings Designatum Contrib) {w : G.Weld}
+    (hterm : G.Terminus w.agent) (hactual : G.Actual w) :=
+  Grid.not_clenchMismatch_of_terminus_response G hterm hactual
+
+end CoreReadings
 
 end WAA

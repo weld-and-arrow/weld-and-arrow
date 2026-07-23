@@ -70,7 +70,7 @@ v2's Part III (the syntactic `Position` ladder) is **superseded**:
 
 ## API consumed (all from WeldAndArrow.Theory / WeldAndArrow.Theorems)
 
-At `Grid` level: `Grid Contrib`, `G.Weld`, `G.Being`, `G.Actual`,
+At `Grid` level: `CoreReadings Designatum Contrib`, `G.Weld`, `Designatum`, `G.Actual`,
 `Tier.floor`, `Tier.actTime`, `Distinction` (with `language`, `sideA`,
 `sideB`, `Separated`, `Freeze`, `Collapse`, `ObeysSeparateFuse`),
 `ClaimLanguage` (with `Claim`, `Holds`), `ErrorFree`,
@@ -104,8 +104,8 @@ namespace Metaphysics
 
 open LadderSide
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable {G : Grid Contrib}
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable {G : CoreReadings Designatum Contrib}
 
 /-! ## The vocabulary, as wrappers -/
 
@@ -249,32 +249,32 @@ theorem nihilist_refuted_at_every_rung {d : Distinction G}
 /-- 有無 — śūnyatā of the beings distinction: no level of its re-emptying
     ladder freezes. 有無 emptied: Nishitani's 'Not Nothing' at the seed,
     carried up the ladder in Jizang's form -/
-theorem beings_sunyata (G : Grid Contrib) : Sunyata (beingsRow G) :=
+theorem beings_sunyata (G : CoreReadings Designatum Contrib) : Sunyata (beingsRow G) :=
   fun ⟨n, hf⟩ => beingsLadder_no_level_final G n hf
 
 /-- Śūnyatā of the before/after distinction: time's arrow functions where
     live and claims no floor — Nishitani's non-reified time, on which
     impermanence is neither an illusion (collapse) nor an absolute (freeze). -/
-theorem time_sunyata (G : Grid Contrib) : Sunyata (beforeAfterRow G) :=
+theorem time_sunyata (G : CoreReadings Designatum Contrib) : Sunyata (beforeAfterRow G) :=
   fun ⟨n, hf⟩ => beforeAfterLadder_no_level_final G n hf
 
 /-- Śūnyatā of the intra-weld arrow: the interior order functions where live
     and claims no floor. MMK 8's checked interior form joins the ladder rather
     than becoming hidden furniture inside a weld. -/
-theorem intraWeldArrow_sunyata (G : Grid Contrib) :
+theorem intraWeldArrow_sunyata (G : CoreReadings Designatum Contrib) :
     Sunyata (intraWeldArrowRow G) :=
   fun ⟨n, hf⟩ => intraWeldArrowLadder_no_level_final G n hf
 
 /-- Śūnyatā of the weld-grain distinction: the weld held as svabhāva is the
     last unemptied level only while unnamed. Once named as a convention layer,
     it enters the same re-emptying ladder as the other readings. -/
-theorem weld_sunyata (G : Grid Contrib) : Sunyata (weldRow G) :=
+theorem weld_sunyata (G : CoreReadings Designatum Contrib) : Sunyata (weldRow G) :=
   fun ⟨n, hf⟩ => weldLadder_no_level_final G n hf
 
 /-- Śūnyatā of doer/deed dependence: the mutual dependence itself is empty,
     so the row that denies a prior doer also refuses to freeze that denial as
     a final floor. -/
-theorem doerDeed_sunyata (G : Grid Contrib) : Sunyata (doerDeedRow G) :=
+theorem doerDeed_sunyata (G : CoreReadings Designatum Contrib) : Sunyata (doerDeedRow G) :=
   fun ⟨n, hf⟩ => doerDeedLadder_no_level_final G n hf
 
 /-- 真空妙有 — true emptiness, wondrous being: the śūnyatā of contentful
@@ -282,7 +282,7 @@ theorem doerDeed_sunyata (G : Grid Contrib) : Sunyata (doerDeedRow G) :=
     technical convenience but the doctrine itself in signature form: 色即是空
     requires 色. An empty world does not model this emptiness; it fails to
     supply `h`. v1's vacuity disease is excluded by the type. -/
-theorem wondrous_being (G : Grid Contrib)
+theorem wondrous_being (G : CoreReadings Designatum Contrib)
     (h : ∃ w : G.Weld, G.Actual w) :
     Sunyata (contentBeingsRow G) :=
   fun ⟨n, hf⟩ => contentBeingsLadder_no_level_final_of_being (G := G) h n hf

@@ -264,8 +264,8 @@ theorem ledgerPicture_contains_legal_causalSkeleton :
     CompoundComponent.legal .causalSkeleton ∈ decomposition ledgerPicture := by
   simp [decomposition]
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 theorem solipsism_karmaInga_row_not_freeze :
     ¬ (karmaIngaRow G).Freeze :=

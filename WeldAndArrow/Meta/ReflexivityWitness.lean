@@ -5,9 +5,8 @@
 ================================================================================
 
 Jizang's fourfold two-truths are re-emptied here over their own rung labels.
-This is a single legal grid instantiating the opaque `Being` parameter with
-`Nat`; it is not a definition of `Being`, and it does not disturb the
-boundary-freedom witnessed by `BeingNegative`.
+This is a single legal reading package whose designata include ladder-rung
+labels. It does not recover a canonical being boundary.
 -/
 
 import WeldAndArrow.Meta.Metaphysics
@@ -19,16 +18,51 @@ namespace DirectedConvention
 namespace BeingConvention
 namespace GridConvention
 
-/-- A concrete grid whose being carrier is read as ladder-rung labels. This is
-    one legal instantiation of the signature parameter, not a recovered being
-    boundary or a claim that beings are numbers. -/
-def ladderRungGrid : Grid Nat where
-  Being      := Nat
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade b _ _ := b
-  conditions _ _ := True
+inductive LadderRungCase
+  | rung (n : Nat)
+  | cue
+  | result
+  | occurrence (n : Nat)
+
+/-- A concrete package whose designata include ladder-rung labels. -/
+def ladderRungGrid : CoreReadings LadderRungCase Nat where
+  occurrence := {
+    occurrence := fun d =>
+      match d with
+      | .occurrence _ => True
+      | _ => False
+    isBeing := fun d =>
+      match d with
+      | .rung _ => True
+      | _ => False
+    isCall := fun d => d = .cue
+    isResponse := fun d => d = .result
+    agent := fun d =>
+      match d with
+      | .occurrence n => .rung n
+      | _ => d
+    call := fun d =>
+      match d with
+      | .occurrence _ => .cue
+      | _ => d
+    response := fun d =>
+      match d with
+      | .occurrence _ => .result
+      | _ => d
+  }
+  response := {
+    respondsTo := fun b c =>
+      match b, c with
+      | .rung _, .cue => some .result
+      | _, _ => none
+  }
+  placement := {
+    grade := fun d =>
+      match d with
+      | .occurrence n => n
+      | _ => 0
+  }
+  conditioning := { conditions := fun _ _ => True }
 
 theorem ladderRungGrid_beings_sunyata :
     Metaphysics.Sunyata (beingsRow ladderRungGrid) :=

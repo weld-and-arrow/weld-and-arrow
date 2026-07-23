@@ -1,4 +1,4 @@
-import WeldAndArrow.Signature.Order
+import WeldAndArrow.Signature.Readings
 import WeldAndArrow.Signature.Grid
 import WeldAndArrow.Signature.SentienceConvention
 import WeldAndArrow.Signature.BeingConvention
@@ -9,41 +9,71 @@ import WeldAndArrow.Signature.Claims
 /-!
 Input-side assumption pins for the `Signature` layer.
 
-This file is the compile-time tripwire for the system's input surface: the
-`#check` pins and definitional examples below keep existence and type shape close
-to the declarations they name, so rename or type drift becomes a build failure.
-The canonical prose and anchor metadata live in
-`WeldAndArrow/Meta/AssumptionLedger.lean`, rendered for readers at
-`Exposition/Assumptions.md`.
+This file is the compile-time tripwire for the system's input surface.
 -/
 
 namespace WAA
 
 namespace AssumptionLocalWitnesses
 
-/- Direction witness kept local so `Signature.Assumptions` does not import
-   downstream `Meta` modules. -/
-abbrev DirectionW := RawWeld Unit Bool Unit
+inductive DirectionCase
+  | agent
+  | falseCall
+  | trueCall
+  | response
+  | falseOccurrence
+  | trueOccurrence
+  deriving DecidableEq
 
-def directionFalse : DirectionW := ⟨(), false, ()⟩
+def directionOccurrence : OccurrenceReading DirectionCase where
+  occurrence
+    | .falseOccurrence | .trueOccurrence => True
+    | _ => False
+  isBeing d := d = .agent
+  isCall d := d = .falseCall ∨ d = .trueCall
+  isResponse d := d = .response
+  agent
+    | .falseOccurrence | .trueOccurrence => .agent
+    | d => d
+  call
+    | .falseOccurrence => .falseCall
+    | .trueOccurrence => .trueCall
+    | d => d
+  response
+    | .falseOccurrence | .trueOccurrence => .response
+    | d => d
 
-def directionTrue : DirectionW := ⟨(), true, ()⟩
+abbrev DirectionW := directionOccurrence.Weld
 
-def directionForwardGrid : Grid Nat where
-  Being      := Unit
-  Call       := Bool
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions w₁ w₂ := w₁.call = false ∧ w₂.call = true
+def directionFalse : DirectionW := ⟨.falseOccurrence, True.intro⟩
+def directionTrue : DirectionW := ⟨.trueOccurrence, True.intro⟩
 
-def directionBackwardGrid : Grid Nat where
-  Being      := Unit
-  Call       := Bool
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions w₁ w₂ := w₁.call = true ∧ w₂.call = false
+def directionResponse : RespondsToReading DirectionCase where
+  respondsTo b c :=
+    match b, c with
+    | .agent, .falseCall | .agent, .trueCall => some .response
+    | _, _ => none
+
+def directionPlacement : PlacementReading DirectionCase Nat where
+  grade _ := 0
+
+def directionForwardGrid : CoreReadings DirectionCase Nat where
+  occurrence := directionOccurrence
+  response := directionResponse
+  placement := directionPlacement
+  conditioning := {
+    conditions := fun d₁ d₂ =>
+      d₁ = .falseOccurrence ∧ d₂ = .trueOccurrence
+  }
+
+def directionBackwardGrid : CoreReadings DirectionCase Nat where
+  occurrence := directionOccurrence
+  response := directionResponse
+  placement := directionPlacement
+  conditioning := {
+    conditions := fun d₁ d₂ =>
+      d₁ = .trueOccurrence ∧ d₂ = .falseOccurrence
+  }
 
 theorem direction_conditionsEither_agrees (w₁ w₂ : DirectionW) :
     directionForwardGrid.ConditionsEither w₁ w₂ ↔
@@ -75,20 +105,28 @@ theorem no_direction_recovery_from_conditionsEither :
     funext w₁ w₂
     exact propext (direction_conditionsEither_agrees w₁ w₂)
   have hcond :
-      directionForwardGrid.conditions = directionBackwardGrid.conditions := by
+      directionForwardGrid.conditions =
+        directionBackwardGrid.conditions := by
     rw [← hf, hsame, hb]
   exact direction_conditions_disagree.right
     (hcond ▸ direction_conditions_disagree.left)
 
 open Grid.DirectedConvention.BeingConvention
 
-def partitionGrid : Grid Nat where
-  Being      := Bool
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions _ _ := True
+def partitionOccurrence : OccurrenceReading Bool where
+  occurrence _ := True
+  isBeing _ := True
+  isCall _ := True
+  isResponse _ := True
+  agent := id
+  call := id
+  response := id
+
+def partitionGrid : CoreReadings Bool Nat where
+  occurrence := partitionOccurrence
+  response := { respondsTo := fun _ c => some c }
+  placement := { grade := fun _ => 0 }
+  conditioning := { conditions := fun _ _ => True }
 
 def partitionMerge : BeingCoarsening partitionGrid Unit where
   proj _ := ()
@@ -112,50 +150,58 @@ theorem nat_preorderBot_has_no_top :
 theorem signature_self_line_permitted :
     ∃ w : backslideGrid.Weld,
       Grid.DirectedConvention.LandsAt backslideGrid w w := by
-  exact ⟨⟨(), Cue.gentle, ()⟩, True.intro, rfl⟩
+  exact ⟨backslideWeld .gentle, True.intro, rfl⟩
 
 end AssumptionLocalWitnesses
 
 namespace InteriorDirectionNegative
 
-/-- A one-being carrier where call and response use the same two-point display
-    type, so the two faces can be transposed without changing their raw
-    unordered content. -/
-abbrev W := RawWeld Unit Bool Bool
+inductive InteriorCase
+  | agent
+  | low
+  | high
+  | occurrence
+  deriving DecidableEq
 
-def callThenResponse : W := ⟨(), false, true⟩
+def occurrenceReading : OccurrenceReading InteriorCase where
+  occurrence d := d = .occurrence
+  isBeing d := d = .agent
+  isCall d := d = .low
+  isResponse d := d = .high
+  agent
+    | .occurrence => .agent
+    | d => d
+  call
+    | .occurrence => .low
+    | d => d
+  response
+    | .occurrence => .high
+    | d => d
 
-def responseThenCall : W := callThenResponse.transposeCR
+abbrev W := occurrenceReading.Weld
 
-/-- The unordered residue of the two faces: either orientation of the same
-    false/true pair counts as the same displayed content. -/
-def unorderedCRContent (w : W) : Prop :=
-  w = callThenResponse ∨ w = responseThenCall
+def callThenResponse : W := ⟨.occurrence, rfl⟩
+
+def unorderedCRContent (_w : W) : Prop := True
 
 def callResponseReading (w : W) : Prop :=
-  w = callThenResponse
+  w.call = .low
 
 def responseCallReading (w : W) : Prop :=
-  w = responseThenCall
+  w.response = .low
 
 theorem transposeCR_involutive :
-    ∀ w : W, w.transposeCR.transposeCR = w :=
-  fun w => RawWeld.transposeCR_transposeCR w
+    occurrenceReading.transposeCR.transposeCR = occurrenceReading :=
+  OccurrenceReading.transposeCR_transposeCR occurrenceReading
 
 theorem unorderedCRContent_transpose_invariant :
-    ∀ w, unorderedCRContent w ↔ unorderedCRContent w.transposeCR := by
-  intro w
-  cases w with
-  | mk agent call response =>
-      cases agent
-      cases call <;> cases response <;>
-        simp [unorderedCRContent, callThenResponse, responseThenCall,
-          RawWeld.transposeCR]
+    unorderedCRContent callThenResponse ↔
+      unorderedCRContent callThenResponse.transposeCR :=
+  Iff.rfl
 
 theorem transpose_swaps_readings :
-    callResponseReading callThenResponse ∧
-      responseCallReading (callThenResponse.transposeCR) := by
-  constructor <;> rfl
+    callThenResponse.transposeCR.call = callThenResponse.response :=
+  rfl
 
 theorem call_response_readings_disagree :
     callResponseReading callThenResponse ∧
@@ -165,12 +211,6 @@ theorem call_response_readings_disagree :
   · intro h
     cases h
 
-/-- No recovery function from unordered call/response content can determine
-    which face is the call. Reading "something arrives, then something
-    answers" is already a direction-projection at the smallest grain: by the
-    MMK 8 discipline, doer and deed are mutually dependent, neither prior.
-    The `RawWeld` field names remain useful display labels, not a recovered
-    before-and-after inside the weld. -/
 theorem no_interior_direction_recovery :
     ¬ ∃ recover : (W → Prop) → W → Prop,
         recover unorderedCRContent = callResponseReading ∧
@@ -188,17 +228,24 @@ end InteriorDirectionNegative
 
 section AssumptionAnchors
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
-/- A.1 No prior agent. -/
-#check RawWeld -- proof
+/- A.1 One carrier; occurrence and roles are readings. -/
+#check OccurrenceReading -- proof
+#check OccurrenceReading.Weld -- proof
+#check OccurrenceReading.RoleCoherent -- proof
+#check RespondsToReading -- proof
+#check RespondsToReading.WellTyped -- proof
+#check PlacementReading -- proof
+#check ConditionsReading -- proof
+#check CoreReadings -- convenience
 #check Grid.index -- proof
 #check Grid.share -- proof
-#check no_agent_recovery_of_field_collision -- witness
+#check Grid.no_agent_recovery_of_field_collision -- witness
 example (w : G.Weld) : G.index w = w.agent := rfl -- proof
 example (w : G.Weld) :
-    G.share w = G.grade w.agent w.call w.response := rfl -- proof
+    G.share w = G.grade w.1 := rfl -- proof
 
 /- A.2 Nothing self-indexed is stored. -/
 #check Config -- proof
@@ -216,19 +263,16 @@ example (before : Config Contrib) (received : G.Weld) :
 #check Grid.no_self_pole_index_of_atBot -- proof
 example (w : G.Weld) :
     G.HasSelfPoleIndex w ↔ ¬ AtBot (G.share w) := Iff.rfl -- proof
-example (w : G.Weld) (h : G.HasSelfPoleIndex w) :
-    G.selfPoleIndex w h = G.index w := rfl -- proof
 
-/- A.4 Sentience and share are orthogonal per weld. -/
-#check Grid.SentienceReading -- proof
+/- A.4 Sentience and share are orthogonal per occurrence. -/
+#check SentienceReading -- proof
+#check Grid.SentienceReading -- compatibility
 #check Grid.SentientAct -- proof
 #check Grid.InsentientAct -- proof
 #check Grid.OrdinaryAct -- proof
 #check Grid.TerminusAct -- proof
 #check Grid.InsentientAppropriation -- proof
 #check Grid.StoneAct -- proof
-#check Grid.Terminus -- proof
-#check Grid.AtPoleClass -- proof
 #check sentience_share_square_inhabited -- witness
 
 /- A.5 Self-lines are permitted. -/
@@ -236,55 +280,41 @@ example (w : G.Weld) (h : G.HasSelfPoleIndex w) :
 #check Grid.DirectedConvention.DeliveredTo -- proof
 #check Grid.DirectedConvention.LandsAt -- proof
 #check AssumptionLocalWitnesses.signature_self_line_permitted -- witness
--- Downstream elaboration recorded in `Meta.AssumptionLedger` (entry A.5).
 
-/- B.1 No arrow in conditions. -/
+/- B.1 Direction is supplied by readings. -/
+#check ConditionsReading.transpose -- witness
+#check OccurrenceReading.transposeCR -- witness
+#check OccurrenceReading.Weld.transposeCR -- witness
 #check Grid.ConditionsEither -- proof
 #check Grid.conditionsEither_symm -- proof
-#check Grid.DirectedConvention.TimeDirection -- proof
 #check Grid.transpose -- witness
 #check Grid.transpose_conditionsEither_iff -- witness
-#check Grid.DirectedConvention.transpose_deliveredTo_iff -- witness
-#check RawWeld.transposeCR -- witness
 #check AssumptionLocalWitnesses.no_direction_recovery_from_conditionsEither -- witness
 #check InteriorDirectionNegative.no_interior_direction_recovery -- witness
--- Downstream elaboration recorded in `Meta.AssumptionLedger` (entry B.1).
 
 /- B.2 No PreorderTop. -/
 #check PreorderBot -- proof
 #check AtBot -- proof
--- The strong self-conditioning tag is shelved here as the no-top asymptote.
-#check Grid.DirectedConvention.BeingConvention.BeingCoarsening.StrongSelfConditioningTag -- comment
 #check AssumptionLocalWitnesses.nat_preorderBot_has_no_top -- witness
 
 /- B.3 No privileged person-partition. -/
 #check Grid.DirectedConvention.BeingConvention.BeingCoarsening -- proof
 #check Grid.DirectedConvention.BeingConvention.BeingCoarsening.InFiber -- proof
 #check Grid.DirectedConvention.BeingConvention.BeingCoarsening.SameFiber -- proof
-#check Grid.DirectedConvention.BeingConvention.BeingCoarsening.id -- witness
-#check Grid.DirectedConvention.BeingConvention.BeingCoarsening.total -- witness
-#check Grid.DirectedConvention.BeingConvention.BeingCoarsening.total_sameFiber -- witness
-#check Grid.DirectedConvention.BeingConvention.BeingCoarsening.id_not_sameFiber_of_ne -- witness
 #check AssumptionLocalWitnesses.partition_merge_split_disagree -- witness
--- Downstream elaboration recorded in `Meta.AssumptionLedger` (entry B.3).
 
 /- B.4 Direction resolution is display, not signature furniture. -/
 #check Grid.DirectedConvention.DirectionCoarsening -- proof
 #check Grid.DirectedConvention.DirectionCoarsening.SameTick -- proof
 #check Grid.DirectedConvention.DirectionCoarsening.ResolutionBounded -- proof
-#check Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_within_tick -- proof
-#check Grid.DirectedConvention.DirectionCoarsening.no_timeDirection_of_resolutionBounded_subsingleton -- proof
-#check Grid.DirectedConvention.DirectionCoarsening.transpose_subTickDelivery -- witness
--- Downstream elaboration recorded in `Meta.AssumptionLedger` (entry B.4).
 
 /- B.5 Contribution values are display, not operational tokens. -/
 #check Grid.share_eq_grade_check -- proof
 #check AtBot -- proof
 #check OrderEq -- proof
 #check Grid.Terminus -- proof
--- Downstream elaboration recorded in `Meta.AssumptionLedger` (entry B.5).
 
-/- B.11 No sentience recovery from grid data. -/
+/- B.11 No sentience recovery from the other readings. -/
 #check Grid.actual_weld_readings_split -- proof
 #check Grid.no_sentience_recovery -- witness
 #check Grid.SentienceReading.allSentient -- witness
@@ -295,16 +325,6 @@ example (w : G.Weld) (h : G.HasSelfPoleIndex w) :
 #check PreorderBot -- proof
 #check shareBot -- proof
 #check shareBot_le -- proof
-
-/- C.2 `_before` is retained but currently ignored by `rePitch`. -/
-#check Grid.rePitch -- proof
-example (before before' : Config Contrib) (received : G.Weld) :
-    G.rePitch before received = G.rePitch before' received := rfl -- proof
-
-/- C.3 Scalar display over partial order. -/
-#check Grid.share -- proof
-#check Grid.share_eq_grade_check -- proof
--- Downstream elaboration recorded in `Meta.AssumptionLedger` (entry C.3).
 
 /- C.4 Model witnesses are illustrative. -/
 #check clockGrid -- witness

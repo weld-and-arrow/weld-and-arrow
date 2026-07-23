@@ -11,15 +11,15 @@ namespace WAA
 namespace Grid
 namespace DirectedConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /-- The stance carries factive faith and the model-side assertion that its
     fidelity predicate is instantiated by actual speech productions. -/
 structure WaaEthicsStance
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (Faith : Prop → Prop) (b : G.Being) : Prop where
+    (Faith : Prop → Prop) (b : Designatum) : Prop where
   factive : Factive Faith
   faith : Faith (WaaFullyEnlightened G sr b)
   fidelityProduces : ∀ record, Fidelity record →
@@ -30,7 +30,7 @@ structure WaaEthicsStance
 def WaaEthicalCode
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (Faith : Prop → Prop) (b : G.Being) : Prop :=
+    (Faith : Prop → Prop) (b : Designatum) : Prop :=
   WaaEthicsStance G sr Fidelity Faith b →
     ∀ u : RecordedUtterance G (waaPathClaimLanguage G), Fidelity u →
       u.weld.agent = b →
@@ -41,7 +41,7 @@ def WaaEthicalCode
 theorem waa_stance_says_true
     {sr : SpeechReading G (waaPathClaimLanguage G)}
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {Faith : Prop → Prop} {b : G.Being}
+    {Faith : Prop → Prop} {b : Designatum}
     (hstance : WaaEthicsStance G sr Fidelity Faith b)
     (u : RecordedUtterance G (waaPathClaimLanguage G))
     (hagent : u.weld.agent = b) (hfid : Fidelity u) :
@@ -52,7 +52,7 @@ theorem waa_stance_says_true
 theorem waa_ethics_landing_of_stance
     {sr : SpeechReading G (waaPathClaimLanguage G)}
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {Faith : Prop → Prop} {b : G.Being}
+    {Faith : Prop → Prop} {b : Designatum}
     (hstance : WaaEthicsStance G sr Fidelity Faith b)
     (u : RecordedUtterance G (waaPathClaimLanguage G))
     (hagent : u.weld.agent = b) (hfid : Fidelity u)
@@ -65,7 +65,7 @@ theorem waa_ethics_landing_of_stance
 theorem waaEthicalCode_conditional
     (sr : SpeechReading G (waaPathClaimLanguage G))
     (Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop)
-    (Faith : Prop → Prop) (b : G.Being) :
+    (Faith : Prop → Prop) (b : Designatum) :
     WaaEthicalCode G sr Fidelity Faith b := by
   intro hstance u hfid hagent hdel hctx
   exact waa_ethics_landing_of_stance G hstance u hagent hfid hdel hctx
@@ -73,7 +73,7 @@ theorem waaEthicalCode_conditional
 theorem waaFaithOught_of_ethicalCode
     {sr : SpeechReading G (waaPathClaimLanguage G)}
     {Fidelity : RecordedUtterance G (waaPathClaimLanguage G) → Prop}
-    {Faith : Prop → Prop} {b : G.Being}
+    {Faith : Prop → Prop} {b : Designatum}
     (hcode : WaaEthicalCode G sr Fidelity Faith b)
     (u : RecordedUtterance G (waaPathClaimLanguage G)) :
     WaaFaithOught G sr Fidelity Faith b u := by

@@ -21,23 +21,23 @@ namespace Grid
 open DirectedConvention
 open DirectedConvention.BeingConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable {G : Grid Contrib}
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable {G : CoreReadings Designatum Contrib}
 
 /-- A total, model-supplied diagnosis of every fine weld by door. -/
-structure DoorReading (G : Grid Contrib) where
+structure DoorReading (G : CoreReadings Designatum Contrib) where
   door : G.Weld → Door
 
 /-- A supplied voicing layer. Voicing is deliberately not restricted by door:
     thoughts and expressive bodily deeds may be represented by the same
     primitive, while testimonial predicates impose their own speech boundary. -/
-structure SpeechReading (G : Grid Contrib) (L : ClaimLanguage G)
+structure SpeechReading (G : CoreReadings Designatum Contrib) (L : ClaimLanguage G)
     extends DoorReading G where
   voices : G.Weld → Option L.Claim
 
 /-- An actual weld together with the claim that the supplied reading says it
     produces. Production itself is door-neutral. -/
-structure ProducedUtterance {G : Grid Contrib} {L : ClaimLanguage G}
+structure ProducedUtterance {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
     (sr : SpeechReading G L) where
   weld : G.Weld
   actual : G.Actual weld
@@ -81,36 +81,36 @@ def WaaDefiledFalsehood {L : ClaimLanguage G} (sr : SpeechReading G L)
       G.HasSelfPoleIndex u.weld
 
 /-- Fine-being quiet on a supplied class of welds. -/
-def QuietOn (G : Grid Contrib) (b : G.Being) (ws : G.Weld → Prop) : Prop :=
+def QuietOn (G : CoreReadings Designatum Contrib) (b : Designatum) (ws : G.Weld → Prop) : Prop :=
   ∀ w, G.Actual w → w.agent = b → ws w → AtBot (G.share w)
 
 /-- Quietness restricted to one supplied door. -/
-def DoorQuiet (dr : DoorReading G) (b : G.Being) (d : Door) : Prop :=
+def DoorQuiet (dr : DoorReading G) (b : Designatum) (d : Door) : Prop :=
   QuietOn G b (fun w => dr.door w = d)
 
 /-- Every bad-content production by `b` at door `d` is at the pole. Full
     `QuietOn G b ⊤` therefore covers every door, including deceptive gesture;
     a merely speech-and-mind-quiet regional figure does not cover the body door. -/
 def NoDefiledVoicing {L : ClaimLanguage G} (sr : SpeechReading G L)
-    (b : G.Being) (bad : L.Claim → Prop) (d : Door) : Prop :=
+    (b : Designatum) (bad : L.Claim → Prop) (d : Door) : Prop :=
   ∀ u : ProducedUtterance sr,
     u.weld.agent = b → sr.door u.weld = d → bad u.content →
       AtBot (G.share u.weld)
 
 /-- Quietness is antitone in the selected weld-class. -/
-theorem quietOn_mono {b : G.Being} {ws vs : G.Weld → Prop}
+theorem quietOn_mono {b : Designatum} {ws vs : G.Weld → Prop}
     (hsub : ∀ w, ws w → vs w) (hquiet : QuietOn G b vs) :
     QuietOn G b ws := by
   intro w hactual hagent hws
   exact hquiet w hactual hagent (hsub w hws)
 
 /-- Total quietness supplies quietness on every weld-class. -/
-theorem quietOn_univ {b : G.Being} {ws : G.Weld → Prop}
+theorem quietOn_univ {b : Designatum} {ws : G.Weld → Prop}
     (hquiet : QuietOn G b (fun _ => True)) : QuietOn G b ws :=
   quietOn_mono (fun _ _ => True.intro) hquiet
 
 /-- Total quietness is exactly quietness through all three doors. -/
-theorem arhat_iff_three_doors_quiet (dr : DoorReading G) (b : G.Being) :
+theorem arhat_iff_three_doors_quiet (dr : DoorReading G) (b : Designatum) :
     QuietOn G b (fun _ => True) ↔
       DoorQuiet dr b .body ∧ DoorQuiet dr b .speech ∧ DoorQuiet dr b .mind := by
   constructor
@@ -123,14 +123,14 @@ theorem arhat_iff_three_doors_quiet (dr : DoorReading G) (b : G.Being) :
     | mind => exact hmind w hactual hagent hdoor
 
 /-- A terminus is quiet on every actual weld it produces. -/
-theorem arhat_of_terminus (_dr : DoorReading G) {b : G.Being}
+theorem arhat_of_terminus (_dr : DoorReading G) {b : Designatum}
     (hterm : G.Terminus b) : QuietOn G b (fun _ => True) := by
   intro w hactual hagent _
   subst hagent
   exact G.atBot_of_terminus_response hterm hactual
 
 /-- Fine total quiet excludes a live self-pole on every actual weld of `b`. -/
-theorem conceit_excluded_of_quietOn {b : G.Being}
+theorem conceit_excluded_of_quietOn {b : Designatum}
     (hquiet : QuietOn G b (fun _ => True)) {w : G.Weld}
     (hactual : G.Actual w) (hagent : w.agent = b) :
     ¬ G.HasSelfPoleIndex w :=
@@ -146,7 +146,7 @@ theorem not_defiledFalsehood_of_atBot {L : ClaimLanguage G}
 
 /-- Speech-door quiet excludes defiled falsehood by that fine being. -/
 theorem no_defiledFalsehood_of_speechDoorQuiet {L : ClaimLanguage G}
-    {sr : SpeechReading G L} {b : G.Being}
+    {sr : SpeechReading G L} {b : Designatum}
     (hquiet : DoorQuiet sr.toDoorReading b .speech) :
     ∀ u : ProducedUtterance sr, u.weld.agent = b →
       ¬ WaaDefiledFalsehood sr u := by
@@ -156,7 +156,7 @@ theorem no_defiledFalsehood_of_speechDoorQuiet {L : ClaimLanguage G}
 
 /-- A terminus producer makes no defiled falsehood. -/
 theorem no_defiledFalsehood_of_terminus {L : ClaimLanguage G}
-    (sr : SpeechReading G L) {b : G.Being} (hterm : G.Terminus b) :
+    (sr : SpeechReading G L) {b : Designatum} (hterm : G.Terminus b) :
     ∀ u : ProducedUtterance sr, u.weld.agent = b →
       ¬ WaaDefiledFalsehood sr u :=
   no_defiledFalsehood_of_speechDoorQuiet
@@ -164,7 +164,7 @@ theorem no_defiledFalsehood_of_terminus {L : ClaimLanguage G}
 
 /-- Three-door quietness, in its canonical arhat form, excludes falsehood. -/
 theorem no_defiledFalsehood_of_arhat {L : ClaimLanguage G}
-    (sr : SpeechReading G L) {b : G.Being}
+    (sr : SpeechReading G L) {b : Designatum}
     (harhat : DoorQuiet sr.toDoorReading b .body ∧
       DoorQuiet sr.toDoorReading b .speech ∧
         DoorQuiet sr.toDoorReading b .mind) :
@@ -174,7 +174,7 @@ theorem no_defiledFalsehood_of_arhat {L : ClaimLanguage G}
 
 /-- Door quiet supplies the content-parametric no-defiled-voicing schema. -/
 theorem noDefiledVoicing_of_doorQuiet {L : ClaimLanguage G}
-    {sr : SpeechReading G L} {b : G.Being} {d : Door}
+    {sr : SpeechReading G L} {b : Designatum} {d : Door}
     (hquiet : DoorQuiet sr.toDoorReading b d) (bad : L.Claim → Prop) :
     NoDefiledVoicing sr b bad d := by
   intro u hagent hdoor _
@@ -185,7 +185,7 @@ theorem noDefiledVoicing_of_doorQuiet {L : ClaimLanguage G}
     truth of the thought. Thought-truth is the later no-nescience conjunct on
     the jñeyāvaraṇa side. -/
 theorem no_defiled_thought_of_mindDoorQuiet {L : ClaimLanguage G}
-    {sr : SpeechReading G L} {b : G.Being}
+    {sr : SpeechReading G L} {b : Designatum}
     (hquiet : DoorQuiet sr.toDoorReading b .mind) :
     ∀ u : ProducedUtterance sr,
       u.weld.agent = b → sr.door u.weld = .mind →
@@ -195,7 +195,7 @@ theorem no_defiled_thought_of_mindDoorQuiet {L : ClaimLanguage G}
 
 /-- At the identity coarsening, old fiber-at-pole and fine total quiet are the
     same predicate. This is the retirement bridge for the old arhat display. -/
-theorem quietOn_univ_iff_fiberAtPole_id (b : G.Being) :
+theorem quietOn_univ_iff_fiberAtPole_id (b : Designatum) :
     QuietOn G b (fun _ => True) ↔
       (BeingCoarsening.id G).FiberAtPole b := by
   constructor
@@ -208,7 +208,7 @@ theorem quietOn_univ_iff_fiberAtPole_id (b : G.Being) :
     coarsening fiber are quiet on the selected weld-class. -/
 theorem seriesQuiet_iff_forall_fine {Macro : Type}
     (kappa : BeingCoarsening G Macro) (b : Macro) (ws : G.Weld → Prop) :
-    (∀ p : G.Being, kappa.proj p = b → QuietOn G p ws) ↔
+    (∀ p : Designatum, kappa.proj p = b → QuietOn G p ws) ↔
       ∀ w : G.Weld, G.Actual w → kappa.InFiber b w → ws w →
         AtBot (G.share w) := by
   constructor
@@ -220,5 +220,27 @@ theorem seriesQuiet_iff_forall_fine {Macro : Type}
     · exact hws
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev DoorReading (G : CoreReadings Designatum Contrib) :=
+  Grid.DoorReading G
+abbrev SpeechReading (G : CoreReadings Designatum Contrib) :=
+  Grid.SpeechReading G
+abbrev ProducedUtterance (G : CoreReadings Designatum Contrib)
+    {L : Grid.ClaimLanguage G} (sr : Grid.SpeechReading G L) :=
+  Grid.ProducedUtterance sr
+abbrev WaaDefiledFalsehood (G : CoreReadings Designatum Contrib)
+    {L : Grid.ClaimLanguage G} (sr : Grid.SpeechReading G L) :=
+  Grid.WaaDefiledFalsehood sr
+abbrev QuietOn (G : CoreReadings Designatum Contrib) := Grid.QuietOn G
+abbrev DoorQuiet (G : CoreReadings Designatum Contrib) := Grid.DoorQuiet (G := G)
+abbrev NoDefiledVoicing (G : CoreReadings Designatum Contrib)
+    {L : Grid.ClaimLanguage G} (sr : Grid.SpeechReading G L) :=
+  Grid.NoDefiledVoicing sr
+
+end CoreReadings
 
 end WAA

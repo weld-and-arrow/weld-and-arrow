@@ -38,15 +38,15 @@ end Preorder
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
 
 /-- The share projection is exactly the grade recorded for the weld. -/
 @[simp]
 theorem share_eq_grade (w : G.Weld) :
-    G.share w = G.grade w.agent w.call w.response :=
+    G.share w = G.grade w.1 :=
   rfl
 
 /-- An actual weld witnesses response-function at its own call. -/
@@ -62,23 +62,25 @@ theorem actualAgentInhabited_of_actual (w : G.Weld) (h : G.Actual w) :
 
 /-- Mounting at a call is exactly the existence of an actual weld with that
     agent and call.  Function talk is thereby kept per occurrence. -/
-theorem mountsAt_iff_exists_actual (b : G.Being) (c : G.Call) :
+theorem mountsAt_iff_exists_actual (b : Designatum) (c : Designatum)
+    (hrealize : ∀ r, G.respondsTo b c = some r →
+      ∃ w : G.Weld, G.Actual w ∧ w.agent = b ∧ w.call = c) :
     G.MountsAt b c ↔
       ∃ w : G.Weld, G.Actual w ∧ w.agent = b ∧ w.call = c := by
   constructor
   · rintro ⟨r, hresp⟩
-    exact ⟨⟨b, c, r⟩, hresp, rfl, rfl⟩
+    exact hrealize r hresp
   · rintro ⟨w, hactual, hagent, hcall⟩
     subst hagent
     subst hcall
     exact ⟨w.response, hactual⟩
 
-theorem respondsToEveryCall_of_no_call (h : G.Call → False) (b : G.Being) :
+theorem respondsToEveryCall_of_no_call (h : Designatum → False) (b : Designatum) :
     G.RespondsToEveryCall b :=
-  fun c => False.elim (h c)
+  fun c _hcall => False.elim (h c)
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
-theorem atPoleClass_of_terminus (b : G.Being) (hterm : G.Terminus b) :
+theorem atPoleClass_of_terminus (b : Designatum) (hterm : G.Terminus b) :
     G.AtPoleClass b :=
   hterm
 
@@ -112,67 +114,66 @@ theorem not_before_le_rePitch_tendency_of_shareDrop
 
 /-- A terminus response re-pitches the carried tendency into the pole-class. -/
 theorem rePitch_tendency_atBot_of_terminus_response
-    (before : Config Contrib) {b : G.Being} {c : G.Call} {r : G.Response}
-    (hterm : G.Terminus b) (hresp : G.respondsTo b c = some r) :
-    AtBot (G.rePitch before ⟨b, c, r⟩).tendency :=
-  G.atBot_of_terminus_response hterm hresp
+    (before : Config Contrib) {w : G.Weld}
+    (hterm : G.Terminus w.agent) (hactual : G.Actual w) :
+    AtBot (G.rePitch before w).tendency :=
+  G.atBot_of_terminus_response hterm hactual
 
 /- ==============================================================================
    Conditions-free grade checks
 ============================================================================== -/
 
-/-- Replace only the delivery relation of a grid. Function and grade data are
+/-- Replace only the conditioning reading. Response and placement readings are
     left untouched. -/
-def withConditions (conditions' : G.Weld -> G.Weld -> Prop) : Grid Contrib where
-  Being      := G.Being
-  Call       := G.Call
-  Response   := G.Response
-  respondsTo := G.respondsTo
-  grade      := G.grade
-  conditions := conditions'
+def withConditions (conditions' : Designatum → Designatum → Prop) :
+    CoreReadings Designatum Contrib where
+  occurrence := G.occurrence
+  response := G.response
+  placement := G.placement
+  conditioning := { conditions := conditions' }
 
 @[simp]
 theorem withConditions_respondsTo
-    (conditions' : G.Weld -> G.Weld -> Prop)
-    (b : G.Being) (c : G.Call) :
-    (G.withConditions conditions').respondsTo b c = G.respondsTo b c :=
+    (conditions' : Designatum → Designatum → Prop)
+    (b : Designatum) (c : Designatum) :
+    (withConditions G conditions').respondsTo b c = G.respondsTo b c :=
   rfl
 
 @[simp]
 theorem withConditions_grade
-    (conditions' : G.Weld -> G.Weld -> Prop)
-    (b : G.Being) (c : G.Call) (r : G.Response) :
-    (G.withConditions conditions').grade b c r = G.grade b c r :=
+    (conditions' : Designatum → Designatum → Prop)
+    (d : Designatum) :
+    (withConditions G conditions').grade d = G.grade d :=
   rfl
 
 @[simp]
 theorem withConditions_share
-    (conditions' : G.Weld -> G.Weld -> Prop) (w : G.Weld) :
-    (G.withConditions conditions').share w = G.share w :=
+    (conditions' : Designatum → Designatum → Prop) (w : G.Weld) :
+    (withConditions G conditions').share w = G.share w :=
   rfl
 
 @[simp]
 theorem withConditions_actual_iff
-    (conditions' : G.Weld -> G.Weld -> Prop) (w : G.Weld) :
-    (G.withConditions conditions').Actual w ↔ G.Actual w :=
+    (conditions' : Designatum → Designatum → Prop) (w : G.Weld) :
+    (withConditions G conditions').Actual w ↔ G.Actual w :=
   Iff.rfl
 
 /-- Changing only `conditions` cannot change the grade assigned to a mounted
     response. This is the formal anchor for the cetana correlation at
     signature level: grade is blind to downstream delivery facts. -/
 theorem grade_independent_of_conditions
-    (conditions₁ conditions₂ : G.Weld -> G.Weld -> Prop)
-    (b : G.Being) (c : G.Call) (r : G.Response) :
-    (G.withConditions conditions₁).grade b c r =
-      (G.withConditions conditions₂).grade b c r :=
+    (conditions₁ conditions₂ : Designatum → Designatum → Prop)
+    (d : Designatum) :
+    (withConditions G conditions₁).grade d =
+      (withConditions G conditions₂).grade d :=
   rfl
 
 /-- The same cetana anchor at the weld/share projection: what is graded is the
     weld's agent-call-response composition, not the later delivery relation. -/
 theorem share_independent_of_conditions
-    (conditions₁ conditions₂ : G.Weld -> G.Weld -> Prop) (w : G.Weld) :
-    (G.withConditions conditions₁).share w =
-      (G.withConditions conditions₂).share w :=
+    (conditions₁ conditions₂ : Designatum → Designatum → Prop) (w : G.Weld) :
+    (withConditions G conditions₁).share w =
+      (withConditions G conditions₂).share w :=
   rfl
 
 /- ==============================================================================
@@ -182,32 +183,30 @@ theorem share_independent_of_conditions
 /-- Replace only the response function of a grid. Grade and delivery data are
     left untouched.  This is countermodel tooling; no doctrinal reading is
     attached to the `none` region it may create. -/
-def withRespondsTo (respondsTo' : G.Being -> G.Call -> Option G.Response) :
-    Grid Contrib where
-  Being      := G.Being
-  Call       := G.Call
-  Response   := G.Response
-  respondsTo := respondsTo'
-  grade      := G.grade
-  conditions := G.conditions
+def withRespondsTo (respondsTo' : Designatum -> Designatum -> Option Designatum) :
+    CoreReadings Designatum Contrib where
+  occurrence := G.occurrence
+  response := { respondsTo := respondsTo' }
+  placement := G.placement
+  conditioning := G.conditioning
 
 @[simp]
 theorem withRespondsTo_grade
-    (respondsTo' : G.Being -> G.Call -> Option G.Response)
-    (b : G.Being) (c : G.Call) (r : G.Response) :
-    (G.withRespondsTo respondsTo').grade b c r = G.grade b c r :=
+    (respondsTo' : Designatum -> Designatum -> Option Designatum)
+    (d : Designatum) :
+    (withRespondsTo G respondsTo').grade d = G.grade d :=
   rfl
 
 @[simp]
 theorem withRespondsTo_share
-    (respondsTo' : G.Being -> G.Call -> Option G.Response) (w : G.Weld) :
-    (G.withRespondsTo respondsTo').share w = G.share w :=
+    (respondsTo' : Designatum -> Designatum -> Option Designatum) (w : G.Weld) :
+    (withRespondsTo G respondsTo').share w = G.share w :=
   rfl
 
 @[simp]
 theorem withRespondsTo_conditions
-    (respondsTo' : G.Being -> G.Call -> Option G.Response) :
-    (G.withRespondsTo respondsTo').conditions = G.conditions :=
+    (respondsTo' : Designatum -> Designatum -> Option Designatum) :
+    (withRespondsTo G respondsTo').conditions = G.conditions :=
   rfl
 
 /- ==============================================================================
@@ -228,7 +227,7 @@ theorem accumulated_attainment_constant_of_same_final
     (before₁ before₂ : Config Contrib) (received : G.Weld) :
     score (G.rePitch before₁ received) =
       score (G.rePitch before₂ received) :=
-  congrArg score (G.rePitch_forgets before₁ before₂ received)
+  congrArg score (rePitch_forgets G before₁ before₂ received)
 
 /- ==============================================================================
    The environs lens
@@ -238,21 +237,21 @@ namespace DirectedConvention
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
 theorem environsLine_of_shareDropLine
-    {before : Config Contrib} {b : G.Being} {deed reception : G.Weld}
+    {before : Config Contrib} {b : Designatum} {deed reception : G.Weld}
     (h : ShareDropLine G before b deed reception) :
     EnvironsLine G b deed reception :=
   h.left
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
 theorem isShareDrop_of_shareDropLine
-    {before : Config Contrib} {b : G.Being} {deed reception : G.Weld}
+    {before : Config Contrib} {b : Designatum} {deed reception : G.Weld}
     (h : ShareDropLine G before b deed reception) :
     G.IsShareDrop before reception :=
   h.right
 
 /-- An environs-line is a delivery-fact. -/
 theorem deliveredTo_of_environsLine
-    {b : G.Being} {deed reception : G.Weld}
+    {b : Designatum} {deed reception : G.Weld}
     (h : EnvironsLine G b deed reception) :
     DeliveredTo G deed reception :=
   h.right.right
@@ -272,29 +271,29 @@ theorem not_isShareDrop_of_eq_shareBot_tendency
     {before : Config Contrib} (h : before.tendency = shareBot)
     (received : G.Weld) :
     ¬ G.IsShareDrop before received :=
-  G.not_isShareDrop_of_tendency_atBot (atBot_of_eq_shareBot h) received
+  not_isShareDrop_of_tendency_atBot G (atBot_of_eq_shareBot h) received
 
 namespace DirectedConvention
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
 theorem no_shareDropLine_of_tendency_atBot
     {before : Config Contrib} (h : AtBot before.tendency)
-    (b : G.Being) (deed reception : G.Weld) :
+    (b : Designatum) (deed reception : G.Weld) :
     ¬ ShareDropLine G before b deed reception :=
   fun hline =>
-    G.not_isShareDrop_of_tendency_atBot h reception hline.right
+    not_isShareDrop_of_tendency_atBot G h reception hline.right
 
 /-- Literal equality with the designated bottom gives the pole-class release
     obstruction. -/
 theorem no_shareDropLine_of_eq_shareBot_tendency
     {before : Config Contrib} (h : before.tendency = shareBot)
-    (b : G.Being) (deed reception : G.Weld) :
+    (b : Designatum) (deed reception : G.Weld) :
     ¬ ShareDropLine G before b deed reception :=
   no_shareDropLine_of_tendency_atBot G (atBot_of_eq_shareBot h) b deed reception
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
 theorem hasShareDropLanding_of_shareDropLine_actual
-    {before : Config Contrib} {b : G.Being} {deed reception : G.Weld}
+    {before : Config Contrib} {b : Designatum} {deed reception : G.Weld}
     (hline : ShareDropLine G before b deed reception)
     (hact : G.Actual reception) :
     HasShareDropLanding G before deed :=
@@ -313,7 +312,7 @@ def ShortfallClosedAt
 /-- An explicit share-drop line with an actual reception supplies the local
     closure predicate. -/
 theorem shortfallClosedAt_of_shareDropLine_actual
-    {before : Config Contrib} {b : G.Being} {deed reception : G.Weld}
+    {before : Config Contrib} {b : Designatum} {deed reception : G.Weld}
     (hline : ShareDropLine G before b deed reception)
     (hact : G.Actual reception) :
     ShortfallClosedAt G before deed reception :=
@@ -330,19 +329,19 @@ theorem shortfallClosedAt_of_shareDropLine_actual
     `EffectiveTerminusNegative` checks that the universal conjunct is not
     recovered from actual-run data. Reading and motivation:
     Identification/Commentary.lean, C.4. -/
-def WaaEffectiveTerminus (b : G.Being) : Prop :=
+def WaaEffectiveTerminus (b : Designatum) : Prop :=
   G.ResponsiveTerminus b ∧
     ∀ before deed reception,
       deed.agent = b →
         ShortfallClosedAt G before deed reception
 
 theorem responsiveTerminus_of_waaEffectiveTerminus
-    {b : G.Being} (h : WaaEffectiveTerminus G b) :
+    {b : Designatum} (h : WaaEffectiveTerminus G b) :
     G.ResponsiveTerminus b :=
   h.left
 
 theorem shortfallClosedAt_of_waaEffectiveTerminus
-    {b : G.Being} (h : WaaEffectiveTerminus G b)
+    {b : Designatum} (h : WaaEffectiveTerminus G b)
     {before : Config Contrib} {deed reception : G.Weld}
     (hdeed : deed.agent = b) :
     ShortfallClosedAt G before deed reception :=
@@ -355,7 +354,7 @@ theorem shortfallClosedAt_of_waaEffectiveTerminus
     separated from enacted effectiveness by
     `not_effectivenessEnacted_of_undelivered`. -/
 theorem waaEffectiveTerminus_of_responsiveTerminus_of_undelivered
-    {b : G.Being} (hterm : G.ResponsiveTerminus b)
+    {b : Designatum} (hterm : G.ResponsiveTerminus b)
     (hundelivered : ∀ (deed reception : G.Weld),
       deed.agent = b → ¬ DeliveredTo G deed reception) :
     WaaEffectiveTerminus G b := by
@@ -451,7 +450,7 @@ end DirectedConvention
 
 namespace ReceptionPair
 
-variable {G : Grid Contrib}
+variable {G : CoreReadings Designatum Contrib}
 
 /-- The first member of a reception pair is actual. -/
 theorem first_actual (p : ReceptionPair G) :
@@ -508,12 +507,12 @@ theorem not_actTime_hasLiveShare_of_atBot
 theorem not_actTime_hasLiveShare_of_eq_shareBot
     {w : G.Weld} (h : G.share w = shareBot) :
     ¬ Tier.hasLiveShare G (Tier.actTime w) :=
-  G.not_actTime_hasLiveShare_of_atBot (atBot_of_eq_shareBot h)
+  not_actTime_hasLiveShare_of_atBot G (atBot_of_eq_shareBot h)
 
 /-- Collapse is impossible at the floor. -/
 theorem not_collapse_floor (d : Distinction G) :
     ¬ d.Collapse (Tier.floor : Tier G) :=
-  fun hcollapse => G.floor_has_no_live_share hcollapse.left
+  fun hcollapse => floor_has_no_live_share G hcollapse.left
 
 /- Reading and motivation: Identification/Commentary.lean, C.2. -/
 theorem hasLiveShare_of_collapse
@@ -550,7 +549,7 @@ theorem separated_of_obeysSeparateFuse
 theorem not_freeze_of_fused_floor
     {d : Distinction G} (h : d.Fused (Tier.floor : Tier G)) :
     ¬ d.Freeze :=
-  fun hfreeze => hfreeze (h G.floor_has_no_live_share)
+  fun hfreeze => hfreeze (h (floor_has_no_live_share G))
 
 /-- Error-freedom is the refutation-only reading of the separate/fuse rule:
     no live-tier collapse and no floor freeze. -/
@@ -569,7 +568,7 @@ theorem errorFree_of_obeys
 
 namespace RecordedUtterance
 
-variable {G : Grid Contrib} {L : ClaimLanguage G}
+variable {G : CoreReadings Designatum Contrib} {L : ClaimLanguage G}
 
 /-- The answered call is the call carried by the utterance's weld. -/
 @[simp]
@@ -600,5 +599,55 @@ end ErrorGrade
 
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev withConditions (G : CoreReadings Designatum Contrib) :=
+  Grid.withConditions G
+abbrev withRespondsTo (G : CoreReadings Designatum Contrib) :=
+  Grid.withRespondsTo G
+abbrev rePitch_tendency_atBot_of_terminus_response
+    (G : CoreReadings Designatum Contrib) :=
+  Grid.rePitch_tendency_atBot_of_terminus_response G
+abbrev grade_independent_of_conditions
+    (G : CoreReadings Designatum Contrib) :=
+  Grid.grade_independent_of_conditions G
+abbrev share_independent_of_conditions
+    (G : CoreReadings Designatum Contrib) :=
+  Grid.share_independent_of_conditions G
+abbrev rePitch_forgets (G : CoreReadings Designatum Contrib) :=
+  Grid.rePitch_forgets G
+abbrev accumulated_attainment_constant_of_same_final
+    (G : CoreReadings Designatum Contrib)
+    {α : Type} (score : Config Contrib → α)
+    (before₁ before₂ : Config Contrib) (received : G.Weld) :=
+  Grid.accumulated_attainment_constant_of_same_final
+    G score before₁ before₂ received
+abbrev not_isShareDrop_of_tendency_atBot
+    (G : CoreReadings Designatum Contrib)
+    {before : Config Contrib} (h : AtBot before.tendency)
+    (received : G.Weld) :=
+  Grid.not_isShareDrop_of_tendency_atBot G h received
+abbrev fused_of_obeysSeparateFuse
+    (G : CoreReadings Designatum Contrib)
+    {d : Grid.Distinction G}
+    (h : d.ObeysSeparateFuse) (t : Grid.Tier G) :=
+  Grid.fused_of_obeysSeparateFuse G h t
+abbrev separated_of_obeysSeparateFuse
+    (G : CoreReadings Designatum Contrib)
+    {d : Grid.Distinction G}
+    (h : d.ObeysSeparateFuse)
+    {t : Grid.Tier G} (ht : Grid.Tier.hasLiveShare G t) :=
+  Grid.separated_of_obeysSeparateFuse G h ht
+abbrev floor_has_no_live_share (G : CoreReadings Designatum Contrib) :=
+  Grid.floor_has_no_live_share G
+abbrev not_actTime_hasLiveShare_of_atBot
+    (G : CoreReadings Designatum Contrib)
+    {w : G.Weld} (h : AtBot (G.share w)) :=
+  Grid.not_actTime_hasLiveShare_of_atBot G h
+
+end CoreReadings
 
 end WAA

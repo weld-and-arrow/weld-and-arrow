@@ -18,8 +18,8 @@ namespace Grid
 open DirectedConvention
 open DirectedConvention.BeingConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /- ==============================================================================
    Stage-schemes as coarsenings
@@ -31,11 +31,11 @@ abbrev StageScheme (Stage : Type) : Type :=
 
 /-- The fifty-two-stage scheme, with no extra signature field. -/
 abbrev FiftyTwoStageScheme : Type :=
-  G.StageScheme (Fin 52)
+  StageScheme G (Fin 52)
 
 /-- The boundary relation read from a supplied coarsening. -/
 abbrev CoarseningBoundary {Macro : Type} (κ : BeingCoarsening G Macro) :
-    G.Being → G.Being → Prop :=
+    Designatum → Designatum → Prop :=
   κ.SameFiber
 
 /- ==============================================================================
@@ -99,17 +99,17 @@ structure BullAscent where
   drops  : ShareDropRun G before run
 
 /-- Bull 7: probe-constancy with a live self-pole index still present. -/
-def WaaBullSeven (b : G.Being) : Prop :=
+def WaaBullSeven (b : Designatum) : Prop :=
   G.ProbeConstant b (fun _ => True) ∧
     ∃ w : G.Weld, G.Actual w ∧ w.agent = b ∧ G.HasSelfPoleIndex w
 
 /-- Bull 8: the empty circle as the pole-class.  The retired function-zero
     disjunct is absent; this is terminus typing. -/
-abbrev WaaBullEight (b : G.Being) : Prop :=
+abbrev WaaBullEight (b : Designatum) : Prop :=
   G.AtPoleClass b
 
 /-- Bull 9: return to source as call-entire terminus response. -/
-abbrev WaaBullNine (b : G.Being) : Prop :=
+abbrev WaaBullNine (b : Designatum) : Prop :=
   G.ResponsiveTerminus b
 
 /-- Bull 10: marketplace functioning through at least one delivery line into
@@ -117,20 +117,20 @@ abbrev WaaBullNine (b : G.Being) : Prop :=
     claim; stronger universal delivery is a separate asymptote. -/
 def WaaBullTen {Macro : Type} (S : SentienceReading G)
     (κ : BeingCoarsening G Macro)
-    (b : G.Being) : Prop :=
+    (b : Designatum) : Prop :=
   G.ResponsiveTerminus b ∧
     ∃ deed reception : G.Weld,
       κ.InFiber (κ.proj b) deed ∧
       G.Actual reception ∧
       ¬ κ.SameFiber deed.agent reception.agent ∧
       κ.SentientTag S (κ.proj reception.agent) ∧
-      DeliveredTo G deed reception
+      DirectedConvention.DeliveredTo G deed reception
 
 /-- The shelved stronger bodhisattva reading: delivery reaches every other
     sentient fiber. The source picture does not require this strength. -/
 def StrongWaaBullTen {Macro : Type} (S : SentienceReading G)
     (κ : BeingCoarsening G Macro)
-    (b : G.Being) : Prop :=
+    (b : Designatum) : Prop :=
   G.ResponsiveTerminus b ∧
     ∀ m : Macro,
       κ.SentientTag S m →
@@ -139,53 +139,53 @@ def StrongWaaBullTen {Macro : Type} (S : SentienceReading G)
             κ.InFiber (κ.proj b) deed ∧
             κ.InFiber m reception ∧
             G.Actual reception ∧
-            DeliveredTo G deed reception
+            DirectedConvention.DeliveredTo G deed reception
 
-theorem bullSeven_not_terminus {b : G.Being}
-    (h : G.WaaBullSeven b) :
+theorem bullSeven_not_terminus {b : Designatum}
+    (h : WaaBullSeven G b) :
     ¬ G.Terminus b := by
   intro hterm
   rcases h.right with ⟨w, hactual, hagent, hidx⟩
   rw [← hagent] at hterm
   exact hidx (G.atBot_of_terminus_response hterm hactual)
 
-theorem bullSeven_not_bullEight {b : G.Being}
-    (h : G.WaaBullSeven b) :
-    ¬ G.WaaBullEight b := by
-  exact G.bullSeven_not_terminus h
+theorem bullSeven_not_bullEight {b : Designatum}
+    (h : WaaBullSeven G b) :
+    ¬ WaaBullEight G b := by
+  exact bullSeven_not_terminus G h
 
 theorem bullTen_to_bullNine {Macro : Type}
-    {S : SentienceReading G} {κ : BeingCoarsening G Macro} {b : G.Being}
-    (h : G.WaaBullTen S κ b) :
-    G.WaaBullNine b :=
+    {S : SentienceReading G} {κ : BeingCoarsening G Macro} {b : Designatum}
+    (h : WaaBullTen G S κ b) :
+    WaaBullNine G b :=
   h.left
 
-theorem bullNine_to_terminus {b : G.Being}
-    (h : G.WaaBullNine b) :
+theorem bullNine_to_terminus {b : Designatum}
+    (h : WaaBullNine G b) :
     G.Terminus b :=
   h.right
 
-theorem terminus_to_bullEight {b : G.Being}
+theorem terminus_to_bullEight {b : Designatum}
     (h : G.Terminus b) :
-    G.WaaBullEight b :=
+    WaaBullEight G b :=
   h
 
-theorem bullNine_to_bullEight {b : G.Being}
-    (h : G.WaaBullNine b) :
-    G.WaaBullEight b :=
-  G.terminus_to_bullEight h.right
+theorem bullNine_to_bullEight {b : Designatum}
+    (h : WaaBullNine G b) :
+    WaaBullEight G b :=
+  terminus_to_bullEight G h.right
 
 theorem bullTen_to_bullEight {Macro : Type}
-    {S : SentienceReading G} {κ : BeingCoarsening G Macro} {b : G.Being}
-    (h : G.WaaBullTen S κ b) :
-    G.WaaBullEight b :=
-  G.bullNine_to_bullEight h.left
+    {S : SentienceReading G} {κ : BeingCoarsening G Macro} {b : Designatum}
+    (h : WaaBullTen G S κ b) :
+    WaaBullEight G b :=
+  bullNine_to_bullEight G h.left
 
 /-- Bull 10 is explicitly reading-relative: under the constant-false
     sentience reading its marketplace destination cannot be inhabited. -/
 theorem not_waaBullTen_allInsentient {Macro : Type}
-    (κ : BeingCoarsening G Macro) (b : G.Being) :
-    ¬ G.WaaBullTen (SentienceReading.allInsentient G) κ b := by
+    (κ : BeingCoarsening G Macro) (b : Designatum) :
+    ¬ WaaBullTen G (SentienceReading.allInsentient G) κ b := by
   rintro ⟨_hterm, deed, reception, _hdeed, _hactual, _hcross,
     hsentient, _hdel⟩
   exact κ.allInsentient_not_sentientTag (κ.proj reception.agent) hsentient
@@ -231,8 +231,8 @@ namespace Grid
 
 open DirectedConvention.BeingConvention
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /-- A minimal object-language for rank-diagnosis utterances. It records the
     rank named by an utterance without adding a new semantic row. -/
@@ -246,21 +246,56 @@ def rankLanguage : ClaimLanguage G where
     | .actTime _, _ => True
 
 abbrev RecordedRankUtterance : Type :=
-  RecordedUtterance G (G.rankLanguage)
+  RecordedUtterance G (rankLanguage G)
 
 /-- The 到 rank's checked shape: marketplace arrival is exactly the Bull 10
     delivery pattern under the supplied coarsening. -/
 abbrev KenChuToShape {Macro : Type} (S : SentienceReading G)
     (κ : BeingCoarsening G Macro)
-    (b : G.Being) : Prop :=
-  G.WaaBullTen S κ b
+    (b : Designatum) : Prop :=
+  WaaBullTen G S κ b
 
 theorem kenChuTo_implies_waaBullTen {Macro : Type}
-    {S : SentienceReading G} {κ : BeingCoarsening G Macro} {b : G.Being}
-    (h : G.KenChuToShape S κ b) :
-    G.WaaBullTen S κ b :=
+    {S : SentienceReading G} {κ : BeingCoarsening G Macro} {b : Designatum}
+    (h : KenChuToShape G S κ b) :
+    WaaBullTen G S κ b :=
   h
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev StageScheme (G : CoreReadings Designatum Contrib) :=
+  Grid.StageScheme G
+abbrev FiftyTwoStageScheme (G : CoreReadings Designatum Contrib) :=
+  Grid.FiftyTwoStageScheme G
+abbrev WaaBullSeven (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaBullSeven G
+abbrev WaaBullEight (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaBullEight G
+abbrev WaaBullNine (G : CoreReadings Designatum Contrib) :=
+  Grid.WaaBullNine G
+abbrev ShareDropRun (G : CoreReadings Designatum Contrib) :=
+  Grid.ShareDropRun G
+abbrev WaaBullTen (G : CoreReadings Designatum Contrib)
+    {Macro : Type} (S : Grid.SentienceReading G)
+    (κ : Grid.DirectedConvention.BeingConvention.BeingCoarsening G Macro) :=
+  Grid.WaaBullTen G S κ
+abbrev StrongWaaBullTen (G : CoreReadings Designatum Contrib)
+    {Macro : Type} (S : Grid.SentienceReading G)
+    (κ : Grid.DirectedConvention.BeingConvention.BeingCoarsening G Macro) :=
+  Grid.StrongWaaBullTen G S κ
+abbrev rankLanguage (G : CoreReadings Designatum Contrib) :=
+  Grid.rankLanguage G
+abbrev RecordedRankUtterance (G : CoreReadings Designatum Contrib) :=
+  Grid.RecordedRankUtterance G
+abbrev KenChuToShape (G : CoreReadings Designatum Contrib)
+    {Macro : Type} (S : Grid.SentienceReading G)
+    (κ : Grid.DirectedConvention.BeingConvention.BeingCoarsening G Macro) :=
+  Grid.KenChuToShape G S κ
+
+end CoreReadings
 
 end WAA

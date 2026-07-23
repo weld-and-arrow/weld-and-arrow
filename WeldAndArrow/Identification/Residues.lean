@@ -17,26 +17,28 @@ namespace WAA
 
 namespace Grid
 
-variable {Contrib : Type} [PreorderBot Contrib]
-variable (G : Grid Contrib)
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+variable (G : CoreReadings Designatum Contrib)
 
 /-- A field residue: the call and response left when the agent-index is not part
     of the data. -/
-abbrev FieldFact : Type := G.Call × G.Response
+abbrev FieldFact (_G : CoreReadings Designatum Contrib) : Type :=
+  Designatum × Designatum
 
 /-- A field-only recovery candidate tries to recover an agent-index from field
     residues alone. -/
-abbrev FieldRecovery : Type := G.FieldFact → G.Being
+abbrev FieldRecovery (G : CoreReadings Designatum Contrib) : Type :=
+  FieldFact G → Designatum
 
 /-- Correctness for a field-only recovery candidate: for every actual weld, it
     must recover the very index projected from that weld. -/
-def CorrectFieldRecovery (recover : G.FieldRecovery) : Prop :=
+def CorrectFieldRecovery (recover : FieldRecovery G) : Prop :=
   ∀ w : G.Weld, G.Actual w → recover (G.fieldOf w) = G.index w
 
 /-- A correct field-only recovery cannot distinguish two actual welds with the
     same field residue; it must assign them the same index. -/
 theorem correctFieldRecovery_forces_same_index_of_same_field
-    {recover : G.FieldRecovery} (hrec : G.CorrectFieldRecovery recover)
+    {recover : FieldRecovery G} (hrec : CorrectFieldRecovery G recover)
     {w₁ w₂ : G.Weld} (h₁ : G.Actual w₁) (h₂ : G.Actual w₂)
     (hfield : G.fieldOf w₁ = G.fieldOf w₂) :
     G.index w₁ = G.index w₂ :=
@@ -52,23 +54,38 @@ theorem no_agent_recovery_from_same_field_distinct_index
     {w₁ w₂ : G.Weld} (h₁ : G.Actual w₁) (h₂ : G.Actual w₂)
     (hfield : G.fieldOf w₁ = G.fieldOf w₂)
     (hne : G.index w₁ ≠ G.index w₂) :
-    ¬ ∃ recover : G.FieldRecovery, G.CorrectFieldRecovery recover :=
+    ¬ ∃ recover : FieldRecovery G, CorrectFieldRecovery G recover :=
   fun ⟨_recover, hrec⟩ =>
-    hne (G.correctFieldRecovery_forces_same_index_of_same_field
+    hne (correctFieldRecovery_forces_same_index_of_same_field G
       hrec h₁ h₂ hfield)
 
 /-- The concrete same-call/same-response witness used in the prose: two
     different beings can actually answer the same call with the same response,
     and the field residue cannot say which one acted. -/
 theorem no_agent_recovery_from_same_call_response
-    (a₁ a₂ : G.Being) (c : G.Call) (r : G.Response)
-    (h₁ : G.Actual ⟨a₁, c, r⟩) (h₂ : G.Actual ⟨a₂, c, r⟩)
-    (hne : a₁ ≠ a₂) :
-    ¬ ∃ recover : G.FieldRecovery, G.CorrectFieldRecovery recover :=
-  G.no_agent_recovery_from_same_field_distinct_index h₁ h₂ rfl hne
+    (w₁ w₂ : G.Weld)
+    (h₁ : G.Actual w₁) (h₂ : G.Actual w₂)
+    (hcall : w₁.call = w₂.call)
+    (hresponse : w₁.response = w₂.response)
+    (hne : w₁.agent ≠ w₂.agent) :
+    ¬ ∃ recover : FieldRecovery G, CorrectFieldRecovery G recover :=
+  no_agent_recovery_from_same_field_distinct_index G h₁ h₂
+    (Prod.ext hcall hresponse) hne
 
 
 end Grid
+
+namespace CoreReadings
+
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
+
+abbrev FieldFact (G : CoreReadings Designatum Contrib) := Grid.FieldFact G
+abbrev FieldRecovery (G : CoreReadings Designatum Contrib) :=
+  Grid.FieldRecovery G
+abbrev CorrectFieldRecovery (G : CoreReadings Designatum Contrib) :=
+  Grid.CorrectFieldRecovery G
+
+end CoreReadings
 
 
 /- ==============================================================================
@@ -77,20 +94,20 @@ end Grid
 
 namespace MisFeedNegative
 
-variable {Contrib : Type} [PreorderBot Contrib]
+variable {Designatum Contrib : Type} [PreorderBot Contrib]
 
 /-- The index-seeking question-form, modeled as its universe of candidate
     answers: one purported self-pole index for each field residue. -/
-abbrev IndexSeekingForm (G : Grid Contrib) : Type :=
-  G.FieldFact → G.Being
+abbrev IndexSeekingForm (G : CoreReadings Designatum Contrib) : Type :=
+  G.FieldFact → Designatum
 
 /-- Success for the form: correctness at every actual weld. -/
-def AnswersCorrectly (G : Grid Contrib) (ans : IndexSeekingForm G) : Prop :=
+def AnswersCorrectly (G : CoreReadings Designatum Contrib) (ans : IndexSeekingForm G) : Prop :=
   ∀ w : G.Weld, G.Actual w → ans (G.fieldOf w) = G.index w
 
 /-- A field collision: two actual welds with the same residue and distinct
     agents. -/
-structure FieldCollision (G : Grid Contrib) where
+structure FieldCollision (G : CoreReadings Designatum Contrib) where
   w1 : G.Weld
   w2 : G.Weld
   actual1 : G.Actual w1
@@ -102,7 +119,7 @@ structure FieldCollision (G : Grid Contrib) where
     collision. The negation encloses the whole universe of candidate answers,
     so the obstruction belongs to the question-shape, not to one bad answer. -/
 theorem no_indexSeeking_success_of_collision
-    {G : Grid Contrib} (c : FieldCollision G) :
+    {G : CoreReadings Designatum Contrib} (c : FieldCollision G) :
     ¬ ∃ ans : IndexSeekingForm G, AnswersCorrectly G ans := by
   rintro ⟨ans, hans⟩
   have hsame : G.index c.w1 = G.index c.w2 := by
@@ -115,8 +132,8 @@ theorem no_indexSeeking_success_of_collision
 /-- Claim-level face of the same obstruction: one field residue has two
     actual-backed, distinct index claims. -/
 theorem indexClaim_not_functional_of_collision
-    {G : Grid Contrib} (c : FieldCollision G) :
-    ∃ f : G.FieldFact, ∃ b1 b2 : G.Being, b1 ≠ b2 ∧
+    {G : CoreReadings Designatum Contrib} (c : FieldCollision G) :
+    ∃ f : G.FieldFact, ∃ b1 b2 : Designatum, b1 ≠ b2 ∧
       (∃ w : G.Weld, G.Actual w ∧ G.fieldOf w = f ∧ w.agent = b1) ∧
       (∃ w : G.Weld, G.Actual w ∧ G.fieldOf w = f ∧ w.agent = b2) :=
   ⟨G.fieldOf c.w1, c.w1.agent, c.w2.agent, c.distinct_agent,
@@ -125,26 +142,51 @@ theorem indexClaim_not_functional_of_collision
 
 /-- Two beings, one call, one response: both actual welds have the same field
     residue. -/
-inductive CollisionBeing
-  | left
-  | right
+inductive CollisionCase
+  | leftAgent
+  | rightAgent
+  | call
+  | response
+  | leftOccurrence
+  | rightOccurrence
 deriving DecidableEq
 
 /-- A concrete grid witnessing a field collision while keeping delivery
     answerable in the same model. -/
-def collisionGrid : Grid Nat where
-  Being      := CollisionBeing
-  Call       := Unit
-  Response   := Unit
-  respondsTo _ _ := some ()
-  grade _ _ _ := 0
-  conditions _ _ := True
+def collisionGrid : CoreReadings CollisionCase Nat where
+  occurrence := {
+    occurrence := fun d => d = .leftOccurrence ∨ d = .rightOccurrence
+    isBeing := fun d => d = .leftAgent ∨ d = .rightAgent
+    isCall := fun d => d = .call
+    isResponse := fun d => d = .response
+    agent := fun d =>
+      match d with
+      | .leftOccurrence => .leftAgent
+      | .rightOccurrence => .rightAgent
+      | _ => d
+    call := fun d =>
+      match d with
+      | .leftOccurrence | .rightOccurrence => .call
+      | _ => d
+    response := fun d =>
+      match d with
+      | .leftOccurrence | .rightOccurrence => .response
+      | _ => d
+  }
+  response := {
+    respondsTo := fun b c =>
+      if (b = .leftAgent ∨ b = .rightAgent) ∧ c = .call
+      then some .response
+      else none
+  }
+  placement := { grade := fun _ => 0 }
+  conditioning := { conditions := fun _ _ => True }
 
 def wLeft : collisionGrid.Weld :=
-  ⟨CollisionBeing.left, (), ()⟩
+  ⟨.leftOccurrence, Or.inl rfl⟩
 
 def wRight : collisionGrid.Weld :=
-  ⟨CollisionBeing.right, (), ()⟩
+  ⟨.rightOccurrence, Or.inr rfl⟩
 
 /-- The fence's hypothesis, witnessed concretely. -/
 def collisionGrid_fieldCollision : FieldCollision collisionGrid where
